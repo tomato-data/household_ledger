@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function TransactionForm({ onAdd }) {
+function TransactionForm({ onAdd, selectedDate }) {
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
     
@@ -17,6 +17,7 @@ function TransactionForm({ onAdd }) {
             description: text,
             amount: parseFloat(amount),
             type: parseFloat(amount) > 0 ? 'income' : 'expense',
+            date: selectedDate.toISOString(),
         };
 
         onAdd(newTransaction);  // 부모에게 전달 (Home.jsx)
