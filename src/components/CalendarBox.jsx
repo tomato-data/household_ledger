@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
@@ -8,7 +8,7 @@ function CalendarBox() {
     return (
         <div>
             <h3>날짜 선택</h3>
-            <Claendar onChange={setValue} value={value} />
+            <Calendar onChange={setValue} value={value} />
             <p>선택한 날짜: {value.toLocaleDateString()}</p>
         </div>
     )
