@@ -1,0 +1,9 @@
+.react-calendar {
+    width: 100%;
+    max-width: 800px;
+    font-size: 1.2em;
+}
+
+.react-calendar__navigation button {
+    min-width: 44px;
+}

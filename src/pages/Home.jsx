@@ -14,7 +14,11 @@ function Home() {
     return (
         <div>
             <h2>가계부 내역</h2>
-            <CalendarBox value={selectedDate} onChange={setSelectedDate}/> {/* 달력 컴포넌트 */}
+            <CalendarBox 
+                transactions={transactions}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+            />
             <TransactionForm onAdd={handleAddTransaction} selectedDate={selectedDate} />
             <TransactionList transactions={transactions} />
         </div>
