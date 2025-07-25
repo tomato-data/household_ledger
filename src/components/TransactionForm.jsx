@@ -1,9 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function TransactionForm({ onAdd, selectedDate }) {
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
+    const [editMode, setEditMode] = useState(false);
+    const [editID, setEditId] = useState(null);
+    const [editTarget, setEditTarget] = useState(null);
     
+    useEffect(() => {
+        if (editTarget) {
+            setText(editTarget.description);
+            setAmount(editTarget.amount.toString());
+            setEditMode(true);
+            setEditId(editTarget.id);
+        }
+    }, [editTarget]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -13,16 +25,22 @@ function TransactionForm({ onAdd, selectedDate }) {
         }
 
         const newTransaction = {
-            id: crypto.randomUUID(),
+            id: editMode ? editIDc : crypto.randomUUID(),
             description: text,
             amount: parseFloat(amount),
             type: parseFloat(amount) > 0 ? 'income' : 'expense',
             date: selectedDate.toISOString(),
         };
 
-        onAdd(newTransaction);  // 부모에게 전달 (Home.jsx)
+        if (editMode) {
+            onUpdate(newTransaction);
+        } else {
+            onAdd(newTransaction);  // 부모에게 전달 (Home.jsx)
+        } 
         setText('');
         setAmount('');
+        setEditMode(false);
+        setEditId(null);
     };
 
     return (
@@ -39,7 +57,7 @@ function TransactionForm({ onAdd, selectedDate }) {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 />
-            <button type="submit">추가</button>
+            <button type="submit">{editMode ? '수정' : '추가'}</button>
         </form>
     )
 }

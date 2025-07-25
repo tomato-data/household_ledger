@@ -10,6 +10,15 @@ function Home() {
     const handleAddTransaction = (transaction) => {
         setTransactions((prev) => [transaction, ...prev]);
     };
+    const handleDeleteTransaction = (id) => {
+        setTransactions(prev => prev.filter(tx => tx.id !== id));
+    };
+
+    const handleUpdateTransaction = (updatedTx) => {
+        setTransactions(prev =>
+            prev.map(tx => (tx.id === updatedTx.id ? updatedTx : tx))
+        );
+    };
 
     return (
         <div>
@@ -19,8 +28,17 @@ function Home() {
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
             />
-            <TransactionForm onAdd={handleAddTransaction} selectedDate={selectedDate} />
-            <TransactionList transactions={transactions} />
+            <TransactionForm 
+                onAdd={handleAddTransaction} 
+                onUpdate={handleUpdateTransaction}
+                selectedDate={selectedDate} 
+                editTarget={editTarget}
+            />
+            <TransactionList 
+                transactions={transactions} 
+                onDelete={handleDeleteTransaction}
+                onEdit={handleUpdateTransaction}
+            />
         </div>
     )
 }
