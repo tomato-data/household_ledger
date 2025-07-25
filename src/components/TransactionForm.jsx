@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-function TransactionForm({ onAdd, selectedDate }) {
+function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
     const [editMode, setEditMode] = useState(false);
     const [editID, setEditId] = useState(null);
-    const [editTarget, setEditTarget] = useState(null);
     
     useEffect(() => {
         if (editTarget) {
@@ -25,7 +24,7 @@ function TransactionForm({ onAdd, selectedDate }) {
         }
 
         const newTransaction = {
-            id: editMode ? editIDc : crypto.randomUUID(),
+            id: editMode ? editID : crypto.randomUUID(),
             description: text,
             amount: parseFloat(amount),
             type: parseFloat(amount) > 0 ? 'income' : 'expense',
