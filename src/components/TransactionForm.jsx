@@ -12,6 +12,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     // 카테고리 목록
     const categories = [
         { value: '식비', emoji: '🍽️', label: '식비' },
+        { value: '간식류', emoji: '🍪', label: '간식류' },
         { value: '카페', emoji: '☕', label: '카페' },
         { value: '농구 패배', emoji: '🏀', label: '농구 패배' },
         { value: '교통비', emoji: '🚗', label: '교통비' },

@@ -26,6 +26,7 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
   const getCategoryEmoji = (category) => {
     const emojiMap = {
       '식비': '🍽️',
+      '간식류': '🍪',
       '카페': '☕',
       '농구 패배': '🏀',
       '교통비': '🚗',
