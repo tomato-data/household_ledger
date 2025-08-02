@@ -8,7 +8,6 @@ import './App.css';
 function App() {
   return (
     <div>
-      <h1>가계부</h1>
       <Home />
     </div>
   );

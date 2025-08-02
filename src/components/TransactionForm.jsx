@@ -4,14 +4,34 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('기타'); // 기본값
-    const [type, setType] = useState('income'); // 수입/지출 선택
+    const [type, setType] = useState('expense'); // 수입/지출 선택
     const [editMode, setEditMode] = useState(false);
     const [editID, setEditId] = useState(null);
     
+    // 천단위 콤마 포맷팅 함수
+    const formatNumber = (num) => {
+        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
+    // 콤마 제거 함수
+    const removeCommas = (str) => {
+        return str.replace(/,/g, '');
+    };
+
+    // 금액 입력 핸들러
+    const handleAmountChange = (e) => {
+        const value = e.target.value;
+        // 숫자와 콤마만 허용
+        const numbersOnly = removeCommas(value);
+        if (numbersOnly === '' || /^\d+$/.test(numbersOnly)) {
+            setAmount(numbersOnly ? formatNumber(numbersOnly) : '');
+        }
+    };
+
     useEffect(() => {
         if (editTarget) {
             setText(editTarget.description);
-            setAmount(editTarget.amount.toString());
+            setAmount(formatNumber(editTarget.amount.toString()));
             setCategory(editTarget.category || '기타');
             setType(editTarget.type || 'income');
             setEditMode(true);
@@ -30,7 +50,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         const newTransaction = {
             id: editMode ? editID : crypto.randomUUID(),
             description: text,
-            amount: parseFloat(amount),
+            amount: parseFloat(removeCommas(amount)),
             type: type,
             date: selectedDate.toISOString(),
             category: category,
@@ -44,7 +64,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         setText('');
         setAmount('');
         setCategory('기타');
-        setType('income'); // 초기화
+        setType('expense'); // 초기화
         setEditMode(false);
         setEditId(null);
     };
@@ -78,6 +98,21 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                     </div>
                 </div>
 
+                {/* 금액 입력 */}
+                <div className="form-group">
+                    <label className="form-label">금액</label>
+                    <div className="amount-input-wrapper">
+                        <input
+                            type="text"
+                            className="form-input amount-input"
+                            placeholder="0"
+                            value={amount}
+                            onChange={handleAmountChange}
+                        />
+                        <span className="currency">원</span>
+                    </div>
+                </div>
+
                 {/* 내역 입력 */}
                 <div className="form-group">
                     <label className="form-label">내역</label>
@@ -90,21 +125,6 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                     />
                 </div>
 
-                {/* 금액 입력 */}
-                <div className="form-group">
-                    <label className="form-label">금액</label>
-                    <div className="amount-input-wrapper">
-                        <input
-                            type="number"
-                            className="form-input amount-input"
-                            placeholder="0"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                        />
-                        <span className="currency">원</span>
-                    </div>
-                </div>
-
                 {/* 카테고리 선택 */}
                 <div className="form-group">
                     <label className="form-label">카테고리</label>
@@ -114,14 +134,20 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                         onChange={(e) => setCategory(e.target.value)}
                     >
                         <option value="식비">🍽️ 식비</option>
+                        <option value="카페">☕ 카페</option>
+                        <option value="농구 패배">🏀 농구 패배</option>
                         <option value="교통비">🚗 교통비</option>
                         <option value="문화생활">🎭 문화생활</option>
+                        <option value="취미생활">🎮 취미생활</option>
+                        <option value="의류">👔 의류</option>
                         <option value="생필품">🛒 생필품</option>
-                        <option value="미용">💄 미용</option>
+                        <option value="미용">💈 미용</option>
                         <option value="의료비">🏥 의료비</option>
                         <option value="교육">📚 교육</option>
+                        <option value="월급">💰 월급</option>
                         <option value="월세">🏠 월세</option>
                         <option value="통신비">📱 통신비</option>
+                        <option value="구독료">📺 구독료</option>
                         <option value="공과금">⚡ 공과금</option>
                         <option value="기타">📝 기타</option>
                     </select>

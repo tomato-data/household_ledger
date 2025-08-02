@@ -592,9 +592,8 @@ button:hover {
 
 /* ➕ 추가 버튼 */
 .add-button {
-    position: absolute;
-    bottom: 100px;
-    right: 20px;
+    position: static;
+    margin: 10px 10px 0 auto;
     width: 56px;
     height: 56px;
     border-radius: 50%;
