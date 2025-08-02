@@ -9,6 +9,7 @@ function Home() {
     const [editTarget, setEditTarget] = useState(null);  // 수정할 거래 상태 추가
     const [showForm, setShowForm] = useState(false);
     const [showBackupAlert, setShowBackupAlert] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(false);
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -30,18 +31,20 @@ function Home() {
                     setEditTarget(null);
                 } else if (showBackupAlert) {
                     setShowBackupAlert(false);
+                } else if (showSidebar) {
+                    setShowSidebar(false);
                 }
             }
         };
 
-        if (showForm || showBackupAlert) {
+        if (showForm || showBackupAlert || showSidebar) {
             document.addEventListener('keydown', handleKeyPress);
         }
 
         return () => {
             document.removeEventListener('keydown', handleKeyPress);
         };
-    }, [showForm, showBackupAlert]);
+    }, [showForm, showBackupAlert, showSidebar]);
 
     // 백업 상태 체크 (30일마다)
     const checkBackupStatus = () => {
@@ -79,6 +82,7 @@ function Home() {
             // 백업 날짜 저장
             localStorage.setItem('lastBackupDate', Date.now().toString());
             setShowBackupAlert(false);
+            setShowSidebar(false);
             
             alert('백업이 완료되었습니다! 💾');
         } catch (error) {
@@ -87,11 +91,54 @@ function Home() {
         }
     };
 
-    // 백업 복원
+    // 백업 복원 (단일 파일)
     const handleRestore = (event) => {
         const file = event.target.files[0];
         if (!file) return;
         
+        restoreFromFile(file);
+        
+        // 파일 input 초기화
+        event.target.value = '';
+    };
+
+    // 백업 디렉토리에서 최신 파일 복원
+    const handleRestoreFromDirectory = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+        
+        // JSON 백업 파일만 필터링
+        const backupFiles = files.filter(file => 
+            file.name.endsWith('.json') && file.name.includes('가계부_백업')
+        );
+        
+        if (backupFiles.length === 0) {
+            alert('백업 파일을 찾을 수 없습니다. 파일명이 "가계부_백업"으로 시작하는 JSON 파일이 있는지 확인해주세요.');
+            return;
+        }
+        
+        // 파일 수정 날짜로 정렬하여 가장 최신 파일 찾기
+        backupFiles.sort((a, b) => b.lastModified - a.lastModified);
+        const latestFile = backupFiles[0];
+        
+        const confirmRestore = window.confirm(
+            `백업 디렉토리에서 가장 최신 파일을 복원하시겠습니까?\n\n` +
+            `파일명: ${latestFile.name}\n` +
+            `수정일: ${new Date(latestFile.lastModified).toLocaleString()}\n` +
+            `총 ${backupFiles.length}개의 백업 파일을 찾았습니다.\n\n` +
+            `⚠️ 현재 데이터가 모두 삭제되고 백업 데이터로 대체됩니다.`
+        );
+        
+        if (confirmRestore) {
+            restoreFromFile(latestFile);
+        }
+        
+        // 파일 input 초기화
+        event.target.value = '';
+    };
+
+    // 파일에서 복원하는 공통 함수
+    const restoreFromFile = (file) => {
         const reader = new FileReader();
         reader.onload = async (e) => {
             try {
@@ -102,35 +149,24 @@ function Home() {
                     return;
                 }
                 
-                const confirmRestore = window.confirm(
-                    `백업 파일을 복원하시겠습니까?\n` +
-                    `백업 날짜: ${new Date(backupData.exportDate).toLocaleDateString()}\n` +
-                    `거래 수: ${backupData.transactions.length}개\n\n` +
-                    `⚠️ 현재 데이터가 모두 삭제되고 백업 데이터로 대체됩니다.`
-                );
+                // 기존 데이터 삭제
+                await db.transactions.clear();
                 
-                if (confirmRestore) {
-                    // 기존 데이터 삭제
-                    await db.transactions.clear();
-                    
-                    // 백업 데이터 복원
-                    await db.transactions.bulkAdd(backupData.transactions);
-                    
-                    // 화면 새로고침
-                    const newTransactions = await db.transactions.toArray();
-                    setTransactions(newTransactions);
-                    
-                    alert('복원이 완료되었습니다! ✅');
-                }
+                // 백업 데이터 복원
+                await db.transactions.bulkAdd(backupData.transactions);
+                
+                // 화면 새로고침
+                const newTransactions = await db.transactions.toArray();
+                setTransactions(newTransactions);
+                setShowSidebar(false);
+                
+                alert(`복원이 완료되었습니다! ✅\n파일: ${file.name}\n거래 수: ${backupData.transactions.length}개`);
             } catch (error) {
                 console.error('복원 실패:', error);
-                alert('복원 중 오류가 발생했습니다.');
+                alert('복원 중 오류가 발생했습니다. 파일 형식을 확인해주세요.');
             }
         };
         reader.readAsText(file);
-        
-        // 파일 input 초기화
-        event.target.value = '';
     };
     
     const handleAddTransaction = async(transaction) => {
@@ -193,6 +229,17 @@ function Home() {
 
     return (
         <div>
+            {/* 햄버거 메뉴 버튼 */}
+            <button 
+                className="hamburger-btn" 
+                onClick={() => setShowSidebar(true)}
+                aria-label="메뉴 열기"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
             {/* 전체 자산 표시 */}
             <div className="total-assets-container">
                 <div className="total-assets-card">
@@ -268,18 +315,50 @@ function Home() {
                             </button>
                         </div>
                         
-                        <div className="backup-tools">
-                            <h4>백업 관리</h4>
-                            <div className="backup-actions">
-                                <button className="manual-backup-btn" onClick={handleBackup}>
+                        <div className="backup-info">
+                            <p>💡 일반 백업 기능은 왼쪽 상단 메뉴에서 이용하실 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 사이드바 */}
+            {showSidebar && (
+                <div className="sidebar-overlay" onClick={() => setShowSidebar(false)}>
+                    <div className="sidebar" onClick={(e) => e.stopPropagation()}>
+                        <div className="sidebar-header">
+                            <h3>메뉴</h3>
+                            <button 
+                                className="sidebar-close-btn" 
+                                onClick={() => setShowSidebar(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div className="sidebar-content">
+                            <div className="sidebar-section">
+                                <h4>백업 관리</h4>
+                                <button className="sidebar-btn backup-btn" onClick={handleBackup}>
                                     💾 수동 백업
                                 </button>
-                                <label className="restore-btn">
-                                    📂 복원하기
+                                <label className="sidebar-btn restore-btn">
+                                    📂 파일에서 복원
                                     <input 
                                         type="file" 
                                         accept=".json"
                                         onChange={handleRestore}
+                                        style={{ display: 'none' }}
+                                    />
+                                </label>
+                                <label className="sidebar-btn restore-dir-btn">
+                                    📁 디렉토리에서 최신 복원
+                                    <input 
+                                        type="file" 
+                                        webkitdirectory=""
+                                        directory=""
+                                        multiple
+                                        onChange={handleRestoreFromDirectory}
                                         style={{ display: 'none' }}
                                     />
                                 </label>
