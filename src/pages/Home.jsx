@@ -1,4 +1,5 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
+import db from '../utils/db';
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
 import TransactionList from '../components/TransactionList';
@@ -8,6 +9,14 @@ function Home() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editTarget, setEditTarget] = useState(null);  // 수정할 거래 상태 추가
 
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            const allTransactions = await db.transactions.toArray();
+            setTransactions(allTransactions);
+        }
+        fetchTransactions();
+    }, []);
+    
     const handleAddTransaction = (transaction) => {
         setTransactions((prev) => [transaction, ...prev]);
         setEditTarget(null);  // 추가 후 수정 상태 초기화
