@@ -21,6 +21,28 @@ function Home() {
         checkBackupStatus();
     }, []);
 
+    // ESC 키로 모달 닫기
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (event.key === 'Escape') {
+                if (showForm) {
+                    setShowForm(false);
+                    setEditTarget(null);
+                } else if (showBackupAlert) {
+                    setShowBackupAlert(false);
+                }
+            }
+        };
+
+        if (showForm || showBackupAlert) {
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [showForm, showBackupAlert]);
+
     // 백업 상태 체크 (30일마다)
     const checkBackupStatus = () => {
         const lastBackup = localStorage.getItem('lastBackupDate');

@@ -1,12 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState('기타'); // 기본값
+    const [category, setCategory] = useState('식비'); // 기본값
     const [type, setType] = useState('expense'); // 수입/지출 선택
     const [editMode, setEditMode] = useState(false);
     const [editID, setEditId] = useState(null);
+    const amountInputRef = useRef(null);
+    
+    // 카테고리 목록
+    const categories = [
+        { value: '식비', emoji: '🍽️', label: '식비' },
+        { value: '카페', emoji: '☕', label: '카페' },
+        { value: '농구 패배', emoji: '🏀', label: '농구 패배' },
+        { value: '교통비', emoji: '🚗', label: '교통비' },
+        { value: '문화생활', emoji: '🎭', label: '문화생활' },
+        { value: '취미생활', emoji: '🎮', label: '취미생활' },
+        { value: '의류', emoji: '👔', label: '의류' },
+        { value: '생필품', emoji: '🛒', label: '생필품' },
+        { value: '미용', emoji: '💈', label: '미용' },
+        { value: '의료비', emoji: '🏥', label: '의료비' },
+        { value: '교육', emoji: '📚', label: '교육' },
+        { value: '월급', emoji: '💰', label: '월급' },
+        { value: '월세', emoji: '🏠', label: '월세' },
+        { value: '통신비', emoji: '📱', label: '통신비' },
+        { value: '구독료', emoji: '📺', label: '구독료' },
+        { value: '공과금', emoji: '⚡', label: '공과금' },
+        { value: '기타', emoji: '📝', label: '기타' }
+    ];
     
     // 천단위 콤마 포맷팅 함수
     const formatNumber = (num) => {
@@ -32,12 +54,23 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         if (editTarget) {
             setText(editTarget.description);
             setAmount(formatNumber(editTarget.amount.toString()));
-            setCategory(editTarget.category || '기타');
+            setCategory(editTarget.category || '식비');
             setType(editTarget.type || 'income');
             setEditMode(true);
             setEditId(editTarget.id);
         }
     }, [editTarget]);
+
+    // 폼이 열릴 때 금액 입력란에 포커스
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (amountInputRef.current) {
+                amountInputRef.current.focus();
+            }
+        }, 100); // 약간의 지연으로 모달 애니메이션 후 포커스
+        
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -63,7 +96,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         } 
         setText('');
         setAmount('');
-        setCategory('기타');
+        setCategory('식비');
         setType('expense'); // 초기화
         setEditMode(false);
         setEditId(null);
@@ -108,6 +141,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                             placeholder="0"
                             value={amount}
                             onChange={handleAmountChange}
+                            ref={amountInputRef}
                         />
                         <span className="currency">원</span>
                     </div>
@@ -128,29 +162,18 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                 {/* 카테고리 선택 */}
                 <div className="form-group">
                     <label className="form-label">카테고리</label>
-                    <select 
-                        className="form-select"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                    >
-                        <option value="식비">🍽️ 식비</option>
-                        <option value="카페">☕ 카페</option>
-                        <option value="농구 패배">🏀 농구 패배</option>
-                        <option value="교통비">🚗 교통비</option>
-                        <option value="문화생활">🎭 문화생활</option>
-                        <option value="취미생활">🎮 취미생활</option>
-                        <option value="의류">👔 의류</option>
-                        <option value="생필품">🛒 생필품</option>
-                        <option value="미용">💈 미용</option>
-                        <option value="의료비">🏥 의료비</option>
-                        <option value="교육">📚 교육</option>
-                        <option value="월급">💰 월급</option>
-                        <option value="월세">🏠 월세</option>
-                        <option value="통신비">📱 통신비</option>
-                        <option value="구독료">📺 구독료</option>
-                        <option value="공과금">⚡ 공과금</option>
-                        <option value="기타">📝 기타</option>
-                    </select>
+                    <div className="category-grid">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.value}
+                                type="button"
+                                className={`category-btn ${category === cat.value ? 'active' : ''}`}
+                                onClick={() => setCategory(cat.value)}
+                            >
+                                {cat.emoji} {cat.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* 제출 버튼 */}
