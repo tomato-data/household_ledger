@@ -1,6 +1,7 @@
 import React from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import '../App.css';
 
 function CalendarBox({ transactions, selectedDate, setSelectedDate }) {
   // 특정 날짜에 해당하는 거래내역 필터링
@@ -17,25 +18,28 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate }) {
         tileContent={({ date, view }) => {
           if (view !== 'month') return null;
 
-          const txs = transactions.filter(
+          const dayTxs = transactions.filter(
             tx => new Date(tx.date).toDateString() === date.toDateString()
           );
 
-          if (txs.length === 0) return null;
+          if (dayTxs.length === 0) return null;
+
+          const income = dayTxs
+            .filter(tx => tx.type === 'income')
+            .reduce((sum, tx) => sum + tx.amount, 0);
+
+          const expense = dayTxs
+            .filter(tx => tx.type === 'expense')
+            .reduce((sum, tx) => sum + tx.amount, 0);
 
           return (
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-              {txs.slice(0, 2).map((tx, idx) => (
-                <li
-                  key={idx}
-                  style={{ fontSize: '0.6rem', color: tx.amount > 0 ? 'green' : 'red' }}
-                >
-                  {tx.description}
-                </li>
-              ))}
-              {txs.length > 2 && (
-                <li style={{ fontSize: '0.5rem', color: '#888' }}>+{txs.length - 2} more</li>
-              )}
+            <ul className="calendar-day-list">
+              {income > 0 && (
+                <li className="income">{income.toLocaleString()}</li>
+               )}
+               {expense > 0 && (
+                <li className="expense">{expense.toLocaleString()}</li>
+               )}
             </ul>
           );
         }}
@@ -49,8 +53,11 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate }) {
         ) : (
           <ul>
             {transactionsForSelectedDate.map(tx => (
-              <li key={tx.id}>
-                {tx.description}: {tx.amount}원 ({tx.type})
+              <li 
+                key={tx.id}
+                className={tx.type === 'income' ? 'income' : 'expense'}
+              >
+                [{new Date(tx.date).toLocaleDateString()}] : {tx.amount.toLocaleString()}원
               </li>
             ))}
           </ul>

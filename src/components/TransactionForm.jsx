@@ -4,6 +4,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('기타'); // 기본값
+    const [type, setType] = useState('income'); // 수입/지출 선택
     const [editMode, setEditMode] = useState(false);
     const [editID, setEditId] = useState(null);
     
@@ -12,6 +13,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
             setText(editTarget.description);
             setAmount(editTarget.amount.toString());
             setCategory(editTarget.category || '기타');
+            setType(editTarget.type || 'income');
             setEditMode(true);
             setEditId(editTarget.id);
         }
@@ -29,7 +31,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
             id: editMode ? editID : crypto.randomUUID(),
             description: text,
             amount: parseFloat(amount),
-            type: parseFloat(amount) > 0 ? 'income' : 'expense',
+            type: type,
             date: selectedDate.toISOString(),
             category: category,
         };
@@ -42,6 +44,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         setText('');
         setAmount('');
         setCategory('기타');
+        setType('income'); // 초기화
         setEditMode(false);
         setEditId(null);
     };
@@ -60,6 +63,13 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 />
+            <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+            >
+                <option value="income">수입</option>
+                <option value="expense">지출</option>
+            </select>
             <select 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}

@@ -1,11 +1,37 @@
 .react-calendar {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
+    margin: 0 auto;
     font-size: 1.2em;
 }
 
 .react-calendar__navigation button {
     min-width: 44px;
+}
+
+.react-calendar__tile {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* align-items: flex-start; */
+    overflow: hidden;
+}
+
+.calendar-day-list li {
+    font-size: 1.2rem;
+  }
+  
+.calendar-day-list li.income {
+color: green;
+font-size: 0.8rem;
+font-weight: bold;
+}
+
+.calendar-day-list li.expense {
+color: red;
+font-size: 0.8rem;
+font-weight: bold;
 }
 
 .summary {
@@ -22,4 +48,39 @@
 .summary .expense {
     color: red;
     font-weight: bold;
+}
+
+.calendar-day-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+.calendar-day-list li {
+font-size: 0.6rem;
+}
+
+.calendar-day-list li.income {
+color: green;
+font-weight: bold;
+}
+
+.calendar-day-list li.expense {
+color: red;
+font-weight: bold;
+}
+
+.calendar-day-list li.more {
+font-size: 0.5rem;
+color: #888;
+}
+
+.income {
+color: green;
+font-weight: bold;
+}
+
+.expense {
+color: red;
+font-weight: bold;
 }
