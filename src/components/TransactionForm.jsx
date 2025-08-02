@@ -50,44 +50,91 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                placeholder="내역"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                />
-            <input
-                type="number"
-                placeholder="금액"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                />
-            <select
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-            >
-                <option value="income">수입</option>
-                <option value="expense">지출</option>
-            </select>
-            <select 
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-            >
-                <option value="식비">식비</option>
-                <option value="교통비">교통비</option>
-                <option value="문화생활">문화생활</option>
-                <option value="생필품">생필품</option>
-                <option value="미용">미용</option>
-                <option value="의료비">의료비</option>
-                <option value="교육">교육</option>
-                <option value="월세">월세</option>
-                <option value="통신비">통신비</option>
-                <option value="공과금">공과금</option>
-                <option value="기타">기타</option>
-            </select>
-            <button type="submit">{editMode ? '수정' : '추가'}</button>
-        </form>
+        <div className="transaction-form-container">
+            <div className="form-header">
+                <h3>{editMode ? '거래 수정' : '새 거래 추가'}</h3>
+                <p>선택된 날짜: {selectedDate.toLocaleDateString()}</p>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="transaction-form">
+                {/* 수입/지출 토글 버튼 */}
+                <div className="form-group">
+                    <label className="form-label">유형</label>
+                    <div className="type-toggle">
+                        <button
+                            type="button"
+                            className={`type-btn ${type === 'income' ? 'active income' : ''}`}
+                            onClick={() => setType('income')}
+                        >
+                            💰 수입
+                        </button>
+                        <button
+                            type="button"
+                            className={`type-btn ${type === 'expense' ? 'active expense' : ''}`}
+                            onClick={() => setType('expense')}
+                        >
+                            💸 지출
+                        </button>
+                    </div>
+                </div>
+
+                {/* 내역 입력 */}
+                <div className="form-group">
+                    <label className="form-label">내역</label>
+                    <input
+                        type="text"
+                        className="form-input"
+                        placeholder="거래 내역을 입력하세요"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                    />
+                </div>
+
+                {/* 금액 입력 */}
+                <div className="form-group">
+                    <label className="form-label">금액</label>
+                    <div className="amount-input-wrapper">
+                        <input
+                            type="number"
+                            className="form-input amount-input"
+                            placeholder="0"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                        />
+                        <span className="currency">원</span>
+                    </div>
+                </div>
+
+                {/* 카테고리 선택 */}
+                <div className="form-group">
+                    <label className="form-label">카테고리</label>
+                    <select 
+                        className="form-select"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                    >
+                        <option value="식비">🍽️ 식비</option>
+                        <option value="교통비">🚗 교통비</option>
+                        <option value="문화생활">🎭 문화생활</option>
+                        <option value="생필품">🛒 생필품</option>
+                        <option value="미용">💄 미용</option>
+                        <option value="의료비">🏥 의료비</option>
+                        <option value="교육">📚 교육</option>
+                        <option value="월세">🏠 월세</option>
+                        <option value="통신비">📱 통신비</option>
+                        <option value="공과금">⚡ 공과금</option>
+                        <option value="기타">📝 기타</option>
+                    </select>
+                </div>
+
+                {/* 제출 버튼 */}
+                <div className="form-actions">
+                    <button type="submit" className={`submit-btn ${type}`}>
+                        {editMode ? '✅ 수정 완료' : '➕ 추가하기'}
+                    </button>
+                </div>
+            </form>
+        </div>
     )
 }
 
