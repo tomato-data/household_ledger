@@ -7,3 +7,19 @@
 .react-calendar__navigation button {
     min-width: 44px;
 }
+
+.summary {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.summary .income {
+    color: green;
+    font-weight: bold;
+}
+
+.summary .expense {
+    color: red;
+    font-weight: bold;
+}

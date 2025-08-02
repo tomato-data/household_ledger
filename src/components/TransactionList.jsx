@@ -8,7 +8,7 @@ function TransactionList({ transactions, onEdit, onDelete }) {
                 <TransactionItem 
                 key={transaction.id}
                 transaction={transaction}
-                // onDelete={onDelete}
+                onDelete={onDelete}
                 onEdit={onEdit}
                 />
             ))}

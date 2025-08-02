@@ -10,7 +10,6 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate }) {
 
   return (
     <div>
-      <h3>날짜 선택</h3>
       <Calendar
         calendarType="gregory"
         onChange={setSelectedDate}  // 🔁 날짜 클릭 시 상태 변경
