@@ -265,11 +265,11 @@ function Home() {
             {/* 월별 수입/지출 요약 */}
             <div className="summary-container">
                 <div className="summary-card income-card">
-                    <span className="summary-label">이번 달 수입</span>
+                    <span className="summary-label">수입</span>
                     <span className="summary-amount income">{totalIncome.toLocaleString()}원</span>
                 </div>
                 <div className="summary-card expense-card">
-                    <span className="summary-label">이번 달 지출</span>
+                    <span className="summary-label">지출</span>
                     <span className="summary-amount expense">{totalExpense.toLocaleString()}원</span>
                 </div>
             </div>
