@@ -8,7 +8,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const [editMode, setEditMode] = useState(false);
     const [editID, setEditId] = useState(null);
     const amountInputRef = useRef(null);
-    
+
     // 카테고리 목록
     const categories = [
         { value: '식비', emoji: '🍽️', label: '식비' },
@@ -30,7 +30,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         { value: '공과금', emoji: '⚡', label: '공과금' },
         { value: '기타', emoji: '📝', label: '기타' }
     ];
-    
+
     // 천단위 콤마 포맷팅 함수
     const formatNumber = (num) => {
         return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -69,7 +69,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                 amountInputRef.current.focus();
             }
         }, 100); // 약간의 지연으로 모달 애니메이션 후 포커스
-        
+
         return () => clearTimeout(timer);
     }, []);
 
@@ -94,7 +94,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
             onUpdate(newTransaction);
         } else {
             onAdd(newTransaction);  // 부모에게 전달 (Home.jsx)
-        } 
+        }
         setText('');
         setAmount('');
         setCategory('식비');
@@ -109,7 +109,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                 <h3>{editMode ? '거래 수정' : '새 거래 추가'}</h3>
                 <p>선택된 날짜: {selectedDate.toLocaleDateString()}</p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="transaction-form">
                 {/* 수입/지출 토글 버튼 */}
                 <div className="form-group">

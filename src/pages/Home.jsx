@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import db from '../utils/db';
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
+import RecurringTransactionForm from '../components/RecurringTransactionForm'
 
 function Home() {
     const [transactions, setTransactions] = useState([]);
@@ -11,6 +12,7 @@ function Home() {
     const [showBackupAlert, setShowBackupAlert] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showAssets, setShowAssets] = useState(false);
+    const [modalTab, setModalTab] = useState('transaction'); // 'transaction' or 'recurring'
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -30,6 +32,7 @@ function Home() {
                 if (showForm) {
                     setShowForm(false);
                     setEditTarget(null);
+                    setModalTab('transaction');
                 } else if (showBackupAlert) {
                     setShowBackupAlert(false);
                 } else if (showSidebar) {
@@ -192,6 +195,13 @@ function Home() {
         setShowForm(false);   // 모달 닫기
     };
 
+    const handleAddRecurringTransaction = async(recurringTx) => {
+        const id = await db.recurring_transactions.add(recurringTx);
+        alert(`반복 거래 "${recurringTx.template_name}"가 생성되었습니다! 🔄`);
+        setShowForm(false);
+        setModalTab('transaction');
+    }
+
     // 수정할 거래를 선택하는 핸들러 추가
     const handleEditClick = (transaction) => {
         setEditTarget(transaction);
@@ -290,21 +300,39 @@ function Home() {
             {showForm && (
                 <div className="modal-overlay" onClick={() => {
                     setShowForm(false);
-                    setEditTarget(null);  // 모달 닫을 때 수정 상태 초기화
+                    setEditTarget(null);
+                    setModalTab('transaction');  // 모달 닫을 때 수정 상태 초기화
                 }}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close-btn" onClick={() => {
                             setShowForm(false);
-                            setEditTarget(null);  // 모달 닫을 때 수정 상태 초기화
+                            setEditTarget(null);
+                            setModalTab('transaction');  // 모달 닫을 때 수정 상태 초기화
                         }}>
                             ✕
                         </button>
+                        <div className="modal-tabs">
+                            <button className={`tab-btn ${modalTab === 'transaction' ? 'active' : ''}`}
+                            onClick={() => setModalTab('transaction')}>💳 일반 거래</button>
+                            <button className={`tab-btn ${modalTab === 'recurring' ? 'active' : ''}`}
+                            onClick={() => setModalTab('recurring')}>🔄 반복 거래</button>
+                        </div>
+                        {/* 탭 내용 */}
+                        {modalTab === 'transaction' && (
                         <TransactionForm
                             onAdd={handleAddTransaction}
                             onUpdate={handleUpdateTransaction}
                             selectedDate={selectedDate}
                             editTarget={editTarget}
                         />
+                        )}
+                        {modalTab === 'recurring' && (
+                            <RecurringTransactionForm
+                                onAdd={handleAddRecurringTransaction}
+                                // onUpdate={handleUpdateRecurringTransaction}
+                            />
+                            // <div>반복 거래 폼(준비 중)</div>
+                        )}
                     </div>
                 </div>
             )}
