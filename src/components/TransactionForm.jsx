@@ -88,6 +88,8 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
             type: type,
             date: selectedDate.toISOString(),
             category: category,
+            status: 'confirmed',
+            recurring_id: null,
         };
 
         if (editMode) {

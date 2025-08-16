@@ -7,7 +7,8 @@ function RecurringTransactionForm({ onAdd }) {
     const [amount, setAmount] = useState('');
     const [type, setType] = useState('expense');
     const [frequency, setFrequency] = useState('monthly'); // monthly, yearly
-    const [startDate, setStartDate] = useState('');
+    const [startDate, setStartDate] = useState(''); // YYYY-MM 형식
+    const [endDate, setEndDate] = useState(''); // YYYY-MM 형식, 빈 값이면 무제한
     const [dayOfMonth, setDayOfMonth] = useState('1'); // 1-31 인데, 특정 기믹이 들어갈 수 있음. 예를 들어 해당 날짜가 휴일이면 가장 가까운 월요일 등
     const [isActive, setIsActive] = useState(true);
     const [isVariableAmount, setIsVariableAmount] = useState(false);
@@ -55,6 +56,11 @@ function RecurringTransactionForm({ onAdd }) {
             return;
         }
 
+        if (!startDate) {
+            alert('시작월을 입력해주세요.');
+            return;
+        }
+
         const newRecurringTransaction = {
             template_name: templateName,
             description: description,
@@ -62,6 +68,7 @@ function RecurringTransactionForm({ onAdd }) {
             type: type,
             frequency: frequency,
             start_date: startDate,
+            end_date: endDate || null,
             day_of_month: dayOfMonth,
             is_active: isActive,
             is_variable_amount: isVariableAmount,
@@ -75,6 +82,7 @@ function RecurringTransactionForm({ onAdd }) {
         setType('expense');
         setFrequency('monthly');
         setStartDate('');
+        setEndDate('');
         setDayOfMonth('1');
         setIsActive(true);
         setIsVariableAmount(false);
@@ -107,14 +115,14 @@ function RecurringTransactionForm({ onAdd }) {
                     <div className="type-toggle">
                         <button
                             type="button"
-                            className={`type-btn ${type === 'income' ? 'active' : ''}`}
+                            className={`type-btn ${type === 'income' ? 'active income' : ''}`}
                             onClick={() => setType('income')}
                         >
                             💰 수입
                         </button>
                         <button
                             type="button"
-                            className={`type-btn ${type === 'expense' ? 'active' : ''}`}
+                            className={`type-btn ${type === 'expense' ? 'active expense' : ''}`}
                             onClick={() => setType('expense')}
                         >
                             💸 지출
@@ -177,10 +185,34 @@ function RecurringTransactionForm({ onAdd }) {
                     </select>
                 </div>
 
-                {/* 시작 날짜 설정 */}
+                {/* 시작월 설정 */}
+                <div className="form-group">
+                    <label className="form-label">시작월</label>
+                    <input
+                        type="month"
+                        className="form-input"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        placeholder="YYYY-MM"
+                    />
+                </div>
+
+                {/* 종료월 설정 (선택사항) */}
+                <div className="form-group">
+                    <label className="form-label">종료월 (선택사항)</label>
+                    <input
+                        type="month"
+                        className="form-input"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        placeholder="비어두면 무제한"
+                    />
+                </div>
+
+                {/* 실행 날짜 설정 */}
                 <div className="form-group">
                     <label className="form-label">
-                        {frequency === "monthly" ? "매월 실행 날짜" : "매년 실행 날짜 (월.일)"}
+                        {frequency === "monthly" ? "매월 실행 날짜" : "매년 실행 날짜"}
                     </label>
                     <input
                         type="number"

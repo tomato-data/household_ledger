@@ -3,6 +3,7 @@ import db from '../utils/db';
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
 import RecurringTransactionForm from '../components/RecurringTransactionForm'
+import { generateScheduledTransactions, updateScheduledTransactions } from '../utils/recurringScheduler';
 
 function Home() {
     const [transactions, setTransactions] = useState([]);
@@ -16,6 +17,10 @@ function Home() {
 
     useEffect(() => {
         const fetchTransactions = async () => {
+            // 스케줄된 거래 생성 및 업데이트
+            await generateScheduledTransactions();
+            await updateScheduledTransactions();
+
             const allTransactions = await db.transactions.toArray();
             setTransactions(allTransactions);
         }
@@ -229,11 +234,11 @@ function Home() {
 
     // 전체 자산 계산 (모든 거래 기준)
     const allIncome = transactions
-        .filter(tx => tx.type === 'income')
+        .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
     const allExpense = transactions
-        .filter(tx => tx.type === 'expense')
+        .filter(tx => tx.type === 'expense' && tx.status === 'confirmed')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
     const totalAssets = allIncome - allExpense;

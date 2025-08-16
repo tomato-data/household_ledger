@@ -68,11 +68,19 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
           if (dayTxs.length === 0) return null;
 
           const income = dayTxs
-            .filter(tx => tx.type === 'income')
+            .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
             .reduce((sum, tx) => sum + tx.amount, 0);
 
           const expense = dayTxs
-            .filter(tx => tx.type === 'expense')
+            .filter(tx => tx.type === 'expense' && tx.status === 'confirmed')
+            .reduce((sum, tx) => sum + tx.amount, 0);
+
+          const scheduledIncome = dayTxs
+            .filter(tx => tx.type === 'income' && tx.status === 'scheduled')
+            .reduce((sum, tx) => sum + tx.amount, 0);
+
+          const scheduledExpense = dayTxs
+            .filter(tx => tx.type === 'expense' && tx.status === 'scheduled')
             .reduce((sum, tx) => sum + tx.amount, 0);
 
           return (
@@ -81,10 +89,16 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
                 {income > 0 && (
                   <div className="income">{income.toLocaleString()}</div>
                 )}
+                {scheduledIncome > 0 && (
+                  <div className="scheduled-income">⏰{scheduledIncome.toLocaleString()}</div>
+                )}
               </div>
               <div className="calendar-expense-slot">
                 {expense > 0 && (
                   <div className="expense">{expense.toLocaleString()}</div>
+                )}
+                {scheduledExpense > 0 && (
+                  <div className="scheduled-expense">⏰{scheduledExpense.toLocaleString()}</div>
                 )}
               </div>
             </div>
@@ -100,28 +114,33 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
         ) : (
           <div className="simple-details-list">
             {transactionsForSelectedDate.map(tx => (
-              <div key={tx.id} className="simple-detail-row">
+              <div key={tx.id} className={`simple-detail-row ${tx.status === 'scheduled' ? 'scheduled' : ''}`}>
                 <div className="simple-detail-left">
                   <span className="simple-emoji">{getCategoryEmoji(tx.category)}</span>
-                  <span className="simple-description">{tx.description}</span>
+                  <span className="simple-description">
+                    {tx.status === 'scheduled' ? '⏰' : ''}
+                    {tx.description}
+                  </span>
                   <span className="simple-category">({tx.category})</span>
                 </div>
                 <div className="simple-detail-right">
-                  <span className={`simple-amount ${tx.type}`}>
+                  <span className={`simple-amount ${tx.type} ${tx.status === 'scheduled' ? 'scheduled' : ''}`}>
                     {tx.type === 'income' ? '+' : ''}{tx.amount.toLocaleString()}원
                   </span>
                   <div className="simple-actions">
-                    <button 
+                    <button
                       className="simple-action-btn edit-btn"
                       onClick={() => onEdit(tx)}
                       title="수정"
+                      disabled={tx.status === 'scheduled'}
                     >
                       ✏️
                     </button>
-                    <button 
+                    <button
                       className="simple-action-btn delete-btn"
                       onClick={() => handleDeleteClick(tx)}
                       title="삭제"
+                      disabled={tx.status === 'scheduled'}
                     >
                       🗑️
                     </button>
@@ -141,7 +160,7 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
               <h3>거래 삭제</h3>
               <p>정말로 이 거래를 삭제하시겠습니까?</p>
             </div>
-            
+
             {deleteConfirm.transaction && (
               <div className="delete-modal-transaction">
                 <div className="delete-transaction-info">
@@ -153,7 +172,7 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
                 </div>
               </div>
             )}
-            
+
             <div className="delete-modal-actions">
               <button className="delete-cancel-btn" onClick={handleDeleteCancel}>
                 취소
