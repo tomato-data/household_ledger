@@ -14,6 +14,7 @@ function Home() {
     const [showSidebar, setShowSidebar] = useState(false);
     const [showAssets, setShowAssets] = useState(false);
     const [modalTab, setModalTab] = useState('transaction'); // 'transaction' or 'recurring'
+    const [recurringTransactions, setRecurringTransactions] = useState([]);
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -22,7 +23,12 @@ function Home() {
             await updateScheduledTransactions();
 
             const allTransactions = await db.transactions.toArray();
+            const allRecurringTransactions = await db.recurring_transactions
+                .filter(rt => rt.is_active === true)
+                .toArray();
+
             setTransactions(allTransactions);
+            setRecurringTransactions(allRecurringTransactions);
         }
         fetchTransactions();
 
@@ -291,6 +297,7 @@ function Home() {
             <div className="calendar-section">
                 <CalendarBox
                     transactions={transactions}
+                    recurringTransactions={recurringTransactions}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     onDelete={handleDeleteTransaction}

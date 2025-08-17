@@ -1832,3 +1832,53 @@ font-size: 0.6rem;
         padding: 12px 16px;
     }
 }
+
+/* 반복 거래 회색 스타일 */
+.recurring-income {
+    color: #888888;
+    font-size: 0.7em;
+    font-weight: 500;
+}
+
+.recurring-expense {
+    color: #888888;
+    font-size: 0.7em;
+    font-weight: 500;
+}
+
+/* 상태 선택 버튼 스타일 */
+.status-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.status-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.status-btn.active {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.status-help-text {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin: 0;
+    font-style: italic;
+}

@@ -3,7 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../App.css';
 
-function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, onEdit }) {
+function CalendarBox({ transactions, recurringTransactions, selectedDate, setSelectedDate, onDelete, onEdit }) {
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, transaction: null });
 
   // 삭제 확인 모달 관련 함수들
@@ -21,6 +21,30 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
   const handleDeleteCancel = () => {
     setDeleteConfirm({ show: false, transaction: null });
   };
+
+  const isValidPeriod = (recurring, currentYear, currentMonth) => {
+    if (recurring.start_date) {
+      const [startYear, startMonth] = recurring.start_date.split('-').map(Number);
+      const currentYearMonth = currentYear * 12 + currentMonth;
+      const startYearMonth = startYear * 12 + (startMonth - 1);
+
+      if (currentYearMonth < startYearMonth) {
+        return false; // 아직 시작 월이 아님
+      }
+    }
+
+    if (recurring.end_date) {
+      const [endYear, endMonth] = recurring.end_date.split('-').map(Number);
+      const currentYearMonth = currentYear * 12 + currentMonth;
+      const endYearMonth = endYear * 12 + (endMonth - 1);
+
+      if (currentYearMonth > endYearMonth) {
+        return false; // 종료 월이 지났음
+      }
+    }
+
+    return true;
+  }
 
   // 카테고리 이모지 매핑
   const getCategoryEmoji = (category) => {
@@ -52,6 +76,21 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
     tx => new Date(tx.date).toDateString() === selectedDate.toDateString()
   );
 
+  // 해당 날짜의 반복 거래도 포함
+  const recurringForSelectedDate = (recurringTransactions || []).filter(recurring => {
+    return parseInt(recurring.day_of_month) === selectedDate.getDate() &&
+           isValidPeriod(recurring, selectedDate.getFullYear(), selectedDate.getMonth()) &&
+           !transactionsForSelectedDate.some(tx => tx.recurring_id === recurring.id);
+  }).map(recurring => ({
+    ...recurring,
+    id: `recurring-${recurring.id}`,
+    date: selectedDate.toISOString(),
+    isRecurring: true,
+    status: 'recurring'
+  }));
+
+  const allTransactionsForSelectedDate = [...transactionsForSelectedDate, ...recurringForSelectedDate];
+
   return (
     <div>
       <Calendar
@@ -65,7 +104,14 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
             tx => new Date(tx.date).toDateString() === date.toDateString()
           );
 
-          if (dayTxs.length === 0) return null;
+          // 반복 거래 중 해당 날짜에 해당하는 것 찾기
+          const recurringForDay = (recurringTransactions || []).filter(recurring => {
+            return parseInt(recurring.day_of_month) === date.getDate() &&
+                   isValidPeriod(recurring, date.getFullYear(), date.getMonth()) &&
+                   !dayTxs.some(tx => tx.recurring_id === recurring.id); // 이미 실제 거래가 있으면 제외
+          });
+
+          if (dayTxs.length === 0 && recurringForDay.length === 0) return null;
 
           const income = dayTxs
             .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
@@ -83,6 +129,14 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
             .filter(tx => tx.type === 'expense' && tx.status === 'scheduled')
             .reduce((sum, tx) => sum + tx.amount, 0);
 
+          const recurringIncome = recurringForDay
+            .filter(r => r.type === 'income')
+            .reduce((sum, r) => sum + (r.amount || 0), 0);
+
+          const recurringExpense = recurringForDay
+            .filter(r => r.type === 'expense')
+            .reduce((sum, r) => sum + (r.amount || 0), 0);
+
           return (
             <div className="calendar-day-list">
               <div className="calendar-income-slot">
@@ -92,6 +146,9 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
                 {scheduledIncome > 0 && (
                   <div className="scheduled-income">⏰{scheduledIncome.toLocaleString()}</div>
                 )}
+                {recurringIncome > 0 && (
+                  <div className="recurring-income">📅{recurringIncome.toLocaleString()}</div>
+                )}
               </div>
               <div className="calendar-expense-slot">
                 {expense > 0 && (
@@ -99,6 +156,9 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
                 )}
                 {scheduledExpense > 0 && (
                   <div className="scheduled-expense">⏰{scheduledExpense.toLocaleString()}</div>
+                )}
+                {recurringExpense > 0 && (
+                  <div className="recurring-expense">📅{recurringExpense.toLocaleString()}</div>
                 )}
               </div>
             </div>
@@ -109,11 +169,11 @@ function CalendarBox({ transactions, selectedDate, setSelectedDate, onDelete, on
       {/* 상세 내역 표시 */}
       <div className="simple-details-section">
         <h4 className="simple-details-title">{selectedDate.toLocaleDateString()} 상세 내역</h4>
-        {transactionsForSelectedDate.length === 0 ? (
+        {allTransactionsForSelectedDate.length === 0 ? (
           <p className="no-transactions-text">거래 내역이 없습니다.</p>
         ) : (
           <div className="simple-details-list">
-            {transactionsForSelectedDate.map(tx => (
+            {allTransactionsForSelectedDate.map(tx => (
               <div key={tx.id} className={`simple-detail-row ${tx.status === 'scheduled' ? 'scheduled' : ''}`}>
                 <div className="simple-detail-left">
                   <span className="simple-emoji">{getCategoryEmoji(tx.category)}</span>
