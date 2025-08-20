@@ -192,8 +192,30 @@ function Home() {
     };
 
     const handleDeleteTransaction = async (id) => {
-        await db.transactions.delete(id);
-        setTransactions(prev => prev.filter(tx => tx.id !== id));
+        // recurring 거래인지 확인
+        if (id.startsWith('recurring-')) {
+            const recurringId = parseInt(id.split('-')[1]);
+            await db.recurring_transactions.delete(recurringId);
+
+            // recurring_transactions 상태 업데이트
+            setRecurringTransactions(prev => prev.filter(rt => rt.id !== recurringId));
+
+            // 해당 recurring과 연결된 실제 거래들도 삭제
+            const relatedTransactions = await db.transactions
+                .filter(tx => tx.recurring_id === recurringId)
+                .toArray();
+
+            for (const tx of relatedTransactions) {
+                await db.transactions.delete(tx.id);
+            }
+
+            // transactions 상태 업데이트
+            setTransactions(prev => prev.filter(tx => tx.recurring_id !== recurringId));
+        } else {
+            // 일반 거래 (scheduled 포함) 삭제
+            await db.transactions.delete(id);
+            setTransactions(prev => prev.filter(tx => tx.id !== id));
+        }
         setEditTarget(null);  // 삭제 후 수정 상태 초기화
     };
 

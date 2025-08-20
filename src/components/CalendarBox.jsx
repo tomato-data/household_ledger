@@ -106,13 +106,17 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
 
           // 반복 거래 중 해당 날짜에 해당하는 것 찾기
           const recurringForDay = (recurringTransactions || []).filter(recurring => {
-            return parseInt(recurring.day_of_month) === date.getDate() &&
-                   isValidPeriod(recurring, date.getFullYear(), date.getMonth()) &&
-                   !dayTxs.some(tx => tx.recurring_id === recurring.id); // 이미 실제 거래가 있으면 제외
+            const dayOfMonth = parseInt(recurring.day_of_month);
+            const isValidDate = dayOfMonth === date.getDate();
+            const isValidTime = isValidPeriod(recurring, date.getFullYear(), date.getMonth());
+            const hasExistingTx = dayTxs.some(tx => tx.recurring_id === recurring.id);
+
+            return isValidDate && isValidTime && !hasExistingTx;
           });
 
           if (dayTxs.length === 0 && recurringForDay.length === 0) return null;
 
+          // 실제 거래 금액 계산
           const income = dayTxs
             .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
             .reduce((sum, tx) => sum + tx.amount, 0);
@@ -129,6 +133,7 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
             .filter(tx => tx.type === 'expense' && tx.status === 'scheduled')
             .reduce((sum, tx) => sum + tx.amount, 0);
 
+          // 반복 거래 금액 계산
           const recurringIncome = recurringForDay
             .filter(r => r.type === 'income')
             .reduce((sum, r) => sum + (r.amount || 0), 0);
@@ -174,11 +179,12 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
         ) : (
           <div className="simple-details-list">
             {allTransactionsForSelectedDate.map(tx => (
-              <div key={tx.id} className={`simple-detail-row ${tx.status === 'scheduled' ? 'scheduled' : ''}`}>
+                <div key={tx.id} className={`simple-detail-row ${tx.status === 'scheduled' ? 'scheduled' : ''}
+                ${tx.status === 'recurring' ? 'recurring' : ''}`}>
                 <div className="simple-detail-left">
                   <span className="simple-emoji">{getCategoryEmoji(tx.category)}</span>
                   <span className="simple-description">
-                    {tx.status === 'scheduled' ? '⏰' : ''}
+                    {tx.status === 'scheduled' ? '⏰' : tx.status === 'recurring' ? '📅' : ''}
                     {tx.description}
                   </span>
                   <span className="simple-category">({tx.category})</span>
@@ -192,7 +198,7 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
                       className="simple-action-btn edit-btn"
                       onClick={() => onEdit(tx)}
                       title="수정"
-                      disabled={tx.status === 'scheduled'}
+                      disabled={tx.status === 'recurring'}
                     >
                       ✏️
                     </button>
