@@ -1,0 +1,13 @@
+# Proxmox 설정 예시 파일
+# 이 파일을 terraform.tfvars로 복사하고 실제 값으로 수정하세요
+
+proxmox_api_url  = "https://192.168.100.x:8006/api2/json"
+proxmox_user     = "root@pam"
+proxmox_password = "your-proxmox-password"
+proxmox_node     = "your-node-name"
+
+# SSH 키 설정 (선택사항 - cloud-init 사용 시)
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAA... your-ssh-key"
+
+# VM 템플릿 (Ubuntu 22.04 cloud-init 템플릿 생성 후)
+vm_template = "ubuntu-22.04-template"
