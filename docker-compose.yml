@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: hl-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: household_ledger
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: welcome1516
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d household_ledger"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - household_ledger_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hl-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:welcome1516@db:5432/household_ledger
+      CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    working_dir: /app
+    networks:
+      - household_ledger_network
+
+volumes:
+  postgres_data:
+    driver: local
+networks:
+  household_ledger_network:
+    driver: bridge

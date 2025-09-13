@@ -1,0 +1,1496 @@
+{
+  "version": 1,
+  "exportDate": "2025-09-03T02:07:17.560Z",
+  "transactions": [
+    {
+      "id": "00aae348-e9d2-4f6a-bf5d-66ede9564a65",
+      "description": "브루인 커피 3명",
+      "amount": 5400,
+      "type": "expense",
+      "date": "2025-07-24T15:00:00.000Z",
+      "category": "쇼핑",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "0227b3a9-88e3-4023-a288-ea193622e935",
+      "description": "월급",
+      "amount": 2031940,
+      "type": "income",
+      "date": "2025-07-29T15:00:00.000Z",
+      "category": "월급",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "046cd1f9-ea3c-4f3d-8cd1-84a89ecb7282",
+      "description": "소주",
+      "amount": 3000,
+      "type": "expense",
+      "date": "2025-08-27T15:00:00.000Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "04b5acb5-c9d4-4efc-880c-5b4105f55e0b",
+      "description": "엄마랑 닭갈비",
+      "amount": 31000,
+      "type": "expense",
+      "date": "2025-06-30T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "057e5a42-7dbb-4271-9c68-51820fe1fdda",
+      "description": "온센 텐동",
+      "amount": 10900,
+      "type": "expense",
+      "date": "2025-08-19T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "085b7cf1-cadf-4e73-871f-0663ccd155ea",
+      "description": "침대 프레임과 매트리스",
+      "amount": 392790,
+      "type": "expense",
+      "date": "2025-06-29T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "099012b2-38f3-413d-8686-15485d592025",
+      "description": "유니클로 지브리티 2장",
+      "amount": 39800,
+      "type": "expense",
+      "date": "2025-07-17T15:00:00.000Z",
+      "category": "의류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "0a347a0b-fd25-49fa-a6b3-d0d5aec4c304",
+      "description": "월세",
+      "amount": 520000,
+      "type": "expense",
+      "date": "2025-08-31T15:00:00.000Z",
+      "category": "월세",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "0af33dbb-21bd-4ae0-a8e8-fed7a33b1763",
+      "description": "메가 커피 한턱",
+      "amount": 11600,
+      "type": "expense",
+      "date": "2025-08-23T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "0b5190ca-6c9f-4b31-b2fa-efe19330b861",
+      "description": "케첩, 두유",
+      "amount": 8100,
+      "type": "expense",
+      "date": "2025-07-19T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "0caffe83-82a9-4bd5-baa5-4ecbfd4f9cc5",
+      "description": "브루인커피",
+      "amount": 7200,
+      "type": "expense",
+      "date": "2025-07-10T15:00:00.000Z",
+      "category": "농구 패배",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "0fdab7cb-124f-4868-82a5-a29f5a7bb620",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-03T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "10377462-2fd8-4241-b2a2-83210a5dd8ef",
+      "description": "헬스장",
+      "amount": 495000,
+      "type": "expense",
+      "date": "2025-07-11T15:00:00.000Z",
+      "category": "미용",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "1276cc50-7d49-40e5-88d9-4cfbcd9845b5",
+      "description": "참설농탕",
+      "amount": 10000,
+      "type": "expense",
+      "date": "2025-07-12T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "131c285a-5d30-4ea8-b9a1-b7f8dcb653a2",
+      "description": "카페 CHIPS 아아",
+      "amount": 4800,
+      "type": "expense",
+      "date": "2025-07-19T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "1664e8f0-1336-4c21-8ec3-d82d9b0005c4",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-13T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "16b642c0-9280-4c2c-9b8c-dbf1004633f1",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-04T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "1b2bf0fa-f44e-4db0-a813-71782b90ab30",
+      "description": "세븐일레븐",
+      "amount": 5600,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "1be55813-c536-4f66-9449-4ef56de3163a",
+      "description": "건의님이랑 카페",
+      "amount": 3600,
+      "type": "expense",
+      "date": "2025-07-15T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "1fffa9ec-ccb5-4d26-818e-017f5d86991a",
+      "description": "농구 짐 ㅠㅠ",
+      "amount": 7200,
+      "type": "expense",
+      "date": "2025-08-06T15:00:00.000Z",
+      "category": "농구 패배",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "2420c108-08ad-4f7d-a5ce-d4f2cfa16011",
+      "description": "식대",
+      "amount": 150000,
+      "type": "income",
+      "date": "2025-08-29T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "27328c48-98cc-4da4-ad5c-1b32aa19c65e",
+      "description": "맥도날드",
+      "amount": 7000,
+      "type": "expense",
+      "date": "2025-08-17T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "2ad1aede-f1bd-4bcc-be91-e3398230b095",
+      "description": "세븐일레븐",
+      "amount": 5000,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "2c54e1f0-4f9b-4f17-a66c-4f000141b8db",
+      "description": "머리 리안헤어",
+      "amount": 15000,
+      "type": "expense",
+      "date": "2025-08-28T15:00:00.000Z",
+      "category": "미용",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "2e273c46-62ee-48d7-9bc7-59e71895ff10",
+      "description": "고향포장마차",
+      "amount": 9000,
+      "type": "expense",
+      "date": "2025-07-10T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "2f979e55-5fa1-4260-9f82-40d93e405a62",
+      "description": "콜라, 감기약",
+      "amount": 5400,
+      "type": "expense",
+      "date": "2025-08-02T09:29:33.987Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "30a4a1b4-cc06-4bb6-b116-ac42cf67bf3a",
+      "description": "브루인 아아",
+      "amount": 1800,
+      "type": "expense",
+      "date": "2025-08-28T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "31277eba-ddf0-4188-95d5-374902964749",
+      "description": "카페 CHIPS",
+      "amount": 4800,
+      "type": "expense",
+      "date": "2025-07-26T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "341b28d1-22d2-4536-ae11-35f20fb9774c",
+      "description": "커피사이엔스",
+      "amount": 6400,
+      "type": "expense",
+      "date": "2025-07-09T15:00:00.000Z",
+      "category": "농구 패배",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "3d95abe8-d61e-4f60-a969-bd9faaaba14e",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-23T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "3edb6554-267f-4445-9423-f8868800c9a3",
+      "description": "아침거리",
+      "amount": 4200,
+      "type": "expense",
+      "date": "2025-08-29T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "3f59cb6b-b60c-407d-b7d7-cdc020285734",
+      "description": "설빙",
+      "amount": 28000,
+      "type": "expense",
+      "date": "2025-07-01T15:00:00.000Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4270d8f6-334d-460d-b28f-57935cd4279c",
+      "description": "프리티 유심",
+      "amount": 2200,
+      "type": "expense",
+      "date": "2025-08-17T15:00:00.000Z",
+      "category": "통신비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "438d640c-ed7f-4e61-aa1d-dd503ab9bcb0",
+      "description": "다이소",
+      "amount": 38000,
+      "type": "expense",
+      "date": "2025-06-30T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "44cc637a-bda3-4572-b9c7-882e52d0aa72",
+      "description": "자전거 바람 주입기",
+      "amount": 6290,
+      "type": "expense",
+      "date": "2025-07-20T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4630f6d7-0a80-4e31-89f1-e3b2ab387486",
+      "description": "친구들 집들이 고기",
+      "amount": 75000,
+      "type": "expense",
+      "date": "2025-08-14T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4af6e3b9-5357-410b-b7af-cffc65cde05e",
+      "description": "월세",
+      "amount": 520000,
+      "type": "expense",
+      "date": "2025-07-31T15:00:00.000Z",
+      "category": "월세",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4d5683d5-9584-4cbb-a6d9-f7c6834d3881",
+      "description": "Yajur랑 한강 맥주",
+      "amount": 15900,
+      "type": "expense",
+      "date": "2025-07-02T15:00:00.000Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4e47f00b-0f93-4158-bff7-0edbe341c5ee",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-27T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4e4926e1-a824-4302-a008-743769ebc421",
+      "description": "도레이씨 안경닦이",
+      "amount": 23400,
+      "type": "expense",
+      "date": "2025-08-16T13:15:51.279Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4e66e19c-360c-45ad-a49b-72db69b32f70",
+      "description": "PC방",
+      "amount": 2000,
+      "type": "expense",
+      "date": "2025-08-22T15:00:00.000Z",
+      "category": "문화생활",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4ed98e50-14a1-4123-b25f-6f1fd0a77541",
+      "description": "나주곰탕 술",
+      "amount": 6000,
+      "type": "expense",
+      "date": "2025-08-10T15:00:00.000Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4eeb24b6-6a20-4486-aac3-f4339a4c3c0e",
+      "description": "카페 CHIPS 아아",
+      "amount": 3840,
+      "type": "expense",
+      "date": "2025-08-01T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "4f26e07f-5d84-4723-8f26-c927970d75e5",
+      "description": "롯데마트 맥스 식비",
+      "amount": 80640,
+      "type": "expense",
+      "date": "2025-07-19T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "530e20ff-ac8e-4d80-a9dd-28af3a23c9a3",
+      "description": "USB",
+      "amount": 3700,
+      "type": "expense",
+      "date": "2025-08-13T15:00:00.000Z",
+      "category": "취미생활",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "537af1a5-5c88-4c73-89b3-9c142f72200b",
+      "description": "콘센트 정리함",
+      "amount": 13500,
+      "type": "expense",
+      "date": "2025-07-02T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "53ee7e99-82b6-4e35-9ecd-7433ab492f00",
+      "description": "민생지원금",
+      "amount": 150000,
+      "type": "income",
+      "date": "2025-07-17T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "55cb2ec8-a678-4727-9573-60ed9eab0a14",
+      "description": "농구 짐",
+      "amount": 7200,
+      "type": "expense",
+      "date": "2025-08-10T15:00:00.000Z",
+      "category": "농구 패배",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "566ce315-cfe2-4700-83c9-6ce5d17e519e",
+      "description": "이삭 토스트 점심",
+      "amount": 8900,
+      "type": "expense",
+      "date": "2025-08-08T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "5684c302-7467-45fb-b718-d6e0d665ba3d",
+      "description": "미니 PC",
+      "amount": 181380,
+      "type": "expense",
+      "date": "2025-08-07T08:48:07.613Z",
+      "category": "취미생활",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "5a99b29d-6e9f-440d-b71f-152d353121bd",
+      "description": "이모 용돈",
+      "amount": 100000,
+      "type": "income",
+      "date": "2025-08-17T10:51:59.190Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "5ab5b8f0-d0c9-4b96-bfe8-4fb7ad34314e",
+      "description": "셰이빙폼",
+      "amount": 13390,
+      "type": "expense",
+      "date": "2025-08-09T11:03:22.233Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "5cd9da53-abaa-4362-ac8a-46e624f84218",
+      "description": "가스비",
+      "amount": 5070,
+      "type": "expense",
+      "date": "2025-08-23T15:00:00.000Z",
+      "category": "공과금",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "5d80924d-e6bd-43ba-8ff3-00a8f5bdb19c",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-15T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "5ef4262a-0aa4-4473-8844-96b31c1f0dbc",
+      "description": "자전거 헬멧",
+      "amount": 60000,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "63793a35-dc77-4848-8a7f-c6584e23c570",
+      "description": "무인양품",
+      "amount": 56600,
+      "type": "expense",
+      "date": "2025-07-02T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "6425bfe0-90b0-47d3-bac9-cd836d839efd",
+      "description": "재형이 팝콘 내가 그냥 사줌",
+      "amount": 15900,
+      "type": "expense",
+      "date": "2025-07-11T15:00:00.000Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "646a0194-265c-4071-8396-755cdcbd72e3",
+      "description": "통신비",
+      "amount": 10560,
+      "type": "expense",
+      "date": "2025-07-27T15:00:00.000Z",
+      "category": "통신비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "6aec859c-7b89-4ea9-b6c2-385c627856cd",
+      "description": "쿠팡와우",
+      "amount": 7890,
+      "type": "expense",
+      "date": "2025-07-30T15:00:00.000Z",
+      "category": "구독료",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "6b7fe3a1-abe2-48a8-a4fc-5592580127ba",
+      "description": "카페 CHIPS 아아",
+      "amount": 4800,
+      "type": "expense",
+      "date": "2025-08-14T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "6c01e95a-9ab2-40dc-b9a7-01d5671f941f",
+      "description": "아식스 운동화",
+      "amount": 214700,
+      "type": "expense",
+      "date": "2025-08-29T15:00:00.000Z",
+      "category": "의류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "70618558-7249-4b69-b5de-0eb30c3c4008",
+      "description": "교통카드",
+      "amount": 34200,
+      "type": "expense",
+      "date": "2025-08-04T15:00:00.000Z",
+      "category": "교통비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "70fa48f6-4c11-4db3-a900-aa67edd8097a",
+      "description": "쿠팡",
+      "amount": 46790,
+      "type": "expense",
+      "date": "2025-07-10T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "71a9dd12-0d05-4f83-a792-7ccbd1666007",
+      "description": "명균이형이랑 집에서 짜장면",
+      "amount": 33900,
+      "type": "expense",
+      "date": "2025-07-13T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "726cd34d-c596-4dce-a631-fb83d609e207",
+      "description": "청소솔, 화장솜",
+      "amount": 3000,
+      "type": "expense",
+      "date": "2025-08-23T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "72fdc845-608a-4f74-ac81-c2db86170660",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-27T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "74a72a55-2e18-421c-b81c-8f62530adf24",
+      "description": "서초중 수업",
+      "amount": 14505,
+      "type": "income",
+      "date": "2025-06-29T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7562ce64-3d56-4be1-af2f-746c6c432e0e",
+      "description": "카모마일 차",
+      "amount": 5900,
+      "type": "expense",
+      "date": "2025-08-27T08:07:40.258Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "76ccf697-3f62-40e7-80e4-ff469031efb6",
+      "description": "랩",
+      "amount": 7800,
+      "type": "expense",
+      "date": "2025-07-02T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "780eaeb0-d0a4-43f5-afd8-94cf72f7f922",
+      "description": "독산역 앞 더카페 버블티",
+      "amount": 4500,
+      "type": "expense",
+      "date": "2025-07-18T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7a11c4c9-6127-477a-b497-9855b376bb44",
+      "description": "두통약",
+      "amount": 3000,
+      "type": "expense",
+      "date": "2025-08-10T15:00:00.000Z",
+      "category": "의료비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7a47d4b9-01e9-4a87-a855-3c28fa4c2d7d",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-14T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7d25188d-203b-42b3-8180-6794e3b48337",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-17T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7db33a02-8e7b-4187-aa0b-2c05fe54a3fe",
+      "description": "롯데마트맥스? 까먹었다",
+      "amount": 17000,
+      "type": "expense",
+      "date": "2025-07-10T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7f46b41a-b973-49cd-b1c6-9389e0c3ed6a",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-12T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "7ff422e6-a415-4bc6-a868-24dfc66f0afa",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-09T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "80a50cb3-d2bf-4bcc-9285-ca88e52f70e8",
+      "description": "컴포즈 커피 내가 삼",
+      "amount": 5400,
+      "type": "expense",
+      "date": "2025-08-19T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "8119f071-9081-4cc8-ad54-3e3d6904a462",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-30T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "83428f70-a638-4f8e-a8a0-4be596745934",
+      "description": "브루인 커피",
+      "amount": 3600,
+      "type": "expense",
+      "date": "2025-08-26T06:13:27.143Z",
+      "category": "농구 패배",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "897b539a-818e-4a5d-9fc1-3f41ee74a170",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-01T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "89becc63-bf61-4bbc-8a62-4dc929e2a41a",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-26T06:13:27.143Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "8aaf38af-f592-452d-ad6a-ef863a261636",
+      "description": "자전거 검침",
+      "amount": 5000,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "교통비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "8bb2fdfe-cca0-4666-a628-62aa31c82dc2",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-28T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "8ebd4f28-dcfb-4280-8b67-e571c8c658e9",
+      "description": "주방집기",
+      "amount": 7000,
+      "type": "expense",
+      "date": "2025-08-17T10:51:59.190Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9133df63-71ba-4e2e-8b88-989accceb12b",
+      "description": "월급",
+      "amount": 2031940,
+      "type": "income",
+      "date": "2025-08-29T15:00:00.000Z",
+      "category": "월급",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "969da5bb-d025-4cf8-9f7b-fc98241530f7",
+      "description": "쿠팡 구독",
+      "amount": 7890,
+      "type": "expense",
+      "date": "2025-08-30T15:00:00.000Z",
+      "category": "구독료",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "96b5ffc9-e52e-4865-9b4e-2a3866d6c60b",
+      "description": "애플워치 스트랩",
+      "amount": 7900,
+      "type": "expense",
+      "date": "2025-08-21T03:39:07.034Z",
+      "category": "의류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "97215547-4cff-4e6e-9bb1-4d4694b106c9",
+      "description": "롯데카드캐시백",
+      "amount": 20000,
+      "type": "income",
+      "date": "2025-07-06T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9bcdf6e7-1748-4479-a5d9-bdbfb18b3d9b",
+      "description": "롯데마트맥스",
+      "amount": 48240,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9c1edec2-d440-46b1-aba5-14d340143262",
+      "description": "건의님이랑 브루인 커피",
+      "amount": 3600,
+      "type": "expense",
+      "date": "2025-08-17T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9c7d5be3-02fb-47fa-bdcd-5b563395ba3b",
+      "description": "건의님이랑 브루인 커피",
+      "amount": 3600,
+      "type": "expense",
+      "date": "2025-08-07T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9d8bf278-294c-46b2-be6a-db29700cbb87",
+      "description": "생수",
+      "amount": 2700,
+      "type": "expense",
+      "date": "2025-08-14T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9dfa5198-97b5-488e-8a23-32918fdeb33f",
+      "description": "다이소",
+      "amount": 5000,
+      "type": "expense",
+      "date": "2025-07-19T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "9fae4378-47ed-41e4-97d4-8621cd6b1ba6",
+      "description": "협탁",
+      "amount": 25800,
+      "type": "expense",
+      "date": "2025-08-14T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a2de5b20-4bd1-42e0-b1bd-1c27bbb6dd19",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-08T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a3cab78b-1774-4069-bd93-214d32966d28",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-22T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a6612bd7-3e86-43d3-ac4d-8f1f23a12649",
+      "description": "머리 리안헤어",
+      "amount": 15000,
+      "type": "expense",
+      "date": "2025-07-26T15:00:00.000Z",
+      "category": "미용",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a6d1eefd-b42c-4810-992d-74dc27c2d6c4",
+      "description": "명균이형, 용현이 커피",
+      "amount": 12900,
+      "type": "expense",
+      "date": "2025-08-02T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a757fee8-45dd-4d8d-8961-8adcfd3de083",
+      "description": "용현이랑 고기",
+      "amount": 66500,
+      "type": "expense",
+      "date": "2025-06-29T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a76c8782-0097-4703-9ed4-5cba06127a49",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-03T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a8547504-d89b-4ab4-b653-9a3f0a575c3b",
+      "description": "통신비",
+      "amount": 10560,
+      "type": "expense",
+      "date": "2025-08-25T15:00:00.000Z",
+      "category": "통신비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "a9c0e772-8060-42f4-985c-0030085d9113",
+      "description": "쿠팡",
+      "amount": 19500,
+      "type": "expense",
+      "date": "2025-07-11T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "aa68b5fd-2176-4db1-bdd8-c0f17f3cda3d",
+      "description": "맥도날드",
+      "amount": 8500,
+      "type": "expense",
+      "date": "2025-08-22T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "adf58329-406f-4ea4-bf81-927571033c74",
+      "description": "보배반점 크림짬뽕",
+      "amount": 14000,
+      "type": "expense",
+      "date": "2025-08-18T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "ae0869fb-c12a-4ed7-ae03-6886e788e33d",
+      "description": "쿠팡와우",
+      "amount": 7890,
+      "type": "expense",
+      "date": "2025-06-29T15:00:00.000Z",
+      "category": "구독료",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "ae8ce1e9-d4b6-41c4-92bd-de52b04dc4b7",
+      "description": "adjustment",
+      "amount": 321573,
+      "type": "income",
+      "date": "2025-06-28T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b01a6c6e-2b13-4dc5-ac9f-8ee66a59f4f5",
+      "description": "투썸에서 샌드위치랑 아아",
+      "amount": 8600,
+      "type": "expense",
+      "date": "2025-07-12T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b0322d22-629c-44ee-b195-364627a6f42b",
+      "description": "음료수",
+      "amount": 1500,
+      "type": "expense",
+      "date": "2025-08-17T10:51:59.190Z",
+      "category": "간식류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b0654ca0-37c4-4a1a-8aad-59ff9cc1a866",
+      "description": "저녁 치킨",
+      "amount": 16100,
+      "type": "expense",
+      "date": "2025-08-08T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b07bf3be-e453-42c0-afa0-4d9dd4a5c18e",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-21T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b0d3d149-a5fe-4d30-80e2-da74f98caa7d",
+      "description": "BRUIN 커피 아아",
+      "amount": 1800,
+      "type": "expense",
+      "date": "2025-08-25T04:59:11.873Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b26c5506-3db1-445f-acc8-3979c4ef8f3b",
+      "description": "식대",
+      "amount": 150000,
+      "type": "income",
+      "date": "2025-07-29T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b28aec5e-15d6-4886-921e-6af0399a942c",
+      "description": "보배반점 쟁반짜장",
+      "amount": 13500,
+      "type": "expense",
+      "date": "2025-08-07T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b76700c6-109e-492e-8175-99f7ec6bf515",
+      "description": "쿠팡",
+      "amount": 35040,
+      "type": "expense",
+      "date": "2025-07-01T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b7d33ce1-4fd3-4590-b032-ef307e9e1b02",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-06T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "b958747f-3fd4-4f92-a470-72419092cb66",
+      "description": "형돈이랑 짜장면",
+      "amount": 18900,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "bafaae40-1982-4a45-93ec-f02e4f051e27",
+      "description": "고향포장마차",
+      "amount": 7000,
+      "type": "expense",
+      "date": "2025-07-06T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "bf8425fb-36a6-4451-a0a5-f741facaf997",
+      "description": "고깃집",
+      "amount": 28033,
+      "type": "expense",
+      "date": "2025-08-22T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "c0116338-ab8d-41c9-829d-f6b9db9113e2",
+      "description": "월세",
+      "amount": 520000,
+      "type": "expense",
+      "date": "2025-06-30T15:00:00.000Z",
+      "category": "월세",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "c4feb9fe-b3f2-4da7-9a67-d09531910b95",
+      "description": "다이소 뽁뽁이",
+      "amount": 3000,
+      "type": "expense",
+      "date": "2025-07-03T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "c58c40ca-6bae-4abd-8052-51f8ba7a0689",
+      "description": "쿤조 돈까스",
+      "amount": 12000,
+      "type": "expense",
+      "date": "2025-07-21T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "c7760104-62b1-4c56-9c46-66a4ae2bb80a",
+      "description": "쿠팡",
+      "amount": 45580,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "cba44266-0aaa-4a19-bede-a429d1a838c3",
+      "description": "카카오페이 아마 명균이형이랑 놀면서 밥 먹은 것",
+      "amount": 10000,
+      "type": "expense",
+      "date": "2025-07-05T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "cd852f33-3a8b-4728-b963-b49f2352333a",
+      "description": "교통카드",
+      "amount": 68250,
+      "type": "expense",
+      "date": "2025-07-02T15:00:00.000Z",
+      "category": "교통비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "cdf8a1ae-e0c4-49c9-a6fb-8178837c118c",
+      "description": "한올이네서 저녁 - 치킨",
+      "amount": 12500,
+      "type": "expense",
+      "date": "2025-07-18T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "ced5417b-4380-42d2-8934-1d20313027f8",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-13T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "d14312a6-6260-4649-a8bb-c960cb134ac0",
+      "description": "다시 봄",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-16T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "d205b0da-0f13-484b-9bd5-a7f2febb4793",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-10T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "d37f2e09-22bb-4be4-965b-2b73fd8a8664",
+      "description": "월급",
+      "amount": 2031940,
+      "type": "income",
+      "date": "2025-06-29T15:00:00.000Z",
+      "category": "월급",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "d87f7ad3-d0b0-4af1-8550-6d3ca81df7a0",
+      "description": "카카오페이",
+      "amount": 10000,
+      "type": "expense",
+      "date": "2025-07-07T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "da4933f6-42c6-4eb7-9d6d-290923ed4146",
+      "description": "롯데카드 연회비",
+      "amount": 30000,
+      "type": "expense",
+      "date": "2025-08-13T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "db97e7e8-2796-4004-ae31-6c6df07d114a",
+      "description": "쿠팡",
+      "amount": 13690,
+      "type": "expense",
+      "date": "2025-07-15T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "dc64733a-64ee-44bc-8abd-295b705fd9bf",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-29T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "ddff1c6a-1989-4b3f-99c3-057abfe710e5",
+      "description": "재형이랑 낙곱새",
+      "amount": 17000,
+      "type": "expense",
+      "date": "2025-07-11T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "e0dacf01-3c03-4479-b19a-be4cbfa86d86",
+      "description": "우지커피",
+      "amount": 3300,
+      "type": "expense",
+      "date": "2025-07-12T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "e5e80e47-3acc-47b7-9874-386121ce937e",
+      "description": "운동복 바지",
+      "amount": 17980,
+      "type": "expense",
+      "date": "2025-07-19T15:00:00.000Z",
+      "category": "의류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "e6881b7c-acff-4465-adca-d047a63a0362",
+      "description": "입사 전 프로젝트에서 쓴 돈",
+      "amount": 27030,
+      "type": "income",
+      "date": "2025-06-29T15:00:00.000Z",
+      "category": "기타",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "e7959ed2-3723-4e81-84aa-32fdf9c189a4",
+      "description": "나우시카",
+      "amount": 16000,
+      "type": "expense",
+      "date": "2025-07-10T15:00:00.000Z",
+      "category": "문화생활",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "ef871d11-1e3d-4759-a6df-91004f04c291",
+      "description": "바지 2개, 셔츠",
+      "amount": 61710,
+      "type": "expense",
+      "date": "2025-08-26T01:54:02.375Z",
+      "category": "의류",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "f1f9e9f5-d47d-4afd-9e9d-14e148952e3b",
+      "description": "칫솔 치약",
+      "amount": 8190,
+      "type": "expense",
+      "date": "2025-08-25T07:42:22.565Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "f2e8309a-f0a5-4b87-8ef9-77a02a922d19",
+      "description": "커피",
+      "amount": 5300,
+      "type": "expense",
+      "date": "2025-08-09T15:00:00.000Z",
+      "category": "카페",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "f3cb5851-7c88-457b-8ef4-ec5f8b1f21f7",
+      "description": "의자 및 생필품",
+      "amount": 313600,
+      "type": "expense",
+      "date": "2025-07-03T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "f489651c-eae6-4e5e-966c-95297dcd483b",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-11T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "f8422eff-44b4-47be-8846-e0d1cd5fa5a5",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-08-20T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "fb23f301-1446-4b3b-895c-7448ec34d6d0",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-02T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "fcb886ff-61bf-4a2a-929e-69cf6f5b74d1",
+      "description": "백소정 돈카츠",
+      "amount": 14500,
+      "type": "expense",
+      "date": "2025-08-23T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "fcc3546f-4760-4169-bb35-0a5ac032e5a8",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-07T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "fd17418e-5ed6-44f2-b46f-b755dadb6ef0",
+      "description": "다이소",
+      "amount": 22000,
+      "type": "expense",
+      "date": "2025-07-04T15:00:00.000Z",
+      "category": "생필품",
+      "status": "confirmed",
+      "recurring_id": null
+    },
+    {
+      "id": "fd444381-fada-44c0-a53e-1ccd4b2f9015",
+      "description": "아이밀",
+      "amount": 7700,
+      "type": "expense",
+      "date": "2025-07-28T15:00:00.000Z",
+      "category": "식비",
+      "status": "confirmed",
+      "recurring_id": null
+    }
+  ]
+}
