@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+from app.core.database import test_db_connection
 
 app = FastAPI(
     title=settings.app_name,
@@ -18,6 +19,16 @@ app.add_middleware(
     allow_methods=["*"],  # 모든 HTTP 메서드 허용
     allow_headers=["*"],  # 모든 헤더 허용
 )
+
+
+@app.on_event("startup")
+async def startup_event():
+    """애플리케이션 시작 시 실행"""
+    print("Starting up...")
+    if test_db_connection():
+        print("✅Database connection successful")
+    else:
+        print("❌Database connection failed")
 
 
 @app.get("/")
