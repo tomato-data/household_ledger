@@ -22,26 +22,26 @@ services:
     networks:
       - household_ledger_network
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: hl-api
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:welcome1516@db:5432/household_ledger
-      CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
-    volumes:
-      - ./backend:/app
-      - /app/__pycache__
-    working_dir: /app
-    networks:
-      - household_ledger_network
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: hl-api
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   environment:
+  #     DATABASE_URL: postgresql://postgres:welcome1516@db:5432/household_ledger
+  #     CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
+  #   volumes:
+  #     - ./backend:/app
+  #     - /app/__pycache__
+  #   working_dir: /app
+  #   networks:
+  #     - household_ledger_network
 
 volumes:
   postgres_data:

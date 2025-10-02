@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.core.database import test_db_connection
+from app.core.database import test_db_connection, engine, Base
+from app.model import user, category, transaction, recurring_transaction
 
 app = FastAPI(
     title=settings.app_name,
@@ -27,6 +28,12 @@ async def startup_event():
     print("Starting up...")
     if test_db_connection():
         print("✅Database connection successful")
+        # 테이블 생성
+        if settings.debug:
+            Base.metadata.create_all(bind=engine)
+            print("✅Tables created successfully")
+        else:
+            print("✅Production mode: Tables not created")
     else:
         print("❌Database connection failed")
 
