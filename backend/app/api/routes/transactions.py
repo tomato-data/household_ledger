@@ -4,6 +4,8 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import datetime, date
 
+from app.api.dependencies.auth import get_current_user
+from app.models.user import User as UserModel
 from app.core.database import get_db
 from app.schemas import Transaction, TransactionCreate, TransactionUpdate
 from app.models.transaction import Transaction as TransactionModel
@@ -24,6 +26,7 @@ def get_transactions(
     end_date: Optional[date] = None,  # YYYY-MM-DD 형식
     category_id: Optional[UUID] = None,
     type: Optional[str] = None,  # 'income' 또는 'expense'
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
@@ -33,6 +36,7 @@ def get_transactions(
     - type: 거래 유형 필터 (income/expense)
     """
     query = db.query(TransactionModel)
+    query = query.filter(TransactionModel.user_id == current_user.id)
     if start_date:
         query = query.filter(TransactionModel.date >= start_date)
     if end_date:
@@ -50,11 +54,15 @@ def get_transactions(
 @router.get("/{transaction_id}", response_model=Transaction)
 def get_transaction(
     transaction_id: UUID,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """특정 트랜잭션 조회"""
     transaction = (
-        db.query(TransactionModel).filter(TransactionModel.id == transaction_id).first()
+        db.query(TransactionModel)
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.id == transaction_id)
+        .first()
     )
     if not transaction:
         raise HTTPException(
@@ -65,10 +73,15 @@ def get_transaction(
 
 # 생성
 @router.post("/", response_model=Transaction, status_code=status.HTTP_201_CREATED)
-def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
+def create_transaction(
+    transaction: TransactionCreate,
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """새 트랜잭션 생성"""
     category = (
         db.query(CategoryModel)
+        .filter(CategoryModel.user_id == current_user.id)
         .filter(CategoryModel.id == transaction.category_id)
         .first()
     )
@@ -78,7 +91,7 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
         )
     new_transaction = TransactionModel(
         **transaction.model_dump(),
-        user_id="32db540c-e343-45d5-aebc-169b078dc0c8",  # user id 변경 필요
+        user_id=current_user.id,  # user id 변경 필요
     )
     db.add(new_transaction)
     db.commit()
@@ -91,11 +104,15 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
 def update_transaction(
     transaction_id: UUID,
     transaction_update: TransactionUpdate,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """트랜잭션 수정"""
     transaction = (
-        db.query(TransactionModel).filter(TransactionModel.id == transaction_id).first()
+        db.query(TransactionModel)
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.id == transaction_id)
+        .first()
     )
     if not transaction:
         raise HTTPException(
@@ -112,11 +129,15 @@ def update_transaction(
 @router.delete("/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_transaction(
     transaction_id: UUID,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """트랜잭션 삭제"""
     transaction = (
-        db.query(TransactionModel).filter(TransactionModel.id == transaction_id).first()
+        db.query(TransactionModel)
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.id == transaction_id)
+        .first()
     )
     if not transaction:
         raise HTTPException(
