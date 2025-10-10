@@ -102,18 +102,24 @@ household_ledger/
 - [x] 데이터베이스 연결 설정 (PostgreSQL + SQLAlchemy)
 - [x] Alembic 마이그레이션 설정 및 초기 마이그레이션 생성
 - [x] Docker로 전체 스택 실행 (Backend + DB)
-- [x] Pydantic 스키마 정의 (Category)
+- [x] Pydantic 스키마 정의 (Category, Transaction)
 - [x] Category API 구현 (CRUD 완료)
   - GET /api/v1/categories/ - 목록 조회
   - GET /api/v1/categories/{id} - 단일 조회
   - POST /api/v1/categories/ - 생성
   - PATCH /api/v1/categories/{id} - 수정
   - DELETE /api/v1/categories/{id} - 삭제
+- [x] Transaction API 구현 (CRUD 완료 + 필터링)
+  - GET /api/v1/transactions/ - 목록 조회 (날짜/카테고리/타입 필터링)
+  - GET /api/v1/transactions/{id} - 단일 조회
+  - POST /api/v1/transactions/ - 생성 (category_id 검증)
+  - PATCH /api/v1/transactions/{id} - 수정
+  - DELETE /api/v1/transactions/{id} - 삭제
 
 ### 진행 중인 작업
-- [ ] Transaction API 구현 (CRUD)
 - [ ] RecurringTransaction API 구현
 - [ ] Clerk JWT 인증 미들웨어
+- [ ] 통계 API 구현 (월별 합계, 카테고리별 지출 등)
 
 ### 예정된 작업
 - [ ] 통계 API 구현

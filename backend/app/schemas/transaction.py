@@ -1,0 +1,48 @@
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime
+from uuid import UUID
+
+from app.models.enums import TransactionType, TransactionStatus
+
+
+# 공통 필드
+class TransactionBase(BaseModel):
+    date: datetime = Field(..., description="거래 날짜")
+    description: str = Field(..., min_length=1, max_length=255, description="거래 설명")
+    amount: int = Field(..., gt=0, description="금액 (양수)")
+    type: TransactionType = Field(..., description="거래 유형 (income/expense)")
+    category_id: UUID = Field(..., description="카테고리 ID")
+    status: TransactionStatus = Field(..., description="거래 상태")
+
+
+# 생성 요청용
+class TransactionCreate(TransactionBase):
+    recurring_id: Optional[UUID] = Field(None, description="반복 거래 ID (선택)")
+
+
+# 수정 요청용
+class TransactionUpdate(BaseModel):
+    date: Optional[datetime] = None
+    description: Optional[str] = Field(None, min_length=1, max_length=255)
+    amount: Optional[int] = Field(None, gt=0)
+    type: Optional[TransactionType] = None
+    category_id: Optional[UUID] = None
+    status: Optional[TransactionStatus] = None
+    # recurring_id는 수정 불가
+
+
+# DB 저장 형식
+class TransactionInDB(TransactionBase):
+    id: UUID
+    user_id: UUID
+    recurring_id: Optional[UUID] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+# API 응답용
+class Transaction(TransactionInDB):
+    class Config:
+        from_attributes = True  # Pydantic v2
+        # orm_mode = True # Pydantic v1
