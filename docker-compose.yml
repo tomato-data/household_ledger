@@ -22,6 +22,23 @@ services:
     networks:
       - household_ledger_network
 
+  redis:
+    image: redis:7-alpine
+    container_name: hl-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - household_ledger_network
+
   backend:
     build:
       context: ./backend
@@ -33,9 +50,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:welcome1516@db:5432/household_ledger
+      REDIS_URL: redis://redis:6379
       CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
     volumes:
       - ./backend:/app
       - /app/__pycache__
@@ -45,6 +66,8 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local
 networks:
   household_ledger_network:
