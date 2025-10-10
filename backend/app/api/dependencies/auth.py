@@ -30,6 +30,7 @@ async def verify_clerk_token(
         # 프로덕션에서는 Clerk Public Key로 검증 필요
         payload = jwt.decode(
             token,
+            key="",  # 빈 키 (서명 검증 안 할 때)
             options={"verify_signature": False},  # 임시로 서명 검증 스킵
         )
 

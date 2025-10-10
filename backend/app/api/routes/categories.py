@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
+from app.api.dependencies.auth import get_current_user
 from app.core.database import get_db
 from app.schemas import Category, CategoryCreate, CategoryUpdate
 from app.models.category import Category as CategoryModel
+from app.models.user import User as UserModel
 
 router = APIRouter(
     prefix="/categories",  # 모든 엔드포인트 앞에 /categories 붙음
@@ -18,14 +20,21 @@ router = APIRouter(
 def get_categories(
     skip: int = 0,
     limit: int = 100,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
-    모든 카테고리 조회
+    모든 카테고리 조회 (사용자별 격리)
     - skip: 건너뛸 개수 (페이지네이션)
     - limit: 조회할 개수 (페이지네이션)
     """
-    categories = db.query(CategoryModel).offset(skip).limit(limit).all()
+    categories = (
+        db.query(CategoryModel)
+        .filter(CategoryModel.user_id == current_user.id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     return categories
 
 
@@ -33,12 +42,18 @@ def get_categories(
 @router.get("/{category_id}", response_model=Category)
 def get_category(
     category_id: UUID,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
-    특정 ID의 카테고리 조회
+    특정 ID의 카테고리 조회(본인 것만)
     """
-    category = db.query(CategoryModel).filter(CategoryModel.id == category_id).first()
+    category = (
+        db.query(CategoryModel)
+        .filter(CategoryModel.user_id == current_user.id)
+        .filter(CategoryModel.id == category_id)
+        .first()
+    )
     if not category:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
@@ -48,15 +63,19 @@ def get_category(
 
 # 3. 카테고리 생성
 @router.post("/", response_model=Category, status_code=status.HTTP_201_CREATED)
-def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+def create_category(
+    category: CategoryCreate,
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """
-    새 카테고리 생성
+    새 카테고리 생성(본인 것만)
     """
     try:
 
         new_category = CategoryModel(
             **category.model_dump(),
-            user_id="32db540c-e343-45d5-aebc-169b078dc0c8"  # 테스트용 고정 ID
+            user_id=current_user.id,
         )
         db.add(new_category)
         db.commit()
@@ -73,12 +92,18 @@ def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
 def update_cateogry(
     category_id: UUID,
     category_update: CategoryUpdate,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
-    카테고리 수정
+    카테고리 수정(본인 것만)
     """
-    category = db.query(CategoryModel).filter(CategoryModel.id == category_id).first()
+    category = (
+        db.query(CategoryModel)
+        .filter(CategoryModel.user_id == current_user.id)
+        .filter(CategoryModel.id == category_id)
+        .first()
+    )
     if not category:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
@@ -94,12 +119,18 @@ def update_cateogry(
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
     category_id: UUID,
+    current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
-    카테고리 삭제
+    카테고리 삭제(본인 것만)
     """
-    category = db.query(CategoryModel).filter(CategoryModel.id == category_id).first()
+    category = (
+        db.query(CategoryModel)
+        .filter(CategoryModel.user_id == current_user.id)
+        .filter(CategoryModel.id == category_id)
+        .first()
+    )
     if not category:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
