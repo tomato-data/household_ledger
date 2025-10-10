@@ -85,32 +85,41 @@ household_ledger/
 - recurring_transactions: id, template_name, description, amount, type, frequency, start_date, end_date, day_of_month, is_active, is_variable_amount
 - categories: id, name, emoji
 
-### 목표 PostgreSQL 스키마 (예정)
-- users: clerk_user_id, email (Clerk 연동)
-- categories: user_id, name, emoji (사용자별 격리)
-- transactions: user_id, date, description, amount, type, category_id (사용자별 격리)
-- recurring_transactions: user_id, template_name, description, amount, type, frequency (사용자별 격리)
+### PostgreSQL 스키마 (구현 완료)
+- **users**: id (UUID), clerk_user_id, email, created_at, updated_at
+- **categories**: id (UUID), user_id, name, emoji, created_at, updated_at
+- **transactions**: id (UUID), user_id, date, description, amount, type, category_id, status, recurring_id, created_at, updated_at
+- **recurring_transactions**: id (UUID), user_id, template_name, description, amount, type, frequency, start_date, end_date, day_of_month, is_active, is_variable_amount, created_at, updated_at
+- **Enum 타입**: TransactionType (INCOME, EXPENSE), TransactionStatus (CONFIRMED, SCHEDULED, PENDING), RecurringFrequency (WEEKLY, MONTHLY, YEARLY)
 
 ## 마이그레이션 진행 상황
 
 ### 완료된 작업
 - [x] Clerk 인증 프론트엔드 통합
 - [x] Docker Compose 환경 구성 (Backend + PostgreSQL)
-- [x] FastAPI 기본 구조 생성
-- [x] 프로젝트 아키텍처 설계
+- [x] FastAPI 기본 앱 및 헬스체크 구현
+- [x] SQLAlchemy 모델 정의 (User, Category, Transaction, RecurringTransaction)
+- [x] 데이터베이스 연결 설정 (PostgreSQL + SQLAlchemy)
+- [x] Alembic 마이그레이션 설정 및 초기 마이그레이션 생성
+- [x] Docker로 전체 스택 실행 (Backend + DB)
+- [x] Pydantic 스키마 정의 (Category)
+- [x] Category API 구현 (CRUD 완료)
+  - GET /api/v1/categories/ - 목록 조회
+  - GET /api/v1/categories/{id} - 단일 조회
+  - POST /api/v1/categories/ - 생성
+  - PATCH /api/v1/categories/{id} - 수정
+  - DELETE /api/v1/categories/{id} - 삭제
 
 ### 진행 중인 작업
-- [ ] FastAPI 기본 앱 및 헬스체크 구현
-- [ ] SQLAlchemy 모델 정의
-- [ ] 데이터베이스 연결 설정
+- [ ] Transaction API 구현 (CRUD)
+- [ ] RecurringTransaction API 구현
 - [ ] Clerk JWT 인증 미들웨어
 
 ### 예정된 작업
-- [ ] Category API 구현 (CRUD)
-- [ ] Transaction API 구현
 - [ ] 통계 API 구현
 - [ ] 프론트엔드 API 연동
-- [ ] IndexedDB → PostgreSQL 데이터 마이그레이션
+- [ ] IndexedDB → PostgreSQL 데이터 마이그레이션 도구
+- [ ] Terraform + Ansible 배포 스크립트
 
 ## 주요 기능
 
