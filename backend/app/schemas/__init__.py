@@ -10,6 +10,12 @@ from .transaction import (
     TransactionUpdate,
     TransactionInDB,
 )
+from .recurring_transaction import (
+    RecurringTransaction,
+    RecurringTransactionCreate,
+    RecurringTransactionUpdate,
+)
+
 
 __all__ = [
     "Category",
@@ -20,4 +26,7 @@ __all__ = [
     "TransactionCreate",
     "TransactionUpdate",
     "TransactionInDB",
+    "RecurringTransaction",
+    "RecurringTransactionCreate",
+    "RecurringTransactionUpdate",
 ]
