@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import test_db_connection, engine, Base
 from app.models import user, category, transaction, recurring_transaction
+from app.api.routes import categories
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -20,6 +22,9 @@ app.add_middleware(
     allow_methods=["*"],  # 모든 HTTP 메서드 허용
     allow_headers=["*"],  # 모든 헤더 허용
 )
+
+# API 라우터 등록
+app.include_router(categories.router, prefix="/api/v1")
 
 
 @app.on_event("startup")
