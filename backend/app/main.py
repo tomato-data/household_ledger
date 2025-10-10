@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import test_db_connection, engine, Base
-from app.model import user, category, transaction, recurring_transaction
+from app.models import user, category, transaction, recurring_transaction
 
 app = FastAPI(
     title=settings.app_name,
