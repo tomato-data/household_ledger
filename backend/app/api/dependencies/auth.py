@@ -5,14 +5,44 @@ from jose import jwt, JWTError
 from typing import Optional
 import httpx
 import json
+from uuid import UUID
 
 from app.core.database import get_db
 from app.core.redis import get_redis
 from app.models.user import User as UserModel
+from app.models.category import Category as CategoryModel
 from redis import asyncio as aioredis
 
 # Bearer 토큰 추출
 security = HTTPBearer()
+
+
+def create_default_categories(db: Session, user_id: UUID):
+    """첫 로그인 시 기본 카테고리 생성"""
+
+    default_categories = [
+        {"name": "식비", "emoji": "🍽️"},
+        {"name": "간식류", "emoji": "🍪"},
+        {"name": "카페", "emoji": "☕"},
+        {"name": "교통비", "emoji": "🚗"},
+        {"name": "문화생활", "emoji": "🎭"},
+        {"name": "의류", "emoji": "👔"},
+        {"name": "생필품", "emoji": "🛒"},
+        {"name": "의료비", "emoji": "🏥"},
+        {"name": "월급", "emoji": "💰"},
+        {"name": "월세", "emoji": "🏠"},
+        {"name": "통신비", "emoji": "📱"},
+        {"name": "공과금", "emoji": "⚡"},
+        {"name": "기타", "emoji": "📝"},
+    ]
+
+    categories = [
+        CategoryModel(user_id=user_id, name=cat["name"], emoji=cat["emoji"])
+        for cat in default_categories
+    ]
+
+    db.bulk_save_objects(categories)
+    db.commit()
 
 
 # JWT 검증 함수
@@ -75,6 +105,9 @@ async def get_current_user(
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        # 기본 카테고리 생성
+        create_default_categories(db, user.id)
 
     # 4. Redis에 캐시 저장 (5분)
     user_cache = {
