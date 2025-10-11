@@ -41,8 +41,13 @@ def create_default_categories(db: Session, user_id: UUID):
         for cat in default_categories
     ]
 
-    db.bulk_save_objects(categories)
-    db.commit()
+    try:
+        db.bulk_save_objects(categories)
+        db.commit()
+        print(f"✅ Created {len(categories)} default categories for user {user_id}")
+    except Exception as e:
+        db.rollback()
+        print(f"❌ Error creating default categories: {str(e)}")
 
 
 # JWT 검증 함수
@@ -138,6 +143,9 @@ async def get_current_user_no_cache(
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        # 기본 카테고리 생성
+        create_default_categories(db, user.id)
 
     # 사용자 반환
     return user
