@@ -3,6 +3,7 @@ import db from '../utils/db';
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
 import RecurringTransactionForm from '../components/RecurringTransactionForm'
+import OnboardingModal from '../components/OnboardingModal';
 import { generateScheduledTransactions, updateScheduledTransactions } from '../utils/recurringScheduler';
 
 function Home() {
@@ -273,6 +274,7 @@ function Home() {
 
     return (
         <div>
+            <OnboardingModal />
             {/* 햄버거 메뉴 버튼 */}
             <button
                 className="hamburger-btn"

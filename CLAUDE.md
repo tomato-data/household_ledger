@@ -42,40 +42,58 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
 
 ### 프론트엔드 (React + Vite)
 - 인증: Clerk 통합 완료
-- 데이터 계층: IndexedDB with Dexie (마이그레이션 대상)
+- 데이터 계층: Context API + Backend API (Category 완료, Transaction/RecurringTransaction 마이그레이션 중)
+- 상태 관리: React Context API 패턴 (AppProviders 메타 프로바이더)
+- API 통신: axios 기반 서비스 레이어 (Service → Context → Component 3계층 구조)
 - 주요 컴포넌트:
   - Home.jsx - 메인 컨테이너, 비즈니스 로직 포함
   - CalendarBox.jsx - React Calendar 통합
   - TransactionForm.jsx - 트랜잭션 추가/수정 모달
   - RecurringTransactionForm.jsx - 반복 트랜잭션 관리
+  - CategoryManagement.jsx - 카테고리 CRUD 재사용 컴포넌트
+  - OnboardingModal.jsx - 첫 로그인 온보딩 모달
 
-### 백엔드 (FastAPI - 구축 중)
+### 백엔드 (FastAPI)
 - 프레임워크: FastAPI + Python 3.11
 - 데이터베이스: PostgreSQL 15
+- 캐싱: Redis (사용자 정보 5분 TTL)
 - 컨테이너: Docker + Docker Compose
-- 인증: Clerk JWT 토큰 검증 (예정)
+- 인증: Clerk JWT 토큰 검증 완료 (자동 사용자 생성 + 기본 카테고리 생성)
 
 ### 프로젝트 구조
 ```
 household_ledger/
-├── frontend/                    # React + Vite 앱
+├── frontend/                           # React + Vite 앱
 │   ├── src/
-│   │   ├── pages/Home.jsx      # 메인 페이지
-│   │   ├── components/         # 재사용 컴포넌트
-│   │   ├── utils/db.js         # Dexie 데이터베이스
-│   │   └── App.jsx             # Clerk 인증 통합
+│   │   ├── pages/Home.jsx             # 메인 페이지
+│   │   ├── components/                # 재사용 컴포넌트
+│   │   │   ├── CategoryManagement.jsx  # 카테고리 CRUD UI
+│   │   │   └── OnboardingModal.jsx     # 첫 로그인 온보딩
+│   │   ├── context/                   # React Context API
+│   │   │   ├── CategoryContext.jsx    # 카테고리 상태 관리
+│   │   │   └── AppProviders.jsx       # 메타 프로바이더
+│   │   ├── services/                  # API 서비스 레이어
+│   │   │   └── categoryService.js     # 카테고리 API 호출
+│   │   ├── utils/
+│   │   │   ├── api.js                 # axios 인스턴스 설정
+│   │   │   └── db.js                  # Dexie (마이그레이션 대상)
+│   │   └── App.jsx                    # Clerk 인증 + 프로바이더
+│   ├── .env.development               # 개발 환경 변수
+│   ├── .env.production                # 프로덕션 환경 변수
 │   └── package.json
-├── backend/                     # FastAPI 백엔드 (구축 중)
+├── backend/                           # FastAPI 백엔드
 │   ├── app/
-│   │   ├── main.py             # FastAPI 앱 진입점
-│   │   ├── core/               # 설정, DB 연결
-│   │   ├── models/             # SQLAlchemy 모델
-│   │   ├── schemas/            # Pydantic 스키마
-│   │   └── api/                # API 라우터들
+│   │   ├── main.py                    # FastAPI 앱 진입점
+│   │   ├── core/                      # 설정, DB 연결, Redis
+│   │   ├── models/                    # SQLAlchemy 모델
+│   │   ├── schemas/                   # Pydantic 스키마
+│   │   └── api/
+│   │       ├── dependencies/auth.py   # Clerk JWT 인증 + 기본 카테고리
+│   │       └── v1/                    # API 라우터들
 │   ├── requirements.txt
 │   └── Dockerfile
-├── docker-compose.yml           # Backend + DB 컨테이너 설정
-└── CLAUDE.md                   # 이 파일
+├── docker-compose.yml                 # Backend + DB + Redis 컨테이너
+└── CLAUDE.md                          # 이 파일
 ```
 
 ## 데이터 스키마
@@ -125,9 +143,22 @@ household_ledger/
   - Bearer 토큰 추출 및 검증
   - 사용자 자동 생성 (첫 로그인 시)
   - Redis 캐싱으로 성능 최적화 (5분 TTL)
+- [x] 기본 카테고리 자동 생성 (첫 로그인 시 13개 카테고리 bulk insert)
+  - 식비, 간식류, 카페/디저트, 교통, 생활, 의료, 쇼핑, 문화/여가, 교육, 월급, 용돈, 기타수입, 기타지출
+- [x] 프론트엔드 Category API 연동 완료
+  - axios 기반 API 클라이언트 구성 (utils/api.js)
+  - 환경별 설정 분리 (.env.development, .env.production)
+  - 서비스 레이어 구현 (services/categoryService.js)
+  - Context API 상태 관리 (context/CategoryContext.jsx)
+  - 메타 프로바이더 패턴 (context/AppProviders.jsx)
+- [x] 온보딩 UX 구현
+  - CategoryManagement.jsx - 재사용 가능한 카테고리 CRUD 컴포넌트
+  - OnboardingModal.jsx - 첫 로그인 시 카테고리 관리 모달 (localStorage 기반)
+  - 완전한 CSS 스타일링 (반응형, 애니메이션, 모바일 대응)
 
 ### 진행 중인 작업
-- [ ] 프론트엔드 API 연동 (IndexedDB → Backend API)
+- [ ] 프론트엔드 Transaction API 연동 (IndexedDB → Backend API)
+- [ ] 프론트엔드 RecurringTransaction API 연동
 - [ ] 통계 API 구현 (월별 합계, 카테고리별 지출 등)
 
 ### 예정된 작업
@@ -163,15 +194,32 @@ household_ledger/
 ### 현재 구현
 - 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
 - react-calendar 라이브러리로 날짜 선택 구현
-- Dexie로 브라우저 로컬 저장소 관리
+- Dexie로 브라우저 로컬 저장소 관리 (Transaction, RecurringTransaction만 사용 중)
 - 반복 트랜잭션은 recurringScheduler.js 유틸리티로 처리
+- **Category는 Backend API 연동 완료** (IndexedDB 사용하지 않음)
+
+### 프론트엔드 아키텍처 패턴 (Category API 연동으로 확립)
+1. **3계층 구조**: Service → Context → Component
+   - **Service 레이어** (services/categoryService.js): axios로 API 호출, 순수 함수
+   - **Context 레이어** (context/CategoryContext.jsx): 상태 관리, useAuth로 토큰 주입
+   - **Component 레이어**: useCategories() 훅으로 상태/함수 사용
+2. **메타 프로바이더 패턴**: AppProviders.jsx로 모든 Context 중앙 관리 (Provider Hell 방지)
+3. **환경 변수 분리**: .env.development / .env.production (Vite 자동 선택)
+4. **Naming Convention**: 백엔드 API와 일관성 유지 (updateCategory, deleteCategory)
+   - 충돌 방지: import 시 별칭 사용 (`updateCategory as updateCategoryAPI`)
+5. **재사용 컴포넌트**: CategoryManagement - 온보딩과 설정에서 공통 사용
+
+### 백엔드 성능 최적화
+- **Bulk Insert**: 기본 카테고리 생성 시 `db.bulk_save_objects()` 사용 (13개 INSERT → 1 트랜잭션)
+- **Redis 캐싱**: 사용자 정보 5분 TTL, DB 쿼리 감소
+- **인덱싱**: user_id 기반 쿼리 최적화 (SQLAlchemy 모델에 ForeignKey 인덱스)
 
 ### 마이그레이션 고려사항
-- 사용자별 데이터 격리 필수 (다중 테넌트)
+- 사용자별 데이터 격리 필수 (다중 테넌트) ✅ 완료
 - 기존 IndexedDB 데이터의 PostgreSQL 마이그레이션 경로 필요
 - API를 통한 백업/복원 기능 유지
-- 한국어 지원 보존
-- 대용량 데이터셋에 대한 PostgreSQL 성능 최적화
+- 한국어 지원 보존 ✅ 완료
+- 대용량 데이터셋에 대한 PostgreSQL 성능 최적화 (진행 중)
 
 ## 중요 알림
 
