@@ -5,6 +5,8 @@ import React from 'react';
 import Home from './pages/Home';
 import './App.css';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
+import { AppProviders } from './context/AppProviders'; // Meta Provider
+
 
 function App() {
   return (
@@ -13,11 +15,13 @@ function App() {
         <SignedOut>
           <SignInButton />
           <SignUpButton />
-          <p>Sign in to see use the app</p>
+          <p>Sign in to use the app</p>
         </SignedOut>
         <SignedIn>
-          <UserButton />
-          <Home />
+          <AppProviders>
+            <UserButton />
+            <Home />
+          </AppProviders>
         </SignedIn>
       </header>
     </div>
