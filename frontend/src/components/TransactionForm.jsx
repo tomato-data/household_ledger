@@ -1,36 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useCategories } from '../context/CategoryContext';
 
 function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
+    // Context에서 카테고리 가져오기
+    const { categories, loading: categoriesLoading } = useCategories();
+
+    // 상태 관리
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState('식비'); // 기본값
+    const [category, setCategory] = useState(''); // 기본값
     const [type, setType] = useState('expense'); // 수입/지출 선택
     const [status, setStatus] = useState('confirmed');
     const [editMode, setEditMode] = useState(false);
     const [editID, setEditId] = useState(null);
     const amountInputRef = useRef(null);
-
-    // 카테고리 목록
-    const categories = [
-        { value: '식비', emoji: '🍽️', label: '식비' },
-        { value: '간식류', emoji: '🍪', label: '간식류' },
-        { value: '카페', emoji: '☕', label: '카페' },
-        { value: '농구 패배', emoji: '🏀', label: '농구 패배' },
-        { value: '교통비', emoji: '🚗', label: '교통비' },
-        { value: '문화생활', emoji: '🎭', label: '문화생활' },
-        { value: '취미생활', emoji: '🎮', label: '취미생활' },
-        { value: '의류', emoji: '👔', label: '의류' },
-        { value: '생필품', emoji: '🛒', label: '생필품' },
-        { value: '미용', emoji: '💈', label: '미용' },
-        { value: '의료비', emoji: '🏥', label: '의료비' },
-        { value: '교육', emoji: '📚', label: '교육' },
-        { value: '월급', emoji: '💰', label: '월급' },
-        { value: '월세', emoji: '🏠', label: '월세' },
-        { value: '통신비', emoji: '📱', label: '통신비' },
-        { value: '구독료', emoji: '📺', label: '구독료' },
-        { value: '공과금', emoji: '⚡', label: '공과금' },
-        { value: '기타', emoji: '📝', label: '기타' }
-    ];
 
     // 천단위 콤마 포맷팅 함수
     const formatNumber = (num) => {
@@ -93,7 +76,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!text || !amount) {
+        if (!text || !amount || !category) {
             alert('모든 필드를 입력해주세요.');
             return;
         }
@@ -116,7 +99,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         }
         setText('');
         setAmount('');
-        setCategory('식비');
+        setCategory(categories.length > 0 ? categories[0].name : '');
         setType('expense'); // 초기화
         setStatus('confirmed');
         setEditMode(false);
@@ -208,16 +191,22 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                 <div className="form-group">
                     <label className="form-label">카테고리</label>
                     <div className="category-grid">
-                        {categories.map((cat) => (
+                        {categoriesLoading ? (
+                            <p className="loading-message">Loading categories...</p>
+                        ) : categories.length === 0 ? (
+                            <p className="no-categories">No categories found</p>
+                        ) : (
+                        categories.map((cat) => (
                             <button
-                                key={cat.value}
+                                key={cat.id}
                                 type="button"
-                                className={`category-btn ${category === cat.value ? 'active' : ''}`}
-                                onClick={() => setCategory(cat.value)}
+                                className={`category-btn ${category === cat.name ? 'active' : ''}`}
+                                onClick={() => setCategory(cat.name)}
                             >
-                                {cat.emoji} {cat.label}
+                                {cat.emoji} {cat.name}
                             </button>
-                        ))}
+                        ))
+                    )}
                     </div>
                 </div>
 

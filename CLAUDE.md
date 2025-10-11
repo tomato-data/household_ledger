@@ -115,16 +115,25 @@ household_ledger/
   - POST /api/v1/transactions/ - 생성 (category_id 검증)
   - PATCH /api/v1/transactions/{id} - 수정
   - DELETE /api/v1/transactions/{id} - 삭제
+- [x] RecurringTransaction API 구현 (CRUD 완료)
+  - GET /api/v1/recurring-transactions/ - 목록 조회 (활성화 상태 필터링)
+  - GET /api/v1/recurring-transactions/{id} - 단일 조회
+  - POST /api/v1/recurring-transactions/ - 생성
+  - PATCH /api/v1/recurring-transactions/{id} - 수정
+  - DELETE /api/v1/recurring-transactions/{id} - 삭제
+- [x] Clerk JWT 인증 미들웨어 (기본 구현 완료, Redis 캐싱 포함)
+  - Bearer 토큰 추출 및 검증
+  - 사용자 자동 생성 (첫 로그인 시)
+  - Redis 캐싱으로 성능 최적화 (5분 TTL)
 
 ### 진행 중인 작업
-- [ ] RecurringTransaction API 구현
-- [ ] Clerk JWT 인증 미들웨어
+- [ ] 프론트엔드 API 연동 (IndexedDB → Backend API)
 - [ ] 통계 API 구현 (월별 합계, 카테고리별 지출 등)
 
 ### 예정된 작업
-- [ ] 통계 API 구현
-- [ ] 프론트엔드 API 연동
 - [ ] IndexedDB → PostgreSQL 데이터 마이그레이션 도구
+- [ ] 반복 트랜잭션 자동 생성 스케줄러 (APScheduler/Celery)
+- [ ] Clerk JWT 서명 검증 강화 (JWKS)
 - [ ] Terraform + Ansible 배포 스크립트
 
 ## 주요 기능
