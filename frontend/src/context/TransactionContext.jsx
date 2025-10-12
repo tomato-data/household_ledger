@@ -37,7 +37,8 @@ export const TransactionProvider = ({ children }) => {
             setLoading(true);
             setError(null);
             const token = await getToken();
-            const data = await getTransactions(token, {}); // 전체 데이터 로드
+            // 전체 데이터 로드 - limit을 충분히 크게 설정
+            const data = await getTransactions(token, { limit: 10000 });
             setAllTransactions(data);
         } catch (error) {
             console.error('트랜잭션 로딩 실패:', error);
