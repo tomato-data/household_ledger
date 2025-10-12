@@ -5,7 +5,7 @@ IndexedDB JSON 백업 파일을 PostgreSQL로 마이그레이션하는 스크립
 import json
 import sys
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal, engine
 from app.models.transaction import Transaction as TransactionModel
@@ -16,7 +16,7 @@ USER_ID = "b5a9fccf-db4a-4a5a-86e6-51a3c684f6d9"
 
 def load_json_backup(file_path: str) -> dict:
     """JSON 백업 파일 로드"""
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -35,62 +35,107 @@ def get_category_mapping(db: Session, user_id: str) -> dict:
     return mapping
 
 
-def migrate_transactions(db: Session, backup_data: dict, user_id: str, category_mapping: dict):
-    """트랜잭션 마이그레이션"""
-    transactions = backup_data.get('transactions', [])
+def convert_utc_to_kst(utc_date_str: str) -> datetime:
+    """
+    UTC 날짜 문자열을 KST(한국 시간)로 변환
+
+    IndexedDB는 한국 시간을 UTC로 저장 (예: 2025-07-30 00:00 KST → 2025-07-29 15:00 UTC)
+    이를 다시 KST로 변환하여 원래 날짜를 복원
+
+    Args:
+        utc_date_str: "2025-07-29T15:00:00.000Z" 형식의 UTC 날짜
+
+    Returns:
+        KST로 변환된 datetime 객체 (timezone-naive, DB에 저장용)
+    """
+    # ISO 8601 형식 정규화
+    if utc_date_str.endswith("Z"):
+        utc_date_str = utc_date_str[:-1] + "+00:00"
+
+    # UTC datetime 객체 생성
+    utc_dt = datetime.fromisoformat(utc_date_str)
+
+    # KST로 변환 (+9시간)
+    kst_offset = timedelta(hours=9)
+    kst_dt = utc_dt + kst_offset
+
+    # timezone 정보 제거 (PostgreSQL에 timezone-naive로 저장)
+    kst_dt_naive = kst_dt.replace(tzinfo=None)
+
+    return kst_dt_naive
+
+
+def migrate_transactions(
+    db: Session, backup_data: dict, user_id: str, category_mapping: dict
+):
+    """트랜잭션 마이그레이션 (UTC → KST 변환 포함)"""
+    transactions = backup_data.get("transactions", [])
 
     success_count = 0
     skip_count = 0
     error_count = 0
 
+    # 디버그: 누락된 카테고리 추적
+    missing_categories = set()
+
     print(f"\n📦 총 {len(transactions)}개의 트랜잭션을 마이그레이션합니다...")
+    print(f"⏰ UTC → KST 변환 적용 (+9시간)\n")
 
     for idx, tx in enumerate(transactions, 1):
         try:
             # 카테고리 이름 → UUID 변환
-            category_name = tx.get('category')
+            category_name = tx.get("category")
             category_id = category_mapping.get(category_name)
 
             if not category_id:
-                print(f"⚠️  [{idx}/{len(transactions)}] 카테고리 '{category_name}' 없음 - 스킵: {tx['description']}")
+                missing_categories.add(category_name)
+                print(
+                    f"⚠️  [{idx}/{len(transactions)}] 카테고리 '{category_name}' 없음 - 스킵: {tx['description']}"
+                )
                 skip_count += 1
                 continue
 
-            # 날짜 파싱 (ISO 8601)
-            date_str = tx.get('date')
-            if date_str.endswith('Z'):
-                date_str = date_str[:-1] + '+00:00'
-            date = datetime.fromisoformat(date_str)
+            # 날짜 파싱 및 UTC → KST 변환
+            date_str = tx.get("date")
+            kst_date = convert_utc_to_kst(date_str)
 
             # Transaction 객체 생성
             transaction = TransactionModel(
-                id=uuid.UUID(tx['id']),  # 문자열 → UUID 변환
+                id=uuid.UUID(tx["id"]),  # 문자열 → UUID 변환
                 user_id=uuid.UUID(user_id),  # 문자열 → UUID 변환
-                date=date,
-                description=tx['description'],
-                amount=tx['amount'],
-                type=tx['type'],  # 'income' or 'expense'
+                date=kst_date,  # KST로 변환된 날짜
+                description=tx["description"],
+                amount=tx["amount"],
+                type=tx["type"],  # 'income' or 'expense'
                 category_id=uuid.UUID(category_id),  # 문자열 → UUID 변환
-                status=tx['status'],  # 'confirmed', 'scheduled', 'pending'
-                recurring_id=None  # recurring은 나중에 마이그레이션
+                status=tx["status"],  # 'confirmed', 'scheduled', 'pending'
+                recurring_id=None,  # recurring은 나중에 마이그레이션
             )
 
             db.add(transaction)
             success_count += 1
 
             if idx % 50 == 0:
-                print(f"⏳ 진행 중: {idx}/{len(transactions)} ({success_count} 성공, {skip_count} 스킵)")
+                print(
+                    f"⏳ 진행 중: {idx}/{len(transactions)} ({success_count} 성공, {skip_count} 스킵)"
+                )
 
         except Exception as e:
             error_count += 1
-            print(f"❌ [{idx}/{len(transactions)}] 에러: {tx['description']} - {str(e)}")
+            print(
+                f"❌ [{idx}/{len(transactions)}] 에러: {tx['description']} - {str(e)}"
+            )
+
+    # 누락된 카테고리 요약
+    if missing_categories:
+        print(f"\n⚠️  누락된 카테고리 목록: {', '.join(sorted(missing_categories))}")
 
     # 커밋
     try:
         db.commit()
         print(f"\n✅ 마이그레이션 완료!")
         print(f"  - 성공: {success_count}개")
-        print(f"  - 스킵: {skip_count}개")
+        print(f"  - 스킵: {skip_count}개 (카테고리 누락)")
         print(f"  - 에러: {error_count}개")
     except Exception as e:
         db.rollback()
@@ -122,7 +167,9 @@ def main():
         category_mapping = get_category_mapping(db, USER_ID)
 
         if not category_mapping:
-            print("❌ 카테고리가 없습니다. 먼저 프론트엔드에서 로그인하여 기본 카테고리를 생성하세요.")
+            print(
+                "❌ 카테고리가 없습니다. 먼저 프론트엔드에서 로그인하여 기본 카테고리를 생성하세요."
+            )
             sys.exit(1)
 
         # 트랜잭션 마이그레이션
