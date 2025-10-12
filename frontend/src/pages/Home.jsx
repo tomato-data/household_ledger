@@ -283,7 +283,6 @@ function Home() {
         .filter(tx => tx.type === 'expense')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
-    // 전체 자산 계산 (allTransactions 사용)
     const allIncome = allTransactions
         .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
         .reduce((sum, tx) => sum + tx.amount, 0);
