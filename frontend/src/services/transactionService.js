@@ -79,3 +79,17 @@ export const deleteTransaction = async (token, transactionId) => {
     })
     // 204 No Content이므로 반환값 없음
 }
+
+/**
+ * 트랜잭션 통계 조회
+ * @param {string} token - Clerk JWT 토큰
+ * @returns {Promise<Object>} - 통계 객체 {total_income, total_expense, net_asset, transaction_count}
+ */
+export const getTransactionStats = async (token) => {
+    const response = await apiClient.get('/api/v1/transactions/stats/summary', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    })
+    return response.data;
+}

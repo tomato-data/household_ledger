@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
@@ -7,7 +8,12 @@ from datetime import datetime, date
 from app.api.dependencies.auth import get_current_user
 from app.models.user import User as UserModel
 from app.core.database import get_db
-from app.schemas import Transaction, TransactionCreate, TransactionUpdate
+from app.schemas import (
+    Transaction,
+    TransactionCreate,
+    TransactionUpdate,
+    TransactionStats,
+)
 from app.models.transaction import Transaction as TransactionModel
 from app.models.category import Category as CategoryModel
 
@@ -146,3 +152,52 @@ def delete_transaction(
     db.delete(transaction)
     db.commit()
     return
+
+
+# 통계 조회
+@router.get("/stats/summary", response_model=TransactionStats)
+def get_transaction_stats(
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    사용자의 전체 트랜잭션 통계 조회
+    - 전체 수입 합계
+    - 전체 지출 합계
+    - 순자산
+    - 트랜잭션 수 (Confirmed만)
+    """
+    # 전체 수입 합계
+    total_income = (
+        db.query(func.sum(TransactionModel.amount))
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.type == "income")
+        .filter(TransactionModel.status == "confirmed")
+        .scalar()
+        or 0
+    )
+    # 전체 지출 합계
+    total_expense = (
+        db.query(func.sum(TransactionModel.amount))
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.type == "expense")
+        .filter(TransactionModel.status == "confirmed")
+        .scalar()
+        or 0
+    )
+
+    # 트랜잭션 수
+    transaction_count = (
+        db.query(func.count(TransactionModel.id))
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.status == "confirmed")
+        .scalar()
+        or 0
+    )
+
+    return TransactionStats(
+        total_income=total_income,
+        total_expense=total_expense,
+        net_asset=total_income - total_expense,
+        transaction_count=transaction_count,
+    )
