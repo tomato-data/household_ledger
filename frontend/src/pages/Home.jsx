@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import db from '../utils/db';
 import { useTransactions } from '../context/TransactionContext';
-import { format, startOfMonth, endOfMonth } from 'date-fns'; // 날짜 필터링용
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns'; // 날짜 필터링용
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
 import RecurringTransactionForm from '../components/RecurringTransactionForm'
@@ -10,10 +10,11 @@ import { generateScheduledTransactions, updateScheduledTransactions } from '../u
 
 function Home() {
     const {
-        transactions,
+        allTransactions,
+        filteredTransactions,
         loading,
         error,
-        loadTransactions,
+        loadAllTransactions,
         addTransaction,
         updateTransaction,
         deleteTransaction,
@@ -29,14 +30,17 @@ function Home() {
     const [recurringTransactions, setRecurringTransactions] = useState([]);
 
     useEffect(() => {
-        // 선택된 달의 시작/끝 계산
-        const startDate = format(startOfMonth(selectedDate), 'yyyy-MM-dd');
-        const endDate = format(endOfMonth(selectedDate), 'yyyy-MM-dd');
+        const monthStart = startOfMonth(selectedDate);
+        const monthEnd = endOfMonth(selectedDate);
 
-        // 필터 설정 (자동으로 loadTransactions 호출됨)
+        // 달력에 표시되는 전체 범위 (이전/다음 달 포함)
+        const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
+        const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+
+        // 필터 설정 (자동으로 loadFilteredTransactions 호출됨)
         setFilters({
-            start_date: startDate,
-            end_date: endDate,
+            start_date: format(calendarStart, 'yyyy-MM-dd'),
+            end_date: format(calendarEnd, 'yyyy-MM-dd'),
             category_id: null,
             type: null,
         });
@@ -94,7 +98,7 @@ function Home() {
     // 백업 실행
     const handleBackup = async () => {
         try {
-            const allTransactions = await db.transactions.toArray();
+            const allTransactions = await db.allTransactions.toArray();
             const backupData = {
                 version: 1,
                 exportDate: new Date().toISOString(),
@@ -191,7 +195,7 @@ function Home() {
                 await db.transactions.bulkAdd(backupData.transactions);
 
                 // 화면 새로고침
-                loadTransactions();
+                loadAllTransactions();
                 setShowSidebar(false);
 
                 alert(`복원이 완료되었습니다! ✅\n파일: ${file.name}\n거래 수: ${backupData.transactions.length}개`);
@@ -224,7 +228,7 @@ function Home() {
                 setRecurringTransactions(prev => prev.filter(rt => rt.id !== recurringId));
 
                 // 연결된 실제 거래들도 삭제 (이건 Backend API 사용)
-                const relatedTransactions = transactions.filter(tx => tx.recurring_id === recurringId);
+                const relatedTransactions = allTransactions.filter(tx => tx.recurring_id === recurringId);
                 for (const tx of relatedTransactions) {
                     await deleteTransaction(tx.id);
                 }
@@ -262,17 +266,15 @@ function Home() {
         setShowForm(true);  // 모달 열기
     };
 
-    const selectedMonth = selectedDate.getMonth();
-    const selectedYear = selectedDate.getFullYear();
-
-    const monthlyTransactions = transactions.filter(tx => {
+    const monthlyTransactions = filteredTransactions.filter(tx => {
         const txDate = new Date(tx.date);
         return (
-            txDate.getMonth() === selectedMonth &&
-            txDate.getFullYear() === selectedYear
+            txDate.getMonth() === selectedDate.getMonth() &&
+            txDate.getFullYear() === selectedDate.getFullYear()
         );
     });
 
+    // 월별 수입/지출 계산 (filteredTransactions 사용)
     const totalIncome = monthlyTransactions
         .filter(tx => tx.type === 'income')
         .reduce((sum, tx) => sum + tx.amount, 0);
@@ -281,12 +283,12 @@ function Home() {
         .filter(tx => tx.type === 'expense')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
-    // 전체 자산 계산 (모든 거래 기준)
-    const allIncome = transactions
+    // 전체 자산 계산 (allTransactions 사용)
+    const allIncome = allTransactions
         .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
-    const allExpense = transactions
+    const allExpense = allTransactions
         .filter(tx => tx.type === 'expense' && tx.status === 'confirmed')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
@@ -340,7 +342,7 @@ function Home() {
             </div>
             <div className="calendar-section">
                 <CalendarBox
-                    transactions={transactions}
+                    transactions={filteredTransactions}
                     recurringTransactions={recurringTransactions}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}

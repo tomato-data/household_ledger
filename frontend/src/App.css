@@ -302,6 +302,36 @@ body {
     border: 2px solid var(--accent-color) !important;
 }
 
+/* 🌫️ 이전/다음 달 날짜 스타일 (현재 월이 아닌 날짜 흐리게) */
+.react-calendar__month-view__days__day--neighboringMonth {
+    opacity: 0.4 !important;
+    background-color: rgba(15, 15, 15, 0.5) !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth abbr {
+    color: #666666 !important;
+    font-weight: 400 !important;
+}
+
+/* 🌫️ 이전/다음 달 날짜의 수입/지출 스타일 (채도 낮추기) */
+.react-calendar__month-view__days__day--neighboringMonth .income {
+    color: rgba(34, 211, 238, 0.4) !important;
+    text-shadow: none !important;
+    opacity: 0.6 !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth .expense {
+    color: rgba(251, 113, 133, 0.4) !important;
+    text-shadow: none !important;
+    opacity: 0.6 !important;
+}
+
+/* 🌫️ 이전/다음 달 날짜 hover 시 약간 밝게 */
+.react-calendar__month-view__days__day--neighboringMonth:hover {
+    opacity: 0.6 !important;
+    background-color: rgba(75, 85, 99, 0.3) !important;
+}
+
 /* 💰 수입/지출 스타일 */
 .income {
     color: var(--income-color) !important;

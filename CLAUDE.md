@@ -171,14 +171,27 @@ household_ledger/
   - IndexedDB 의존성 제거 (Transaction은 더 이상 IndexedDB 사용하지 않음)
   - Home, TransactionForm, CalendarBox 컴포넌트 업데이트
   - Category와 동일한 3계층 패턴 적용 (Service → Context → Component)
-- [x] IndexedDB 마이그레이션 도구 구현
+- [x] IndexedDB 마이그레이션 도구 구현 및 실행 완료
   - Python 스크립트 (migrate_indexeddb.py): JSON → PostgreSQL 변환 로직
+    - UTC → KST 타임존 변환 (+9시간) 적용
+    - 카테고리 매핑 실패 시 상세 로그 추가
   - JavaScript 스크립트 (export_all_indexeddb.js): 브라우저 콘솔에서 데이터 추출
   - backup_data.json 최신화 (2025-10-12 기준)
+  - 마이그레이션 실행 완료: 261개 트랜잭션 성공적으로 이전
+  - 데이터 검증 완료: 월급 날짜 30일, 월세 데이터 4건 모두 정상 확인
+- [x] 프론트엔드 이중 상태 관리 구현
+  - TransactionContext: allTransactions + filteredTransactions 분리
+  - hasActiveFilters() 헬퍼 함수로 불필요한 API 호출 방지
+  - Home.jsx: 전체 자산(allTransactions), 월별 요약(filteredTransactions) 분리
+- [x] 달력 성능 최적화
+  - 필터 범위 확장: 달력 표시 범위(이전/다음 달 포함) 전체 로드
+  - startOfWeek/endOfWeek 사용으로 약 35-42일분만 필터링
+  - 방법 1(전체 데이터) 대비 6.5배 성능 향상 (9,135회 → 1,400회 비교)
+  - 이전/다음 달 날짜에도 트랜잭션 표시로 UX 개선
 
 ### 진행 중인 작업
 - [ ] 프론트엔드 RecurringTransaction API 연동
-- [ ] IndexedDB 마이그레이션 실행 및 검증
+- [ ] 백업/복원 기능을 Backend API로 전환
 - [ ] 통계 API 구현 (월별 합계, 카테고리별 지출 등)
 
 ### 예정된 작업
