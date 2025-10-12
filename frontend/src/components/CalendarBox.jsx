@@ -182,12 +182,12 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
                 <div key={tx.id} className={`simple-detail-row ${tx.status === 'scheduled' ? 'scheduled' : ''}
                 ${tx.status === 'recurring' ? 'recurring' : ''}`}>
                 <div className="simple-detail-left">
-                  <span className="simple-emoji">{getCategoryEmoji(tx.category)}</span>
+                  <span className="simple-emoji">{tx.category.emoji || getCategoryEmoji(tx.category?.name)}</span>
                   <span className="simple-description">
                     {tx.status === 'scheduled' ? '⏰' : tx.status === 'recurring' ? '📅' : ''}
                     {tx.description}
                   </span>
-                  <span className="simple-category">({tx.category})</span>
+                  <span className="simple-category">({tx.category?.name})</span>
                 </div>
                 <div className="simple-detail-right">
                   <span className={`simple-amount ${tx.type} ${tx.status === 'scheduled' ? 'scheduled' : ''}`}>
@@ -230,7 +230,7 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
             {deleteConfirm.transaction && (
               <div className="delete-modal-transaction">
                 <div className="delete-transaction-info">
-                  <span className="delete-emoji">{getCategoryEmoji(deleteConfirm.transaction.category)}</span>
+                  <span className="delete-emoji">{deleteConfirm.transaction.category.emoji || getCategoryEmoji(deleteConfirm.transaction.category?.name)}</span>
                   <span className="delete-description">{deleteConfirm.transaction.description}</span>
                 </div>
                 <div className={`delete-amount ${deleteConfirm.transaction.type}`}>

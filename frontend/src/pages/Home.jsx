@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import db from '../utils/db';
+import { useTransactions } from '../context/TransactionContext';
+import { format, startOfMonth, endOfMonth } from 'date-fns'; // 날짜 필터링용
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
 import RecurringTransactionForm from '../components/RecurringTransactionForm'
@@ -7,7 +9,16 @@ import OnboardingModal from '../components/OnboardingModal';
 import { generateScheduledTransactions, updateScheduledTransactions } from '../utils/recurringScheduler';
 
 function Home() {
-    const [transactions, setTransactions] = useState([]);
+    const {
+        transactions,
+        loading,
+        error,
+        loadTransactions,
+        addTransaction,
+        updateTransaction,
+        deleteTransaction,
+        setFilters,
+    } = useTransactions();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editTarget, setEditTarget] = useState(null);  // 수정할 거래 상태 추가
     const [showForm, setShowForm] = useState(false);
@@ -18,24 +29,32 @@ function Home() {
     const [recurringTransactions, setRecurringTransactions] = useState([]);
 
     useEffect(() => {
-        const fetchTransactions = async () => {
-            // 스케줄된 거래 생성 및 업데이트
+        // 선택된 달의 시작/끝 계산
+        const startDate = format(startOfMonth(selectedDate), 'yyyy-MM-dd');
+        const endDate = format(endOfMonth(selectedDate), 'yyyy-MM-dd');
+
+        // 필터 설정 (자동으로 loadTransactions 호출됨)
+        setFilters({
+            start_date: startDate,
+            end_date: endDate,
+            category_id: null,
+            type: null,
+        });
+
+        // Recurring 트랜잭션 처리 (아직 IndexedDB 사용)
+        const setupRecurring = async () => {
             await generateScheduledTransactions();
             await updateScheduledTransactions();
 
-            const allTransactions = await db.transactions.toArray();
             const allRecurringTransactions = await db.recurring_transactions
                 .filter(rt => rt.is_active === true)
                 .toArray();
-
-            setTransactions(allTransactions);
             setRecurringTransactions(allRecurringTransactions);
-        }
-        fetchTransactions();
+        };
 
-        // 백업 알림 체크
+        setupRecurring();
         checkBackupStatus();
-    }, []);
+    }, [selectedDate, setFilters]);
 
     // ESC 키로 모달 닫기
     useEffect(() => {
@@ -172,8 +191,7 @@ function Home() {
                 await db.transactions.bulkAdd(backupData.transactions);
 
                 // 화면 새로고침
-                const newTransactions = await db.transactions.toArray();
-                setTransactions(newTransactions);
+                loadTransactions();
                 setShowSidebar(false);
 
                 alert(`복원이 완료되었습니다! ✅\n파일: ${file.name}\n거래 수: ${backupData.transactions.length}개`);
@@ -186,47 +204,49 @@ function Home() {
     };
 
     const handleAddTransaction = async(transaction) => {
-        const id = await db.transactions.add(transaction);
-        setTransactions((prev) => [transaction, ...prev]);
-        setEditTarget(null);  // 추가 후 수정 상태 초기화
-        setShowForm(false);   // 모달 닫기
+        try {
+            await addTransaction(transaction); // Context 함수 사용
+            setEditTarget(null);
+            setShowForm(false);
+        } catch (error) {
+            console.error('트랜잭션 추가 실패:', error);
+            alert('트랜잭션 추가 중 오류가 발생했습니다.');
+        }
     };
 
     const handleDeleteTransaction = async (id) => {
-        // recurring 거래인지 확인
-        if (id.startsWith('recurring-')) {
-            const recurringId = parseInt(id.split('-')[1]);
-            await db.recurring_transactions.delete(recurringId);
+        try {
+            if (id.startsWith('recurring-')) {
+                // recurring 거래 삭제 (아직 IndexedDB 사용)
+                const recurringId = parseInt(id.split('-')[1]);
+                await db.recurring_transactions.delete(recurringId);
 
-            // recurring_transactions 상태 업데이트
-            setRecurringTransactions(prev => prev.filter(rt => rt.id !== recurringId));
+                setRecurringTransactions(prev => prev.filter(rt => rt.id !== recurringId));
 
-            // 해당 recurring과 연결된 실제 거래들도 삭제
-            const relatedTransactions = await db.transactions
-                .filter(tx => tx.recurring_id === recurringId)
-                .toArray();
-
-            for (const tx of relatedTransactions) {
-                await db.transactions.delete(tx.id);
+                // 연결된 실제 거래들도 삭제 (이건 Backend API 사용)
+                const relatedTransactions = transactions.filter(tx => tx.recurring_id === recurringId);
+                for (const tx of relatedTransactions) {
+                    await deleteTransaction(tx.id);
+                }
+            } else {
+                await deleteTransaction(id);
             }
-
-            // transactions 상태 업데이트
-            setTransactions(prev => prev.filter(tx => tx.recurring_id !== recurringId));
-        } else {
-            // 일반 거래 (scheduled 포함) 삭제
-            await db.transactions.delete(id);
-            setTransactions(prev => prev.filter(tx => tx.id !== id));
+            setEditTarget(null);
+        } catch (error) {
+            console.error('트랜잭션 삭제 실패:', error);
+            alert('트랜잭션 삭제 중 오류가 발생했습니다.');
         }
-        setEditTarget(null);  // 삭제 후 수정 상태 초기화
     };
 
     const handleUpdateTransaction = async(updatedTx) => {
-        await db.transactions.put(updatedTx);
-        setTransactions(prev =>
-            prev.map(tx => (tx.id === updatedTx.id ? updatedTx : tx))
-        );
-        setEditTarget(null);  // 수정 완료 후 수정 상태 초기화
-        setShowForm(false);   // 모달 닫기
+        try {
+            await updateTransaction(updatedTx.id, updatedTx); // Context 함수 사용
+            setEditTarget(null);
+            setShowForm(false);
+        } catch (error) {
+            console.error('트랜잭션 수정 실패:', error);
+            alert('트랜잭션 수정 중 오류가 발생했습니다.');
+        }
     };
 
     const handleAddRecurringTransaction = async(recurringTx) => {

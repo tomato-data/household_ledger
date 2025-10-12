@@ -6,6 +6,16 @@ from uuid import UUID
 from app.models.enums import TransactionType, TransactionStatus
 
 
+# 중첩된 Category 정보 (읽기 전용)
+class CategoryNested(BaseModel):
+    id: UUID
+    name: str
+    emoji: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
 # 공통 필드
 class TransactionBase(BaseModel):
     date: datetime = Field(..., description="거래 날짜")
@@ -43,6 +53,8 @@ class TransactionInDB(TransactionBase):
 
 # API 응답용
 class Transaction(TransactionInDB):
+    category: CategoryNested
+
     class Config:
         from_attributes = True  # Pydantic v2
         # orm_mode = True # Pydantic v1

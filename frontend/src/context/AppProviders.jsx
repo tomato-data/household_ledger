@@ -1,5 +1,6 @@
 import React from 'react';
 import { CategoryProvider } from './CategoryContext';
+import { TransactionProvider } from './TransactionContext';
 // 나중에 컨텍스트들을 추가
 
 /**
@@ -9,7 +10,9 @@ import { CategoryProvider } from './CategoryContext';
 export const AppProviders = ({ children }) => {
     return (
         <CategoryProvider>
-            {children}
+            <TransactionProvider>
+                {children}
+            </TransactionProvider>
         </CategoryProvider>
     );
 };
