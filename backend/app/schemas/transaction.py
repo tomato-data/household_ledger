@@ -58,3 +58,11 @@ class Transaction(TransactionInDB):
     class Config:
         from_attributes = True  # Pydantic v2
         # orm_mode = True # Pydantic v1
+
+
+# 통계 응답용
+class TransactionStats(BaseModel):
+    total_income: int = Field(..., description="수입 합계")
+    total_expense: int = Field(..., description="지출 합계")
+    net_asset: int = Field(..., description="순자산 (수입 - 지출)")
+    transaction_count: int = Field(..., description="총 트랜잭션 수 (Confirmed만)")

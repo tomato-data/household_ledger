@@ -12,6 +12,7 @@ function Home() {
     const {
         allTransactions,
         filteredTransactions,
+        stats,
         loading,
         error,
         loadAllTransactions,
@@ -283,15 +284,8 @@ function Home() {
         .filter(tx => tx.type === 'expense')
         .reduce((sum, tx) => sum + tx.amount, 0);
 
-    const allIncome = allTransactions
-        .filter(tx => tx.type === 'income' && tx.status === 'confirmed')
-        .reduce((sum, tx) => sum + tx.amount, 0);
-
-    const allExpense = allTransactions
-        .filter(tx => tx.type === 'expense' && tx.status === 'confirmed')
-        .reduce((sum, tx) => sum + tx.amount, 0);
-
-    const totalAssets = allIncome - allExpense;
+    // 전체 자산 계산 (Backend 통계 API 사용)
+    const totalAssets = stats?.net_asset ?? 0;
 
     return (
         <div>

@@ -6,6 +6,7 @@ import {
     createTransaction,
     updateTransaction as updateTransactionAPI,
     deleteTransaction as deleteTransactionAPI,
+    getTransactionStats,
 } from '../services/transactionService';
 
 // 1. Context 생성
@@ -18,6 +19,7 @@ export const TransactionProvider = ({ children }) => {
     // 상태 관리
     const [allTransactions, setAllTransactions] = useState([]); // 전체 데이터
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 필터링된 데이터
+    const [stats, setStats] = useState(null); // 통계 데이터
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
@@ -48,6 +50,16 @@ export const TransactionProvider = ({ children }) => {
         }
     }
 
+    const loadStats = async () => {
+        try {
+            const token = await getToken();
+            const statsData = await getTransactionStats(token);
+            setStats(statsData);
+        } catch (error) {
+            console.error('트랜잭션 통계 로딩 실패:', error);
+        }
+    }
+
     const loadFilteredTransactions = async () => {
         try {
             const token = await getToken();
@@ -64,6 +76,7 @@ export const TransactionProvider = ({ children }) => {
     // 최초 로드 시 전체 트랜잭션 가져오기
     useEffect(() => {
         loadAllTransactions();
+        loadStats();
     }, []); // 컴포넌트 마운트 시 한 번
 
     // 필터 변경 시 필터링된 트랜잭션 가져오기
@@ -85,6 +98,9 @@ export const TransactionProvider = ({ children }) => {
             if (hasActiveFilters()) {
                 loadFilteredTransactions();
             }
+
+            // 통계 데이터 업데이트
+            loadStats();
 
             return newTransaction;
         } catch (error) {
@@ -110,6 +126,9 @@ export const TransactionProvider = ({ children }) => {
                 tx.id === transactionId ? updatedTransaction : tx
             ));
 
+            // 통계 데이터 업데이트
+            loadStats();
+
             return updatedTransaction;
         } catch (error) {
             console.error('트랜잭션 수정 실패:', error);
@@ -129,6 +148,10 @@ export const TransactionProvider = ({ children }) => {
 
             // 필터 조건에 맞으면 filteredTransactions에도 제거 또는 다시 로드
             setFilteredTransactions(filteredTransactions.filter(tx => tx.id !== transactionId));
+
+            // 통계 데이터 업데이트
+            loadStats();
+
         } catch (error) {
             console.error('트랜잭션 삭제 실패:', error);
             setError(error.message);
@@ -140,6 +163,7 @@ export const TransactionProvider = ({ children }) => {
     const value = {
         allTransactions,
         filteredTransactions,
+        stats,
         loading,
         error,
         filters,
