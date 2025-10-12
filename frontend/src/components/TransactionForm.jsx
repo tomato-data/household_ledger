@@ -8,7 +8,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     // 상태 관리
     const [text, setText] = useState('');
     const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState(''); // 기본값
+    const [categoryId, setCategoryId] = useState(''); // 기본값
     const [type, setType] = useState('expense'); // 수입/지출 선택
     const [status, setStatus] = useState('confirmed');
     const [editMode, setEditMode] = useState(false);
@@ -39,7 +39,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         if (editTarget) {
             setText(editTarget.description);
             setAmount(formatNumber(editTarget.amount.toString()));
-            setCategory(editTarget.category || '식비');
+            setCategoryId(editTarget.category_id || (categories.length > 0 ? categories[0].id : ''));
             setType(editTarget.type || 'income');
             setStatus(editTarget.status || 'confirmed'); // 기존 상태 로드
             setEditMode(true);
@@ -76,7 +76,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!text || !amount || !category) {
+        if (!text || !amount || !categoryId) {
             alert('모든 필드를 입력해주세요.');
             return;
         }
@@ -87,7 +87,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
             amount: parseFloat(removeCommas(amount)),
             type: type,
             date: selectedDate.toISOString(),
-            category: category,
+            category_id: categoryId,
             status: status,
             recurring_id: null,
         };
@@ -99,7 +99,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         }
         setText('');
         setAmount('');
-        setCategory(categories.length > 0 ? categories[0].name : '');
+        setCategoryId(categories.length > 0 ? categories[0].id : '');
         setType('expense'); // 초기화
         setStatus('confirmed');
         setEditMode(false);
@@ -200,8 +200,8 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
                             <button
                                 key={cat.id}
                                 type="button"
-                                className={`category-btn ${category === cat.name ? 'active' : ''}`}
-                                onClick={() => setCategory(cat.name)}
+                                className={`category-btn ${categoryId === cat.id ? 'active' : ''}`}
+                                onClick={() => setCategoryId(cat.id)}
                             >
                                 {cat.emoji} {cat.name}
                             </button>
