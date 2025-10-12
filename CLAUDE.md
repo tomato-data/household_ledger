@@ -71,15 +71,18 @@ household_ledger/
 │   │   │   └── OnboardingModal.jsx     # 첫 로그인 온보딩
 │   │   ├── context/                   # React Context API
 │   │   │   ├── CategoryContext.jsx    # 카테고리 상태 관리
+│   │   │   ├── TransactionContext.jsx # 트랜잭션 상태 관리
 │   │   │   └── AppProviders.jsx       # 메타 프로바이더
 │   │   ├── services/                  # API 서비스 레이어
-│   │   │   └── categoryService.js     # 카테고리 API 호출
+│   │   │   ├── categoryService.js     # 카테고리 API 호출
+│   │   │   └── transactionService.js  # 트랜잭션 API 호출
 │   │   ├── utils/
 │   │   │   ├── api.js                 # axios 인스턴스 설정
-│   │   │   └── db.js                  # Dexie (마이그레이션 대상)
+│   │   │   └── db.js                  # Dexie (RecurringTransaction만 사용)
 │   │   └── App.jsx                    # Clerk 인증 + 프로바이더
 │   ├── .env.development               # 개발 환경 변수
 │   ├── .env.production                # 프로덕션 환경 변수
+│   ├── export_all_indexeddb.js        # IndexedDB 데이터 추출 스크립트
 │   └── package.json
 ├── backend/                           # FastAPI 백엔드
 │   ├── app/
@@ -90,6 +93,9 @@ household_ledger/
 │   │   └── api/
 │   │       ├── dependencies/auth.py   # Clerk JWT 인증 + 기본 카테고리
 │   │       └── v1/                    # API 라우터들
+│   ├── scripts/                       # 마이그레이션 및 유틸리티
+│   │   ├── migrate_indexeddb.py       # IndexedDB → PostgreSQL 마이그레이션
+│   │   └── backup_data.json           # IndexedDB 백업 데이터
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── docker-compose.yml                 # Backend + DB + Redis 컨테이너
@@ -155,14 +161,27 @@ household_ledger/
   - CategoryManagement.jsx - 재사용 가능한 카테고리 CRUD 컴포넌트
   - OnboardingModal.jsx - 첫 로그인 시 카테고리 관리 모달 (localStorage 기반)
   - 완전한 CSS 스타일링 (반응형, 애니메이션, 모바일 대응)
+- [x] Transaction 스키마 개선
+  - CategoryNested 스키마 추가로 중첩 객체 응답 지원
+  - Transaction 응답에 카테고리 전체 정보 포함 (id, name, emoji)
+  - 프론트엔드에서 카테고리 정보를 위한 추가 API 호출 불필요
+- [x] 프론트엔드 Transaction API 연동 완료
+  - axios 기반 transactionService.js 구현
+  - TransactionContext를 Backend API로 완전 전환
+  - IndexedDB 의존성 제거 (Transaction은 더 이상 IndexedDB 사용하지 않음)
+  - Home, TransactionForm, CalendarBox 컴포넌트 업데이트
+  - Category와 동일한 3계층 패턴 적용 (Service → Context → Component)
+- [x] IndexedDB 마이그레이션 도구 구현
+  - Python 스크립트 (migrate_indexeddb.py): JSON → PostgreSQL 변환 로직
+  - JavaScript 스크립트 (export_all_indexeddb.js): 브라우저 콘솔에서 데이터 추출
+  - backup_data.json 최신화 (2025-10-12 기준)
 
 ### 진행 중인 작업
-- [ ] 프론트엔드 Transaction API 연동 (IndexedDB → Backend API)
 - [ ] 프론트엔드 RecurringTransaction API 연동
+- [ ] IndexedDB 마이그레이션 실행 및 검증
 - [ ] 통계 API 구현 (월별 합계, 카테고리별 지출 등)
 
 ### 예정된 작업
-- [ ] IndexedDB → PostgreSQL 데이터 마이그레이션 도구
 - [ ] 반복 트랜잭션 자동 생성 스케줄러 (APScheduler/Celery)
 - [ ] Clerk JWT 서명 검증 강화 (JWKS)
 - [ ] Terraform + Ansible 배포 스크립트
@@ -194,20 +213,29 @@ household_ledger/
 ### 현재 구현
 - 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
 - react-calendar 라이브러리로 날짜 선택 구현
-- Dexie로 브라우저 로컬 저장소 관리 (Transaction, RecurringTransaction만 사용 중)
+- Dexie로 브라우저 로컬 저장소 관리 (RecurringTransaction만 사용 중)
 - 반복 트랜잭션은 recurringScheduler.js 유틸리티로 처리
-- **Category는 Backend API 연동 완료** (IndexedDB 사용하지 않음)
+- **Category와 Transaction은 Backend API 연동 완료** (IndexedDB 사용하지 않음)
 
-### 프론트엔드 아키텍처 패턴 (Category API 연동으로 확립)
+### 프론트엔드 아키텍처 패턴 (Category/Transaction API 연동으로 확립)
 1. **3계층 구조**: Service → Context → Component
-   - **Service 레이어** (services/categoryService.js): axios로 API 호출, 순수 함수
-   - **Context 레이어** (context/CategoryContext.jsx): 상태 관리, useAuth로 토큰 주입
-   - **Component 레이어**: useCategories() 훅으로 상태/함수 사용
+   - **Service 레이어**: axios로 API 호출, 순수 함수
+     - categoryService.js: 카테고리 CRUD
+     - transactionService.js: 트랜잭션 CRUD + 필터링
+   - **Context 레이어**: 상태 관리, useAuth로 토큰 주입
+     - CategoryContext.jsx: 카테고리 전역 상태
+     - TransactionContext.jsx: 트랜잭션 전역 상태
+   - **Component 레이어**: 커스텀 훅으로 상태/함수 사용
+     - useCategories() 훅
+     - useTransactions() 훅
 2. **메타 프로바이더 패턴**: AppProviders.jsx로 모든 Context 중앙 관리 (Provider Hell 방지)
 3. **환경 변수 분리**: .env.development / .env.production (Vite 자동 선택)
 4. **Naming Convention**: 백엔드 API와 일관성 유지 (updateCategory, deleteCategory)
    - 충돌 방지: import 시 별칭 사용 (`updateCategory as updateCategoryAPI`)
 5. **재사용 컴포넌트**: CategoryManagement - 온보딩과 설정에서 공통 사용
+6. **중첩 객체 응답**: 백엔드가 관계 데이터를 함께 반환 (Transaction → Category)
+   - 프론트엔드에서 추가 API 호출 불필요
+   - N+1 쿼리 문제 방지
 
 ### 백엔드 성능 최적화
 - **Bulk Insert**: 기본 카테고리 생성 시 `db.bulk_save_objects()` 사용 (13개 INSERT → 1 트랜잭션)
