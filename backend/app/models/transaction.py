@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, func, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -17,7 +17,7 @@ class Transaction(Base):
         nullable=False,
         index=True,
     )
-    date = Column(DateTime, nullable=False, index=True)
+    date = Column(Date, nullable=False, index=True)
     description = Column(String(255), nullable=False)
     amount = Column(Integer, nullable=False)
     type = Column(Enum(TransactionType), nullable=False)  # income, expense

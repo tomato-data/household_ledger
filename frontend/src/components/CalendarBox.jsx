@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
+import { getTransactionsForDate, formatDateToYYYYMMDD, formatDisplayDate } from '../utils/formatDate';
 import 'react-calendar/dist/Calendar.css';
 import '../App.css';
 
@@ -71,10 +72,8 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
     return emojiMap[category] || '📝';
   };
 
-  // 특정 날짜에 해당하는 거래내역 필터링
-  const transactionsForSelectedDate = transactions.filter(
-    tx => new Date(tx.date).toDateString() === selectedDate.toDateString()
-  );
+  // 특정 날짜에 해당하는 거래내역 필터링 (유틸리티 함수 사용)
+  const transactionsForSelectedDate = getTransactionsForDate(transactions, selectedDate);
 
   // 해당 날짜의 반복 거래도 포함
   const recurringForSelectedDate = (recurringTransactions || []).filter(recurring => {
@@ -84,7 +83,7 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
   }).map(recurring => ({
     ...recurring,
     id: `recurring-${recurring.id}`,
-    date: selectedDate.toISOString(),
+    date: formatDateToYYYYMMDD(selectedDate),
     isRecurring: true,
     status: 'recurring'
   }));
@@ -100,9 +99,8 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
         tileContent={({ date, view }) => {
           if (view !== 'month') return null;
 
-          const dayTxs = transactions.filter(
-            tx => new Date(tx.date).toDateString() === date.toDateString()
-          );
+          // 유틸리티 함수로 해당 날짜의 트랜잭션 필터링
+          const dayTxs = getTransactionsForDate(transactions, date);
 
           // 반복 거래 중 해당 날짜에 해당하는 것 찾기
           const recurringForDay = (recurringTransactions || []).filter(recurring => {
@@ -173,7 +171,7 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
 
       {/* 상세 내역 표시 */}
       <div className="simple-details-section">
-        <h4 className="simple-details-title">{selectedDate.toLocaleDateString()} 상세 내역</h4>
+        <h4 className="simple-details-title">{formatDisplayDate(selectedDate, 'full')} 상세 내역</h4>
         {allTransactionsForSelectedDate.length === 0 ? (
           <p className="no-transactions-text">거래 내역이 없습니다.</p>
         ) : (

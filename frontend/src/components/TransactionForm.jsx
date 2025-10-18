@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCategories } from '../context/CategoryContext';
+import { formatDateToYYYYMMDD, formatDisplayDate } from '../utils/formatDate';
 
 function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
     // Context에서 카테고리 가져오기
@@ -86,7 +87,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
             description: text,
             amount: parseFloat(removeCommas(amount)),
             type: type,
-            date: selectedDate.toISOString(),
+            date: formatDateToYYYYMMDD(selectedDate),
             category_id: categoryId,
             status: status,
             recurring_id: null,
@@ -110,7 +111,7 @@ function TransactionForm({ onAdd, onUpdate, editTarget, selectedDate }) {
         <div className="transaction-form-container">
             <div className="form-header">
                 <h3>{editMode ? '거래 수정' : '새 거래 추가'}</h3>
-                <p>선택된 날짜: {selectedDate.toLocaleDateString()}</p>
+                <p>선택된 날짜: {formatDisplayDate(selectedDate, 'full')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="transaction-form">

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime, date
@@ -24,7 +24,7 @@ router = APIRouter(
 
 
 # 목록 조회 (날짜 필터링 포함)
-@router.get("/", response_model=List[Transaction])
+@router.get("", response_model=List[Transaction])
 def get_transactions(
     skip: int = 0,
     limit: int = 100,
@@ -41,7 +41,7 @@ def get_transactions(
     - category_id: 카테고리 ID 필터
     - type: 거래 유형 필터 (income/expense)
     """
-    query = db.query(TransactionModel)
+    query = db.query(TransactionModel).options(joinedload(TransactionModel.category))
     query = query.filter(TransactionModel.user_id == current_user.id)
     if start_date:
         query = query.filter(TransactionModel.date >= start_date)
@@ -66,6 +66,7 @@ def get_transaction(
     """특정 트랜잭션 조회"""
     transaction = (
         db.query(TransactionModel)
+        .options(joinedload(TransactionModel.category))
         .filter(TransactionModel.user_id == current_user.id)
         .filter(TransactionModel.id == transaction_id)
         .first()
@@ -78,13 +79,14 @@ def get_transaction(
 
 
 # 생성
-@router.post("/", response_model=Transaction, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=Transaction, status_code=status.HTTP_201_CREATED)
 def create_transaction(
     transaction: TransactionCreate,
     current_user: UserModel = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """새 트랜잭션 생성"""
+    # 1. 카테고리 검증
     category = (
         db.query(CategoryModel)
         .filter(CategoryModel.user_id == current_user.id)
@@ -95,6 +97,7 @@ def create_transaction(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
         )
+    # 2. 트랜잭션 생성
     new_transaction = TransactionModel(
         **transaction.model_dump(),
         user_id=current_user.id,  # user id 변경 필요
@@ -102,6 +105,10 @@ def create_transaction(
     db.add(new_transaction)
     db.commit()
     db.refresh(new_transaction)
+
+    # 3. 이미 조회한 category를 명시적으로 할당 (N+1 방지)
+    new_transaction.category = category
+
     return new_transaction
 
 
@@ -114,8 +121,10 @@ def update_transaction(
     db: Session = Depends(get_db),
 ):
     """트랜잭션 수정"""
+    # 1. 기존 트랜잭션 조회 (eager loading)
     transaction = (
         db.query(TransactionModel)
+        .options(joinedload(TransactionModel.category))
         .filter(TransactionModel.user_id == current_user.id)
         .filter(TransactionModel.id == transaction_id)
         .first()
@@ -124,7 +133,23 @@ def update_transaction(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found"
         )
-    for field, value in transaction_update.model_dump(exclude_unset=True).items():
+    # 2. category_id 변경 시 검증
+    updated_data = transaction_update.model_dump(exclude_unset=True)
+    if "category_id" in updated_data:
+        new_category = (
+            db.query(CategoryModel)
+            .filter(CategoryModel.user_id == current_user.id)
+            .filter(CategoryModel.id == updated_data["category_id"])
+            .first()
+        )
+        if not new_category:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
+            )
+        # 미리 할당 (commit 전에)
+        transaction.category = new_category
+    # 3. 트랜잭션 업데이트
+    for field, value in updated_data.items():
         setattr(transaction, field, value)
     db.commit()
     db.refresh(transaction)

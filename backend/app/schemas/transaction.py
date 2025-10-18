@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from datetime import datetime
+from datetime import date as DateType, datetime
 from uuid import UUID
 
 from app.models.enums import TransactionType, TransactionStatus
@@ -18,7 +18,7 @@ class CategoryNested(BaseModel):
 
 # 공통 필드
 class TransactionBase(BaseModel):
-    date: datetime = Field(..., description="거래 날짜")
+    date: DateType = Field(..., description="거래 날짜 (YYYY-MM-DD)")
     description: str = Field(..., min_length=1, max_length=255, description="거래 설명")
     amount: int = Field(..., gt=0, description="금액 (양수)")
     type: TransactionType = Field(..., description="거래 유형 (income/expense)")
@@ -33,7 +33,7 @@ class TransactionCreate(TransactionBase):
 
 # 수정 요청용
 class TransactionUpdate(BaseModel):
-    date: Optional[datetime] = None
+    date: Optional[DateType] = None
     description: Optional[str] = Field(None, min_length=1, max_length=255)
     amount: Optional[int] = Field(None, gt=0)
     type: Optional[TransactionType] = None
