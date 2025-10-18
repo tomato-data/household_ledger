@@ -2,12 +2,12 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import {
     getTransactions,
-    // getTransaction,
     createTransaction,
     updateTransaction as updateTransactionAPI,
     deleteTransaction as deleteTransactionAPI,
     getTransactionStats,
 } from '../services/transactionService';
+import { sortTransactionsByDate, isDateInRange } from '../utils/formatDate';
 
 // 1. Context 생성
 const TransactionContext = createContext();
@@ -32,23 +32,44 @@ export const TransactionProvider = ({ children }) => {
     // 헬퍼 함수: 필터가 활성화되었는지 체크
     const hasActiveFilters = () => {
         return !!(filters.start_date || filters.end_date || filters.category_id || filters.type);
-    }
+    };
+
+    // 헬퍼 함수: 트랜잭션이 현재 필터에 맞는지 확인
+    const checkTransactionMatchesFilter = (transaction) => {
+        // 날짜 필터 (문자열 비교)
+        const txDate = transaction.date.split('T')[0]; // "2025-10-18"
+
+        if (!isDateInRange(txDate, filters.start_date, filters.end_date)) {
+            return false;
+        }
+
+        // 카테고리 필터
+        if (filters.category_id && transaction.category.id !== filters.category_id) {
+            return false;
+        }
+
+        // 타입 필터
+        if (filters.type && transaction.type.toLowerCase() !== filters.type.toLowerCase()) {
+            return false;
+        }
+
+        return true;
+    };
 
     const loadAllTransactions = async () => {
         try {
             setLoading(true);
             setError(null);
             const token = await getToken();
-            // 전체 데이터 로드 - limit을 충분히 크게 설정
             const data = await getTransactions(token, { limit: 10000 });
-            setAllTransactions(data);
+            setAllTransactions(sortTransactionsByDate(data));
         } catch (error) {
             console.error('트랜잭션 로딩 실패:', error);
             setError(error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const loadStats = async () => {
         try {
@@ -64,14 +85,12 @@ export const TransactionProvider = ({ children }) => {
         try {
             const token = await getToken();
             const data = await getTransactions(token, filters);
-            setFilteredTransactions(data);
+            setFilteredTransactions(sortTransactionsByDate(data));
         } catch (error) {
             console.error('필터링된 트랜잭션 로딩 실패:', error);
             setError(error.message);
-        } finally {
-            setLoading(false);
         }
-    }
+    };
 
     // 최초 로드 시 전체 트랜잭션 가져오기
     useEffect(() => {
@@ -79,10 +98,19 @@ export const TransactionProvider = ({ children }) => {
         loadStats();
     }, []); // 컴포넌트 마운트 시 한 번
 
+    // allTransactions 변경 시 filteredTransactions 동기화 (필터 없을 때)
+    useEffect(() => {
+        if (!hasActiveFilters()) {
+            setFilteredTransactions(allTransactions);
+        }
+    }, [allTransactions]);
+
     // 필터 변경 시 필터링된 트랜잭션 가져오기
     useEffect(() => {
-        if (filters.start_date || filters.end_date || filters.category_id || filters.type) {
+        if (hasActiveFilters()) {
             loadFilteredTransactions();
+        } else {
+            setFilteredTransactions(allTransactions);
         }
     }, [filters]);
 
@@ -91,49 +119,58 @@ export const TransactionProvider = ({ children }) => {
             const token = await getToken();
             const newTransaction = await createTransaction(token, transactionData);
 
-            // 전체 트랜잭션 배열에 추가
-            setAllTransactions([...allTransactions, newTransaction]);
+            // 전체 트랜잭션에 추가 후 정렬
+            const updatedAll = sortTransactionsByDate([...allTransactions, newTransaction]);
+            setAllTransactions(updatedAll);
 
-            // 필터가 설정된 경우에만 필터링된 트랜잭션 다시 로드
+            // 필터가 있으면 조건 확인 후 추가
             if (hasActiveFilters()) {
-                loadFilteredTransactions();
+                if (checkTransactionMatchesFilter(newTransaction)) {
+                    const updatedFiltered = sortTransactionsByDate([...filteredTransactions, newTransaction]);
+                    setFilteredTransactions(updatedFiltered);
+                }
             }
+            // 필터가 없으면 useEffect가 자동 동기화
 
-            // 통계 데이터 업데이트
             loadStats();
-
             return newTransaction;
         } catch (error) {
             console.error('트랜잭션 생성 실패:', error);
             setError(error.message);
-            throw error; // 호출한 곳에서 에러 처리하도록
+            throw error;
         }
-    };
+    }
 
-    // 트랜잭션 수정 함수
     const updateTransaction = async (transactionId, transactionData) => {
         try {
             const token = await getToken();
             const updatedTransaction = await updateTransactionAPI(token, transactionId, transactionData);
 
-            // 전체 트랜잭션 배열에서 해당 트랜잭션만 업데이트
-            setAllTransactions(allTransactions.map(tx =>
+            // 전체 트랜잭션 업데이트
+            const updatedAll = allTransactions.map(tx =>
                 tx.id === transactionId ? updatedTransaction : tx
-            ));
+            );
+            setAllTransactions(sortTransactionsByDate(updatedAll));
 
-            // 필터 조건에 맞으면 filteredTransactions에도 업데이트 또는 다시 로드
-            setFilteredTransactions(filteredTransactions.map(tx =>
-                tx.id === transactionId ? updatedTransaction : tx
-            ));
+            // 필터링된 트랜잭션 업데이트
+            if (hasActiveFilters()) {
+                if (checkTransactionMatchesFilter(updatedTransaction)) {
+                    const updatedFiltered = filteredTransactions.map(tx =>
+                        tx.id === transactionId ? updatedTransaction : tx
+                    );
+                    setFilteredTransactions(sortTransactionsByDate(updatedFiltered));
+                } else {
+                    // 더 이상 필터에 맞지 않으면 제거
+                    setFilteredTransactions(filteredTransactions.filter(tx => tx.id !== transactionId));
+                }
+            }
 
-            // 통계 데이터 업데이트
             loadStats();
-
             return updatedTransaction;
         } catch (error) {
             console.error('트랜잭션 수정 실패:', error);
             setError(error.message);
-            throw error; // 호출한 곳에서 에러 처리하도록
+            throw error;
         }
     };
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import db from '../utils/db';
 import { useTransactions } from '../context/TransactionContext';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns'; // 날짜 필터링용
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
+import { getTransactionsForMonth } from '../utils/formatDate';
 import CalendarBox from '../components/CalendarBox';
 import TransactionForm from '../components/TransactionForm';
 import RecurringTransactionForm from '../components/RecurringTransactionForm'
@@ -267,13 +268,8 @@ function Home() {
         setShowForm(true);  // 모달 열기
     };
 
-    const monthlyTransactions = filteredTransactions.filter(tx => {
-        const txDate = new Date(tx.date);
-        return (
-            txDate.getMonth() === selectedDate.getMonth() &&
-            txDate.getFullYear() === selectedDate.getFullYear()
-        );
-    });
+    // 월별 트랜잭션 필터링 (유틸리티 함수 사용)
+    const monthlyTransactions = getTransactionsForMonth(filteredTransactions, selectedDate);
 
     // 월별 수입/지출 계산 (filteredTransactions 사용)
     const totalIncome = monthlyTransactions
