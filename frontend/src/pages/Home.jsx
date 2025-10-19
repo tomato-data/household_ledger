@@ -329,7 +329,7 @@ function Home() {
                     <span className="summary-amount expense">{totalExpense.toLocaleString()}원</span>
                 </div>
             </div>
-            <div className="calendar-section">
+            <div className={`calendar-section ${loading ? 'calendar-loading' : ''}`}>
                 <CalendarBox
                     transactions={filteredTransactions}
                     recurringTransactions={recurringTransactions}
