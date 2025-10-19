@@ -83,9 +83,17 @@ export const TransactionProvider = ({ children }) => {
 
     const loadFilteredTransactions = async () => {
         try {
+            // 즉시 클라이언트 필터링 (낙관적 업데이트)
+            if (allTransactions.length > 0) {
+                const clientFiltered = allTransactions.filter(tx => {
+                    return checkTransactionMatchesFilter(tx);
+                });
+                setFilteredTransactions(sortTransactionsByDate(clientFiltered));
+            }
+            // 백그라운드에서 서버 데이터 동기화
             const token = await getToken();
-            const data = await getTransactions(token, filters);
-            setFilteredTransactions(sortTransactionsByDate(data));
+            const serverData = await getTransactions(token, filters);
+            setFilteredTransactions(sortTransactionsByDate(serverData));
         } catch (error) {
             console.error('필터링된 트랜잭션 로딩 실패:', error);
             setError(error.message);
