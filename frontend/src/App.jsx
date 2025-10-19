@@ -19,7 +19,9 @@ function App() {
         </SignedOut>
         <SignedIn>
           <AppProviders>
-            <UserButton />
+            <div className="user-button-container">
+              <UserButton />
+            </div>
             <Home />
           </AppProviders>
         </SignedIn>

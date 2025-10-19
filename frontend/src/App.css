@@ -69,6 +69,23 @@ body {
     background-color: var(--accent-color);
 }
 
+/* Clerk UserButton 위치 (오른쪽 위) */
+.user-button-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    transition: all 0.2s ease;
+}
+
+/* 반응형 UserButton */
+@media (max-width: 480px) {
+    .user-button-container {
+        top: 15px;
+        right: 15px;
+    }
+}
+
 /* 📱 사이드바 스타일 */
 .sidebar-overlay {
     position: fixed;

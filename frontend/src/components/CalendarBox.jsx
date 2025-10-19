@@ -96,6 +96,11 @@ function CalendarBox({ transactions, recurringTransactions, selectedDate, setSel
         calendarType="gregory"
         onChange={setSelectedDate}  // 🔁 날짜 클릭 시 상태 변경
         value={selectedDate}
+        onActiveStartDateChange={({ activeStartDate }) => {
+          // 화살표로 월 변경 시 호출됨
+          // activeStartDate는 표지 중인 월의 1일
+          setSelectedDate(activeStartDate);
+        }}
         tileContent={({ date, view }) => {
           if (view !== 'month') return null;
 
