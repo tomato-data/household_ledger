@@ -1040,6 +1040,28 @@ button:hover {
     animation: slideUp 0.3s ease-out;
 }
 
+/* 🏷️ 카테고리 관리 모달 - 더 넓게 */
+.category-modal-content {
+    max-width: 800px;
+    width: 95%;
+    color: var(--text-primary);
+}
+
+.category-modal-content h2,
+.category-modal-content h3,
+.category-modal-content h4,
+.category-modal-content p,
+.category-modal-content label,
+.category-modal-content span {
+    color: var(--text-primary);
+}
+
+.category-modal-content input,
+.category-modal-content select,
+.category-modal-content textarea {
+    color: var(--text-primary);
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }

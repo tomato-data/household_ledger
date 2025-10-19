@@ -5,6 +5,7 @@ import {
     createCategory,
     updateCategory as updateCategoryAPI,
     deleteCategory as deleteCategoryAPI,
+    reorderCategories as reorderCategoriesAPI,
 } from '../services/categoryService';
 
 // 1. Context 생성
@@ -31,7 +32,9 @@ export const CategoryProvider = ({ children }) => {
             setError(null);
             const token = await getToken();
             const data = await getCategories(token);
-            setCategories(data);
+            // order 기준으로 정렬
+            const sortedData = [...data].sort((a, b) => (a.order || 0) - (b.order || 0));
+            setCategories(sortedData);
         } catch (error) {
             console.error('카테고리 로딩 실패:', error);
             setError(error.message);
@@ -89,6 +92,30 @@ export const CategoryProvider = ({ children }) => {
         }
     }
 
+    // 카테고리 순서 변경 함수
+    const reorderCategories = async (newOrderedCategories) => {
+        try {
+            // 1️⃣ 낙관적 UI 업데이트 (즉시 화면 반영)
+            setCategories(newOrderedCategories);
+
+            // 2️⃣ 백엔드 동기화용 데이터 생성
+            const reorderData = newOrderedCategories.map((cat, index) => ({
+                category_id: cat.id,
+                order: index,
+            }));
+
+            // 3️⃣ 백엔드에 순서 저장
+            const token = await getToken();
+            await reorderCategoriesAPI(token, reorderData);
+        } catch (error) {
+            console.error('카테고리 순서 변경 실패:', error);
+            setError(error.message);
+            // 에러 발생 시 원래 데이터로 롤백
+            await loadCategories();
+            throw error;
+        }
+    };
+
     // Context에 제공할 값
     const value = {
         categories, // 카테고리 목록
@@ -98,6 +125,7 @@ export const CategoryProvider = ({ children }) => {
         addCategory, // 카테고리 추가
         updateCategory, // 카테고리 수정
         deleteCategory, // 카테고리 삭제
+        reorderCategories, // 카테고리 순서 변경
     };
 
     return (

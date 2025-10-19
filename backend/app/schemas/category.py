@@ -8,6 +8,7 @@ from uuid import UUID
 class CategoryBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     emoji: Optional[str] = Field(None, max_length=10)
+    order: Optional[int] = 0
 
 
 # 2. CategoryCreate 생성 요청
@@ -34,3 +35,8 @@ class Category(CategoryInDB):
     class Config:
         from_attributes = True  # Pydantic v2
         # orm_mode = True # Pydantic v1
+
+# 6. CategoryReorder 순서 변경 요청
+class CategoryReorder(BaseModel):
+    category_id: UUID
+    order: int

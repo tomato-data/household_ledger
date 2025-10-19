@@ -3,6 +3,7 @@ from .category import (
     CategoryCreate,
     CategoryUpdate,
     CategoryInDB,
+    CategoryReorder,
 )
 from .transaction import (
     Transaction,
@@ -23,6 +24,7 @@ __all__ = [
     "CategoryCreate",
     "CategoryUpdate",
     "CategoryInDB",
+    "CategoryReorder",
     "Transaction",
     "TransactionCreate",
     "TransactionUpdate",
