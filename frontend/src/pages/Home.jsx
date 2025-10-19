@@ -8,6 +8,7 @@ import TransactionForm from '../components/TransactionForm';
 import RecurringTransactionForm from '../components/RecurringTransactionForm'
 import OnboardingModal from '../components/OnboardingModal';
 import { generateScheduledTransactions, updateScheduledTransactions } from '../utils/recurringScheduler';
+import CategoryManagement from '../components/CategoryManagement';
 
 function Home() {
     const {
@@ -22,11 +23,12 @@ function Home() {
         deleteTransaction,
         setFilters,
     } = useTransactions();
+    const [showForm, setShowForm] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(false);
+    const [showCategoryManagement, setShowCategoryManagement] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editTarget, setEditTarget] = useState(null);  // 수정할 거래 상태 추가
-    const [showForm, setShowForm] = useState(false);
     const [showBackupAlert, setShowBackupAlert] = useState(false);
-    const [showSidebar, setShowSidebar] = useState(false);
     const [showAssets, setShowAssets] = useState(false);
     const [modalTab, setModalTab] = useState('transaction'); // 'transaction' or 'recurring'
     const [recurringTransactions, setRecurringTransactions] = useState([]);
@@ -74,18 +76,20 @@ function Home() {
                     setShowBackupAlert(false);
                 } else if (showSidebar) {
                     setShowSidebar(false);
+                } else if (showCategoryManagement) {
+                    setShowCategoryManagement(false);
                 }
             }
         };
 
-        if (showForm || showBackupAlert || showSidebar) {
+        if (showForm || showBackupAlert || showSidebar || showCategoryManagement) {
             document.addEventListener('keydown', handleKeyPress);
         }
 
         return () => {
             document.removeEventListener('keydown', handleKeyPress);
         };
-    }, [showForm, showBackupAlert, showSidebar]);
+    }, [showForm, showBackupAlert, showSidebar, showCategoryManagement]);
 
     // 백업 상태 체크 (30일마다)
     const checkBackupStatus = () => {
@@ -450,7 +454,28 @@ function Home() {
                                     />
                                 </label>
                             </div>
+                            <div className="sidebar-section">
+                                <h4>설정</h4>
+                                <button
+                                    className="sidebar-btn category-btn"
+                                    onClick={() => {
+                                        setShowCategoryManagement(true);
+                                        setShowSidebar(false);  // 사이드바 닫기
+                                    }}
+                                >
+                                    🏷️ 카테고리 관리
+                                </button>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 카테고리 관리 모달 */}
+            {showCategoryManagement && (
+                <div className="modal-overlay" onClick={() => setShowCategoryManagement(false)}>
+                    <div className="modal-content category-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <CategoryManagement onComplete={() => setShowCategoryManagement(false)} />
                     </div>
                 </div>
             )}

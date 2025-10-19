@@ -73,3 +73,18 @@ export const deleteCategory = async (token, categoryId) => {
     });
     // 204 No Content이므로 반환값 없음
 }
+
+/**
+ * 카테고리 순서 일괄 업데이트
+ * @param {string} token - Clerk JWT 토큰
+ * @param {Array} reorderData - [{category_id: string, order: number}, ...]
+ * @returns {Promise<Object>} - 응답 메시지
+ */
+export const reorderCategories = async (token, reorderData) => {
+    const response = await apiClient.patch('/api/v1/categories/batch/reorder', reorderData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return response.data;
+}

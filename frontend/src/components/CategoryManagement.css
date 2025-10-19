@@ -1,19 +1,118 @@
 /* 카테고리 관리 컨테이너 */
 .category-management {
     padding: 20px;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
-.category-management h3 {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 24px;
+/* 모달 헤더 */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    gap: 20px;
+}
+
+.modal-title-section h3 {
+    margin: 0 0 8px 0;
+    color: #e0e0e0;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.modal-title-section .description {
+    color: #b0b0b0;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 모달 액션 버튼들 */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.unsaved-indicator {
+    color: #ff9800;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: rgba(255, 152, 0, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    animation: pulse 2s infinite;
+    white-space: nowrap;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+}
+
+.btn-cancel-modal {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-cancel-modal:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-save-modal {
+    padding: 10px 24px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-save-modal:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-save-modal:active {
+    transform: translateY(0);
+}
+
+.btn-save-modal:disabled {
+    background: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
 }
 
 .description {
-    color: #666;
-    margin-bottom: 20px;
+    color: #b0b0b0;
     font-size: 14px;
 }
 
@@ -26,16 +125,16 @@
 
 /* 추가 섹션 */
 .add-section {
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.05);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;
-    border: 2px dashed #dee2e6;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
 }
 
 .add-section h4 {
     margin: 0 0 15px 0;
-    color: #495057;
+    color: #e0e0e0;
     font-size: 16px;
 }
 
@@ -107,7 +206,7 @@
 
 .category-list h4 {
     margin: 0 0 15px 0;
-    color: #495057;
+    color: #e0e0e0;
     font-size: 16px;
 }
 
@@ -122,9 +221,9 @@
     padding: 40px 20px;
     color: #adb5bd;
     font-size: 14px;
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
-    border: 2px dashed #dee2e6;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
 }
 
 .category-item {
@@ -138,7 +237,7 @@
 }
 
 .category-item:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* 일반 모드 */
@@ -148,9 +247,32 @@
     align-items: center;
 }
 
+.category-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.drag-handle {
+    cursor: grab;
+    padding: 4px 8px;
+    color: #adb5bd;
+    font-size: 18px;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.drag-handle:hover {
+    color: #e0e0e0;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
 .category-display {
     font-size: 16px;
-    color: #212529;
+    color: #e0e0e0;
     font-weight: 500;
 }
 
@@ -273,6 +395,21 @@
         padding: 15px;
     }
 
+    .modal-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .modal-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .unsaved-indicator {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
     .input-group {
         flex-direction: column;
     }
@@ -287,6 +424,10 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+
+    .category-left {
+        width: 100%;
     }
 
     .actions {

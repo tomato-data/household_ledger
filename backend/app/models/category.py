@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, func
+from sqlalchemy import Column, String, ForeignKey, DateTime, func, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -22,6 +22,7 @@ class Category(Base):
     # 카테고리 이름과 이모지
     name = Column(String(100), nullable=False)
     emoji = Column(String(10), nullable=True)
+    order = Column(Integer, nullable=False, default=0)
 
     # 타임스탬프
     created_at = Column(

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.api.dependencies.auth import get_current_user
 from app.core.database import get_db
-from app.schemas import Category, CategoryCreate, CategoryUpdate
+from app.schemas import Category, CategoryCreate, CategoryUpdate, CategoryReorder
 from app.models.category import Category as CategoryModel
 from app.models.user import User as UserModel
 
@@ -31,6 +31,7 @@ def get_categories(
     categories = (
         db.query(CategoryModel)
         .filter(CategoryModel.user_id == current_user.id)
+        .order_by(CategoryModel.order.asc())
         .offset(skip)
         .limit(limit)
         .all()
@@ -138,3 +139,23 @@ def delete_category(
     db.delete(category)
     db.commit()
     return
+
+
+# 6. 카테고리 순서 변경
+@router.patch("/batch/reorder")
+def reorder_categories(
+    reorder_data: List[CategoryReorder],
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """카테고리 순서 일괄 업데이트"""
+    for item in reorder_data:
+        category = db.query(CategoryModel).filter(
+            CategoryModel.id == item.category_id,
+            CategoryModel.user_id == current_user.id,
+        ).first()
+        if category:
+            category.order = item.order
+    db.commit()
+
+    return {"message": "Categories reordered successfully"}
