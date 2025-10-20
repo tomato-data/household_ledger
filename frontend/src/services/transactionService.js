@@ -93,3 +93,25 @@ export const getTransactionStats = async (token) => {
     })
     return response.data;
 }
+
+/**
+ * 카테고리별 지출/수입 통계 조회
+ * @param {string} token - Clerk JWT 토큰
+ * @param {string} startDate - 시작 날짜 (YYYY-MM-DD)
+ * @param {string} endDate - 종료 날짜 (YYYY-MM-DD)
+ * @param {string} type - 거래 유형 (income/expense)
+ * @returns {Promise<Object>} - 통계 객체 {category_id, category_name, category_emoji, total_amount, transaction_count, percentage}
+ */
+export const getCategoryBreakdown = async (token, startDate, endDate, type = 'expense') => {
+    const response = await apiClient.get('/api/v1/transactions/stats/category-breakdown', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: {
+            start_date: startDate,
+            end_date: endDate,
+            type: type,
+        }
+    });
+    return response.data;
+};

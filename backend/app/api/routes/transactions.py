@@ -5,14 +5,16 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import datetime, date
 
+from app.core.database import get_db
 from app.api.dependencies.auth import get_current_user
 from app.models.user import User as UserModel
-from app.core.database import get_db
+from app.models.enums import TransactionType, TransactionStatus
 from app.schemas import (
     Transaction,
     TransactionCreate,
     TransactionUpdate,
     TransactionStats,
+    CategoryExpenseStats,
 )
 from app.models.transaction import Transaction as TransactionModel
 from app.models.category import Category as CategoryModel
@@ -226,3 +228,55 @@ def get_transaction_stats(
         net_asset=total_income - total_expense,
         transaction_count=transaction_count,
     )
+
+
+@router.get("/stats/category-breakdown", response_model=List[CategoryExpenseStats])
+def get_category_expense_breakdown(
+    start_date: date,
+    end_date: date,
+    type: TransactionType = TransactionType.EXPENSE, # 기본값: 지출
+    current_user: UserModel = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    기간별 카테고리별 지출/수입 통계
+
+    - PosrgreSQL GROUP BY로 집계
+    - Category 정보 JOIN
+    - Backend에서 percentage 계산
+    """
+
+    # PostgreSQL 집계 쿼리
+    query = (
+        db.query(
+            CategoryModel.id.label("category_id"),
+            CategoryModel.name.label("category_name"),
+            CategoryModel.emoji.label("category_emoji"),
+            func.sum(TransactionModel.amount).label("total_amount"),
+            func.count(TransactionModel.id).label("transaction_count"),
+        )
+        .join(CategoryModel, TransactionModel.category_id == CategoryModel.id)
+        .filter(TransactionModel.user_id == current_user.id)
+        .filter(TransactionModel.type == type)
+        .filter(TransactionModel.status == TransactionStatus.CONFIRMED)
+        .filter(TransactionModel.date >= start_date)
+        .filter(TransactionModel.date <= end_date)
+        .group_by(CategoryModel.id, CategoryModel.name, CategoryModel.emoji)
+        .order_by(func.sum(TransactionModel.amount).desc())
+    )
+
+    results = query.all()
+
+    # Backend에서 percentage 계산 (간단한 로직)
+    total = sum(r.total_amount for r in results)
+
+    return [
+        CategoryExpenseStats(
+            category_id=r.category_id,
+            category_name=r.category_name,
+            category_emoji=r.category_emoji,
+            total_amount=r.total_amount,
+            transaction_count=r.transaction_count,
+            percentage=r.total_amount / total if total > 0 else 0,
+        ) for r in results
+    ]

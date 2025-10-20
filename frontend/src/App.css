@@ -2405,3 +2405,21 @@ body:has(.calendar-loading) .summary-container {
 .simple-detail-row.recurring .simple-description {
     color: #888888;
 }
+
+.sidebar-btn {
+    /* 기존 버튼 스타일과 동일하게 */
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    text-decoration: none;  /* Link는 기본적으로 밑줄 있음 */
+    color: inherit;         /* 텍스트 색상 상속 */
+  }
+
+  .stats-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .home-btn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }

@@ -66,3 +66,15 @@ class TransactionStats(BaseModel):
     total_expense: int = Field(..., description="지출 합계")
     net_asset: int = Field(..., description="순자산 (수입 - 지출)")
     transaction_count: int = Field(..., description="총 트랜잭션 수 (Confirmed만)")
+
+
+class CategoryExpenseStats(BaseModel):
+    category_id: UUID
+    category_name: str
+    category_emoji: Optional[str]
+    total_amount: int
+    transaction_count: int
+    percentage: float # 전체 중 비율 (Backend에서 계산)
+
+    class Config:
+        from_attributes = True
