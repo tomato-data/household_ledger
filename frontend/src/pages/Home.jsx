@@ -9,6 +9,7 @@ import RecurringTransactionForm from '../components/RecurringTransactionForm'
 import OnboardingModal from '../components/OnboardingModal';
 import { generateScheduledTransactions, updateScheduledTransactions } from '../utils/recurringScheduler';
 import CategoryManagement from '../components/CategoryManagement';
+import { Link } from 'react-router-dom';
 
 function Home() {
     const {
@@ -453,6 +454,15 @@ function Home() {
                                         style={{ display: 'none' }}
                                     />
                                 </label>
+                            </div>
+                            <div className="sidebar-section">
+                                <h4>통계</h4>
+                                <Link to="/stats" className="sidebar-btn stats-btn" onClick={() => setShowSidebar(false)}>
+                                    📊 통계 보기
+                                </Link>
+                                <Link to="/" className="sidebar-btn home-btn" onClick={() => setShowSidebar(false)}>
+                                    🏠 홈으로 돌아가기
+                                </Link>
                             </div>
                             <div className="sidebar-section">
                                 <h4>설정</h4>

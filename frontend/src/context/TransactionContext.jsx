@@ -6,6 +6,7 @@ import {
     updateTransaction as updateTransactionAPI,
     deleteTransaction as deleteTransactionAPI,
     getTransactionStats,
+    getCategoryBreakdown,
 } from '../services/transactionService';
 import { sortTransactionsByDate, isDateInRange } from '../utils/formatDate';
 
@@ -20,6 +21,7 @@ export const TransactionProvider = ({ children }) => {
     const [allTransactions, setAllTransactions] = useState([]); // 전체 데이터
     const [filteredTransactions, setFilteredTransactions] = useState([]); // 필터링된 데이터
     const [stats, setStats] = useState(null); // 통계 데이터
+    const [categoryStats, setCategoryStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
@@ -80,6 +82,20 @@ export const TransactionProvider = ({ children }) => {
             console.error('트랜잭션 통계 로딩 실패:', error);
         }
     }
+
+    const loadCategoryStats = async (startDate, endDate, type = 'expense') => {
+        try {
+            setLoading(true);
+            const token = await getToken();
+            const stats = await getCategoryBreakdown(token, startDate, endDate, type);
+            setCategoryStats(stats);
+        } catch (error) {
+            console.error('카테고리 통계 로딩 실패:', error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const loadFilteredTransactions = async () => {
         try {
@@ -209,6 +225,7 @@ export const TransactionProvider = ({ children }) => {
         allTransactions,
         filteredTransactions,
         stats,
+        categoryStats,
         loading,
         error,
         filters,
@@ -217,6 +234,7 @@ export const TransactionProvider = ({ children }) => {
         addTransaction,
         updateTransaction,
         deleteTransaction,
+        loadCategoryStats,
         setFilters, // 필터 변경 함수도 제공
     };
 
