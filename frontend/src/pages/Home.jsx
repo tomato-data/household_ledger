@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import db from '../utils/db';
 import { useTransactions } from '../context/TransactionContext';
+import { useRecurringTransactions } from '../context/RecurringTransactionContext';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import { getTransactionsForMonth } from '../utils/formatDate';
 import CalendarBox from '../components/CalendarBox';
@@ -24,6 +25,11 @@ function Home() {
         deleteTransaction,
         setFilters,
     } = useTransactions();
+    const {
+        recurringTransactions,
+        loadRecurringTransactions,
+        deleteRecurringTransaction,
+    } = useRecurringTransactions();
     const [showForm, setShowForm] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showCategoryManagement, setShowCategoryManagement] = useState(false);
@@ -32,7 +38,6 @@ function Home() {
     const [showBackupAlert, setShowBackupAlert] = useState(false);
     const [showAssets, setShowAssets] = useState(false);
     const [modalTab, setModalTab] = useState('transaction'); // 'transaction' or 'recurring'
-    const [recurringTransactions, setRecurringTransactions] = useState([]);
 
     useEffect(() => {
         const monthStart = startOfMonth(selectedDate);
@@ -49,19 +54,6 @@ function Home() {
             category_id: null,
             type: null,
         });
-
-        // Recurring 트랜잭션 처리 (아직 IndexedDB 사용)
-        const setupRecurring = async () => {
-            await generateScheduledTransactions();
-            await updateScheduledTransactions();
-
-            const allRecurringTransactions = await db.recurring_transactions
-                .filter(rt => rt.is_active === true)
-                .toArray();
-            setRecurringTransactions(allRecurringTransactions);
-        };
-
-        setupRecurring();
         checkBackupStatus();
     }, [selectedDate, setFilters]);
 
@@ -228,17 +220,23 @@ function Home() {
     const handleDeleteTransaction = async (id) => {
         try {
             if (id.startsWith('recurring-')) {
-                // recurring 거래 삭제 (아직 IndexedDB 사용)
-                const recurringId = parseInt(id.split('-')[1]);
-                await db.recurring_transactions.delete(recurringId);
+                // recurring 거래 삭제
+                const recurringId = id.split('-')[1];
 
-                setRecurringTransactions(prev => prev.filter(rt => rt.id !== recurringId));
+                const confirmed = window.confirm(
+                    '반복 거래를 삭제하시겠습니까?\n\n' +
+                    '⚠️ 주의: 이미 확정된(confirmed) 거래는 유지됩니다.\n' +
+                    '예정된(scheduled) 거래만 삭제됩니다.'
+                )
 
-                // 연결된 실제 거래들도 삭제 (이건 Backend API 사용)
-                const relatedTransactions = allTransactions.filter(tx => tx.recurring_id === recurringId);
-                for (const tx of relatedTransactions) {
-                    await deleteTransaction(tx.id);
-                }
+                if (!confirmed) return;
+
+                // 백엔드가 scheduled만 삭제, confirmed는 보호
+
+                await deleteRecurringTransaction(recurringId);
+
+                // Context가 자동으로 상태 업데이트하므로 추가 작업 불필요
+                alert('반복 거래가 삭제되었습니다!');
             } else {
                 await deleteTransaction(id);
             }
@@ -261,8 +259,8 @@ function Home() {
     };
 
     const handleAddRecurringTransaction = async(recurringTx) => {
-        const id = await db.recurring_transactions.add(recurringTx);
-        alert(`반복 거래 "${recurringTx.template_name}"가 생성되었습니다! 🔄`);
+        // RecurringTransactionForm에서 이미 addRecurringTransaction 함수를 호출하므로 여기서는 모달만 닫으면 됨
+        alert(`"${recurringTx.template_name}" 반복 거래가 생성되었습니다! 🔄`);
         setShowForm(false);
         setModalTab('transaction');
     }
