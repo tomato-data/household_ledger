@@ -38,8 +38,10 @@ def get_recurring_transactions(
     - limit: 조회할 개수 (페이지네이션)
     - is_active: 활성 여부 필터
     """
-    query = db.query(RecurringTransactionModel)
-    query = query.filter(RecurringTransactionModel.user_id == current_user.id)
+    query = db.query(RecurringTransactionModel).filter(
+        RecurringTransactionModel.user_id == current_user.id,
+        RecurringTransactionModel.deleted_at == None,
+    )
 
     # 활성화 상태 필터
     if is_active is not None:
@@ -67,6 +69,7 @@ def get_recurring_transaction(
         db.query(RecurringTransactionModel)
         .filter(RecurringTransactionModel.user_id == current_user.id)
         .filter(RecurringTransactionModel.id == recurring_transaction_id)
+        .filter(RecurringTransactionModel.deleted_at == None)
         .first()
     )
     if not recurring_transaction:
@@ -142,7 +145,11 @@ def delete_recurring_transaction(
 ):
     """
     반복거래 삭제
+    - RecurringTransaction을 삭제합니다
+    - 연결된 scheduled 상태의 Transaction만 함께 삭제합니다
+    - confirmed 상태의 Transaction은 유지됩니다 (실제 발생한 거래 보호)
     """
+    # 1. RecurringTransaction 존재 확인
     recurring_transaction = (
         db.query(RecurringTransactionModel)
         .filter(RecurringTransactionModel.user_id == current_user.id)
@@ -154,6 +161,22 @@ def delete_recurring_transaction(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Recurring transaction not found",
         )
-    db.delete(recurring_transaction)
+
+    # 2. 연결된 scheduled Transaction 삭제 (confirmed는 유지)
+    from app.models.transaction import Transaction as TransactionModel
+    from app.models.enums import TransactionStatus
+
+    db.query(TransactionModel).filter(
+        TransactionModel.user_id == current_user.id,
+        TransactionModel.recurring_id == recurring_transaction_id,
+        TransactionModel.status == TransactionStatus.SCHEDULED,
+    ).delete(synchronize_session=False)
+
+    # 3. RecurringTransaction 삭제
+    from sqlalchemy import func
+    recurring_transaction.deleted_at = func.now()
+    recurring_transaction.is_active = False
+
+    # 4. 변경 사항 저장
     db.commit()
     return

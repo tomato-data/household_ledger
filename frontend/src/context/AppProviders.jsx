@@ -1,6 +1,7 @@
 import React from 'react';
 import { CategoryProvider } from './CategoryContext';
 import { TransactionProvider } from './TransactionContext';
+import { RecurringTransactionProvider } from './RecurringTransactionContext';
 // 나중에 컨텍스트들을 추가
 
 /**
@@ -11,7 +12,9 @@ export const AppProviders = ({ children }) => {
     return (
         <CategoryProvider>
             <TransactionProvider>
-                {children}
+                <RecurringTransactionProvider>
+                    {children}
+                </RecurringTransactionProvider>
             </TransactionProvider>
         </CategoryProvider>
     );

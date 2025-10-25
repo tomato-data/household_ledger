@@ -2423,3 +2423,14 @@ body:has(.calendar-loading) .summary-container {
   .home-btn {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
+
+.recurring-badge {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.recurring-badge:hover {
+    opacity: 1;
+}

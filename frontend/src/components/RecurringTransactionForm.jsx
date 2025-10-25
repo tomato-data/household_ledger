@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useRecurringTransactions } from '../context/RecurringTransactionContext';
 
 function RecurringTransactionForm({ onAdd }) {
+    const { addRecurringTransaction } = useRecurringTransactions();
     const templateNameRef = useRef(null);
     const [templateName, setTemplateName] = useState('');
     const [description, setDescription] = useState('');
@@ -43,7 +45,7 @@ function RecurringTransactionForm({ onAdd }) {
         return () => clearTimeout(timer);
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
 
         if (!templateName || !description) {
@@ -64,28 +66,38 @@ function RecurringTransactionForm({ onAdd }) {
         const newRecurringTransaction = {
             template_name: templateName,
             description: description,
-            amount: isVariableAmount ? null : parseFloat(removeCommas(amount)),
+            amount: isVariableAmount ? null : parseInt(removeCommas(amount)),
             type: type,
             frequency: frequency,
             start_date: startDate,
             end_date: endDate || null,
-            day_of_month: dayOfMonth,
+            day_of_month: parseInt(dayOfMonth),
             is_active: isActive,
             is_variable_amount: isVariableAmount,
         };
 
-        onAdd(newRecurringTransaction);
+        try {
+            // Context 함수 호출
+            await addRecurringTransaction(newRecurringTransaction);
 
-        setTemplateName('');
-        setDescription('');
-        setAmount('');
-        setType('expense');
-        setFrequency('monthly');
-        setStartDate('');
-        setEndDate('');
-        setDayOfMonth('1');
-        setIsActive(true);
-        setIsVariableAmount(false);
+            // 성공 시 부모 컴포넌트에 알림 (모달 닫기 등)
+            onAdd();
+
+            // 폼 초기화
+            setTemplateName('');
+            setDescription('');
+            setAmount('');
+            setType('expense');
+            setFrequency('monthly');
+            setStartDate('');
+            setEndDate('');
+            setDayOfMonth('1');
+            setIsActive(true);
+            setIsVariableAmount(false);
+        } catch (error) {
+            // 에러 처리 (Context에서 이미 로그 출력했지만, UI에서도 알림)
+            alert('반복거래 생성 중 오류가 발생했습니다.');
+        }
     };
 
     return (

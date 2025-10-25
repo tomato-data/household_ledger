@@ -188,32 +188,53 @@ household_ledger/
   - startOfWeek/endOfWeek 사용으로 약 35-42일분만 필터링
   - 방법 1(전체 데이터) 대비 6.5배 성능 향상 (9,135회 → 1,400회 비교)
   - 이전/다음 달 날짜에도 트랜잭션 표시로 UX 개선
+- [x] 통계 API 구현 완료
+  - GET /api/v1/transactions/stats/summary - 전체 수입/지출/순자산 합계
+  - GET /api/v1/transactions/stats/category-breakdown - 카테고리별 지출/수입 통계 (날짜 범위 필터링)
+  - 프론트엔드: StatsPage.jsx + CategoryPieChart.jsx 구현 (Recharts 라이브러리)
+  - PostgreSQL GROUP BY 집계 + Backend에서 percentage 계산
+- [x] 프론트엔드 RecurringTransaction API 연동 완료
+  - 서비스 레이어: recurringTransactionService.js (CRUD 5개 함수)
+  - Context 레이어: RecurringTransactionContext.jsx (CategoryContext 패턴 적용)
+  - AppProviders에 RecurringTransactionProvider 추가
+  - RecurringTransactionForm 수정 (IndexedDB → Backend API)
+  - Home.jsx 업데이트 (IndexedDB 의존성 제거)
+  - Category, Transaction과 동일한 3계층 패턴 완성
+- [x] RecurringTransaction Soft Delete 구현
+  - DB 스키마: deleted_at 컬럼 추가 (Alembic migration 완료)
+  - 삭제 로직: confirmed Transaction 보호, scheduled만 삭제
+  - DELETE API: Soft Delete (deleted_at + is_active = false)
+  - 프론트엔드: 삭제 확인 모달 추가
+  - TransactionItem에 recurring 배지(🔄) 표시
+- [x] Timezone 전략 확립
+  - DB + Backend: UTC 저장 (func.now() 사용)
+  - Frontend: 로컬 타임존(KST) 표시 (formatDate.js)
+  - 다국적 서비스 대비 완료
 
 ### 진행 중인 작업
-- [ ] 프론트엔드 RecurringTransaction API 연동
 - [ ] 백업/복원 기능을 Backend API로 전환
-- [ ] 통계 API 구현 (월별 합계, 카테고리별 지출 등)
+- [ ] 반복 트랜잭션 자동 생성 스케줄러 (Backend로 이동)
 
 ### 예정된 작업
-- [ ] 반복 트랜잭션 자동 생성 스케줄러 (APScheduler/Celery)
 - [ ] Clerk JWT 서명 검증 강화 (JWKS)
 - [ ] Terraform + Ansible 배포 스크립트
 
 ## 주요 기능
 
 ### 현재 기능
-- 트랜잭션 관리: 수입/지출 추가, 수정, 삭제
-- 반복 트랜잭션: 월별 자동 생성 (급여, 고정비 등)
-- 카테고리: 이모지와 함께 분류 (식비, 간식류, 카페 등)
-- 달력 뷰: react-calendar로 일별 트랜잭션 표시
-- 자산 계산: 전체 트랜잭션 합계
-- 백업/복원: JSON 파일 export/import
+- 트랜잭션 관리: 수입/지출 추가, 수정, 삭제 (Backend API 연동 완료)
+- 반복 트랜잭션: 템플릿 관리 (Backend API 연동 완료, 자동 생성은 Frontend 스케줄러)
+- 카테고리: 이모지와 함께 분류, 드래그 앤 드롭 순서 변경 (Backend API 연동 완료)
+- 달력 뷰: react-calendar로 일별 트랜잭션 표시, lazy loading 최적화
+- 통계: 전체 자산, 카테고리별 지출 분석, 파이 차트 시각화
+- 백업/복원: JSON 파일 export/import (아직 IndexedDB 사용)
 
-### 목표 기능 (마이그레이션 후)
-- 사용자별 데이터 격리: Clerk 사용자 ID 기반
-- API 기반 아키텍처: 프론트엔드-백엔드 분리
-- 확장 가능한 구조: 다중 사용자, 통계, 분석 기능
-- 컨테이너 배포: Kubernetes 준비
+### 마이그레이션 완료 현황
+- ✅ 사용자별 데이터 격리: Clerk 사용자 ID 기반 완료
+- ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction 모두 Backend 연동 완료
+- ✅ 통계 및 분석 기능: 카테고리별 지출 통계 API + 시각화 완료
+- 🔄 컨테이너 배포: Docker Compose 완료, Kubernetes 대기
+- 🔄 IndexedDB 제거: 백업/복원 기능만 남음
 
 ## 한국어 지원
 - 모든 UI 텍스트와 주석은 한국어로 작성
@@ -226,9 +247,9 @@ household_ledger/
 ### 현재 구현
 - 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
 - react-calendar 라이브러리로 날짜 선택 구현
-- Dexie로 브라우저 로컬 저장소 관리 (RecurringTransaction만 사용 중)
-- 반복 트랜잭션은 recurringScheduler.js 유틸리티로 처리
-- **Category와 Transaction은 Backend API 연동 완료** (IndexedDB 사용하지 않음)
+- **모든 도메인 Backend API 연동 완료**: Category, Transaction, RecurringTransaction
+- IndexedDB는 백업/복원 기능에만 남아있음 (제거 예정)
+- 반복 트랜잭션 자동 생성은 아직 Frontend(recurringScheduler.js)에서 처리 (Backend 이동 예정)
 
 ### 프론트엔드 아키텍처 패턴 (Category/Transaction API 연동으로 확립)
 1. **3계층 구조**: Service → Context → Component
@@ -255,12 +276,18 @@ household_ledger/
 - **Redis 캐싱**: 사용자 정보 5분 TTL, DB 쿼리 감소
 - **인덱싱**: user_id 기반 쿼리 최적화 (SQLAlchemy 모델에 ForeignKey 인덱스)
 
-### 마이그레이션 고려사항
-- 사용자별 데이터 격리 필수 (다중 테넌트) ✅ 완료
-- 기존 IndexedDB 데이터의 PostgreSQL 마이그레이션 경로 필요
-- API를 통한 백업/복원 기능 유지
-- 한국어 지원 보존 ✅ 완료
-- 대용량 데이터셋에 대한 PostgreSQL 성능 최적화 (진행 중)
+### RecurringTransaction Soft Delete 패턴
+- **Soft Delete 구현**: 실제 삭제 대신 `deleted_at` 컬럼 설정 + `is_active = false`
+- **confirmed Transaction 보호**: 이미 발생한 거래는 유지 (recurring_id 유지)
+- **scheduled Transaction 삭제**: 예정된 거래만 삭제
+- **히스토리 추적**: 삭제된 RecurringTransaction도 DB에 남아 추적 가능
+- **Foreign Key 무결성**: CASCADE 대신 수동 관리로 데이터 보호
+
+### Timezone 전략
+- **Backend + DB**: UTC로 통일 (func.now() 사용, PostgreSQL timezone=UTC)
+- **Frontend**: 로컬 타임존(KST) 자동 표시 (formatDate.js 유틸리티)
+- **다국적 대비**: 글로벌 서비스 확장 준비 완료
+- **일관성**: DateTime(timezone=True) 사용으로 모든 시간 필드 통일
 
 ## 중요 알림
 
