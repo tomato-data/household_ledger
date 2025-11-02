@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
 
 from app.models.recurring_transaction import (
     RecurringTransaction as RecurringTransactionModel,
