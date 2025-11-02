@@ -8,14 +8,13 @@ from app.models.user import User as UserModel
 
 from app.core.database import get_db
 
-from app.models.recurring_transaction import (
-    RecurringTransaction as RecurringTransactionModel,
-)
 from app.schemas import (
     RecurringTransaction,
     RecurringTransactionCreate,
     RecurringTransactionUpdate,
 )
+from app.services.recurring_transaction_service import RecurringTransactionService
+
 
 router = APIRouter(
     prefix="/recurring-transactions",
@@ -38,20 +37,10 @@ def get_recurring_transactions(
     - limit: 조회할 개수 (페이지네이션)
     - is_active: 활성 여부 필터
     """
-    query = db.query(RecurringTransactionModel).filter(
-        RecurringTransactionModel.user_id == current_user.id,
-        RecurringTransactionModel.deleted_at == None,
+    service = RecurringTransactionService(db)
+    recurring_transactions = service.get_recurring_transactions(
+        current_user.id, skip, limit, is_active
     )
-
-    # 활성화 상태 필터
-    if is_active is not None:
-        query = query.filter(RecurringTransactionModel.is_active == is_active)
-
-    # 정렬
-    query = query.order_by(RecurringTransactionModel.created_at.desc())
-
-    recurring_transactions = query.offset(skip).limit(limit).all()
-
     return recurring_transactions
 
 
@@ -65,12 +54,9 @@ def get_recurring_transaction(
     """
     특정 ID의 반복거래 조회(본인 것만)
     """
-    recurring_transaction = (
-        db.query(RecurringTransactionModel)
-        .filter(RecurringTransactionModel.user_id == current_user.id)
-        .filter(RecurringTransactionModel.id == recurring_transaction_id)
-        .filter(RecurringTransactionModel.deleted_at == None)
-        .first()
+    service = RecurringTransactionService(db)
+    recurring_transaction = service.get_recurring_transaction(
+        current_user.id, recurring_transaction_id
     )
     if not recurring_transaction:
         raise HTTPException(
@@ -92,19 +78,11 @@ def create_recurring_transaction(
     """
     새 반복거래 생성
     """
-    try:
-        new_recurring_transaction = RecurringTransactionModel(
-            **recurring_transaction.model_dump(),
-            user_id=current_user.id,
-        )
-        db.add(new_recurring_transaction)
-        db.commit()
-        db.refresh(new_recurring_transaction)
-        return new_recurring_transaction
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+    service = RecurringTransactionService(db)
+    new_recurring_transaction = service.create_recurring_transaction(
+        recurring_transaction, current_user.id
+    )
+    return new_recurring_transaction
 
 
 # 4. 반복거래 수정
@@ -118,26 +96,20 @@ def update_recurring_transaction(
     """
     반복거래 수정
     """
-    recurring_transaction = (
-        db.query(RecurringTransactionModel)
-        .filter(RecurringTransactionModel.user_id == current_user.id)
-        .filter(RecurringTransactionModel.id == recurring_transaction_id)
-        .first()
+    service = RecurringTransactionService(db)
+    updated_recurring_transaction = service.update_recurring_transaction(
+        recurring_transaction_id, recurring_update, current_user.id
     )
-    if not recurring_transaction:
+    if not updated_recurring_transaction:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Recurring transaction not found",
         )
-    for field, value in recurring_update.model_dump(exclude_unset=True).items():
-        setattr(recurring_transaction, field, value)
-    db.commit()
-    db.refresh(recurring_transaction)
-    return recurring_transaction
+    return updated_recurring_transaction
 
 
 # 5. 반복거래 삭제
-@router.delete("/{recurring_transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{recurring_transaction_id}", status_code=status.HTTP_200_OK)
 def delete_recurring_transaction(
     recurring_transaction_id: UUID,
     current_user: UserModel = Depends(get_current_user),
@@ -149,34 +121,16 @@ def delete_recurring_transaction(
     - 연결된 scheduled 상태의 Transaction만 함께 삭제합니다
     - confirmed 상태의 Transaction은 유지됩니다 (실제 발생한 거래 보호)
     """
-    # 1. RecurringTransaction 존재 확인
-    recurring_transaction = (
-        db.query(RecurringTransactionModel)
-        .filter(RecurringTransactionModel.user_id == current_user.id)
-        .filter(RecurringTransactionModel.id == recurring_transaction_id)
-        .first()
+    service = RecurringTransactionService(db)
+    deleted_count = service.delete_recurring_transaction(
+        recurring_transaction_id, current_user.id
     )
-    if not recurring_transaction:
+    if deleted_count is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Recurring transaction not found",
         )
-
-    # 2. 연결된 scheduled Transaction 삭제 (confirmed는 유지)
-    from app.models.transaction import Transaction as TransactionModel
-    from app.models.enums import TransactionStatus
-
-    db.query(TransactionModel).filter(
-        TransactionModel.user_id == current_user.id,
-        TransactionModel.recurring_id == recurring_transaction_id,
-        TransactionModel.status == TransactionStatus.SCHEDULED,
-    ).delete(synchronize_session=False)
-
-    # 3. RecurringTransaction 삭제
-    from sqlalchemy import func
-    recurring_transaction.deleted_at = func.now()
-    recurring_transaction.is_active = False
-
-    # 4. 변경 사항 저장
-    db.commit()
-    return
+    return {
+        "message": "Recurring transaction deleted successfully",
+        "deleted_scheduled_count": deleted_count,
+    }
