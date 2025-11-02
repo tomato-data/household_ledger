@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import test_db_connection, engine, Base
-from app.models import user, category, transaction, recurring_transaction
-from app.api.routes import categories, transactions, recurring_transactions
+from app.api.routes import categories, transactions, recurring_transactions, backup
 
 
 app = FastAPI(
@@ -27,6 +26,7 @@ app.add_middleware(
 app.include_router(categories.router, prefix="/api/v1")
 app.include_router(transactions.router, prefix="/api/v1")
 app.include_router(recurring_transactions.router, prefix="/api/v1")
+app.include_router(backup.router, prefix="/api/v1")
 
 
 @app.on_event("startup")

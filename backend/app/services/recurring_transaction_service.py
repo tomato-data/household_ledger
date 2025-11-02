@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 
-from datetime import date
 from uuid import UUID
 from typing import List, Optional
 from app.models.recurring_transaction import (

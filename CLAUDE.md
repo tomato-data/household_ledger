@@ -55,6 +55,7 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
 
 ### 백엔드 (FastAPI)
 - 프레임워크: FastAPI + Python 3.11
+- **아키텍처**: 3-Layer Architecture (Router → Service → CRUD → Model)
 - 데이터베이스: PostgreSQL 15
 - 캐싱: Redis (사용자 정보 5분 TTL)
 - 컨테이너: Docker + Docker Compose
@@ -90,14 +91,27 @@ household_ledger/
 │   │   ├── core/                      # 설정, DB 연결, Redis
 │   │   ├── models/                    # SQLAlchemy 모델
 │   │   ├── schemas/                   # Pydantic 스키마
+│   │   ├── crud/                      # CRUD Layer (DB 쿼리)
+│   │   │   ├── category_crud.py
+│   │   │   ├── transaction_crud.py
+│   │   │   └── recurring_transaction_crud.py
+│   │   ├── services/                  # Service Layer (비즈니스 로직)
+│   │   │   ├── category_service.py
+│   │   │   ├── transaction_service.py
+│   │   │   └── recurring_transaction_service.py
 │   │   └── api/
 │   │       ├── dependencies/auth.py   # Clerk JWT 인증 + 기본 카테고리
-│   │       └── v1/                    # API 라우터들
+│   │       └── routes/                # Router Layer (HTTP 처리)
+│   │           ├── categories.py
+│   │           ├── transactions.py
+│   │           └── recurring_transactions.py
 │   ├── scripts/                       # 마이그레이션 및 유틸리티
 │   │   ├── migrate_indexeddb.py       # IndexedDB → PostgreSQL 마이그레이션
 │   │   └── backup_data.json           # IndexedDB 백업 데이터
 │   ├── requirements.txt
 │   └── Dockerfile
+├── docs/                              # 기술 문서
+│   └── architecture-refactoring.md    # 3-Layer Architecture 리팩토링 가이드
 ├── docker-compose.yml                 # Backend + DB + Redis 컨테이너
 └── CLAUDE.md                          # 이 파일
 ```
@@ -210,6 +224,20 @@ household_ledger/
   - DB + Backend: UTC 저장 (func.now() 사용)
   - Frontend: 로컬 타임존(KST) 표시 (formatDate.js)
   - 다국적 서비스 대비 완료
+- [x] **Backend 3-Layer Architecture 리팩토링 완료** (2025-11-02)
+  - CRUD Layer: 순수 DB 쿼리 분리 (category, transaction, recurring_transaction)
+    - `flush()` 사용, `commit()`은 Service에서
+    - 재사용 가능한 쿼리 함수 제공
+  - Service Layer: 비즈니스 로직 + 트랜잭션 관리
+    - 여러 CRUD 조합
+    - `commit()` + `refresh()` 담당
+    - 클래스 기반 설계 (의존성 주입 패턴)
+  - Router Layer: HTTP 요청/응답 처리만
+    - Service 호출만
+    - None/False → HTTPException
+  - 코드 간결화 (평균 17-41% 감소)
+  - 테스트 용이성 및 유지보수성 향상
+  - 상세 문서: [docs/architecture-refactoring.md](docs/architecture-refactoring.md)
 
 ### 진행 중인 작업
 - [ ] 백업/복원 기능을 Backend API로 전환
@@ -271,10 +299,29 @@ household_ledger/
    - 프론트엔드에서 추가 API 호출 불필요
    - N+1 쿼리 문제 방지
 
+### 백엔드 아키텍처 패턴 (3-Layer Architecture, 2025-11-02 확립)
+1. **CRUD Layer** (`app/crud/*.py`):
+   - 순수 DB 쿼리만 담당
+   - `flush()` 사용 (commit은 Service에서)
+   - None 반환 (에러는 상위 계층)
+   - 재사용 가능한 쿼리 함수
+2. **Service Layer** (`app/services/*.py`):
+   - 비즈니스 로직 처리
+   - 여러 CRUD 조합
+   - `commit()` + `refresh()` 담당
+   - None/False 반환 (HTTPException은 Router에서)
+   - 클래스 기반 설계 (의존성 주입)
+3. **Router Layer** (`app/api/routes/*.py`):
+   - HTTP 요청/응답만
+   - Service 호출
+   - None/False → HTTPException
+   - 직접 DB 쿼리 금지
+
 ### 백엔드 성능 최적화
 - **Bulk Insert**: 기본 카테고리 생성 시 `db.bulk_save_objects()` 사용 (13개 INSERT → 1 트랜잭션)
 - **Redis 캐싱**: 사용자 정보 5분 TTL, DB 쿼리 감소
 - **인덱싱**: user_id 기반 쿼리 최적화 (SQLAlchemy 모델에 ForeignKey 인덱스)
+- **N+1 방지**: joinedload() 사용 + 이미 조회한 객체 재사용
 
 ### RecurringTransaction Soft Delete 패턴
 - **Soft Delete 구현**: 실제 삭제 대신 `deleted_at` 컬럼 설정 + `is_active = false`
