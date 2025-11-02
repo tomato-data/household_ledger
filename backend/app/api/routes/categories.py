@@ -6,8 +6,9 @@ from uuid import UUID
 from app.api.dependencies.auth import get_current_user
 from app.core.database import get_db
 from app.schemas import Category, CategoryCreate, CategoryUpdate, CategoryReorder
-from app.models.category import Category as CategoryModel
 from app.models.user import User as UserModel
+from app.services.category_service import CategoryService
+
 
 router = APIRouter(
     prefix="/categories",  # 모든 엔드포인트 앞에 /categories 붙음
@@ -28,14 +29,8 @@ def get_categories(
     - skip: 건너뛸 개수 (페이지네이션)
     - limit: 조회할 개수 (페이지네이션)
     """
-    categories = (
-        db.query(CategoryModel)
-        .filter(CategoryModel.user_id == current_user.id)
-        .order_by(CategoryModel.order.asc())
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    service = CategoryService(db)
+    categories = service.get_categories(current_user.id, skip, limit)
     return categories
 
 
@@ -49,12 +44,10 @@ def get_category(
     """
     특정 ID의 카테고리 조회(본인 것만)
     """
-    category = (
-        db.query(CategoryModel)
-        .filter(CategoryModel.user_id == current_user.id)
-        .filter(CategoryModel.id == category_id)
-        .first()
-    )
+    service = CategoryService(db)
+    category = service.get_category(current_user.id, category_id)
+
+    # None 체크 (Service가 None 반환하면 404 예외 발생)
     if not category:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
@@ -72,20 +65,9 @@ def create_category(
     """
     새 카테고리 생성(본인 것만)
     """
-    try:
-
-        new_category = CategoryModel(
-            **category.model_dump(),
-            user_id=current_user.id,
-        )
-        db.add(new_category)
-        db.commit()
-        db.refresh(new_category)
-        return new_category
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+    service = CategoryService(db)
+    new_category = service.create_category(category, current_user.id)
+    return new_category
 
 
 # 4. 카테고리 수정
@@ -99,21 +81,16 @@ def update_cateogry(
     """
     카테고리 수정(본인 것만)
     """
-    category = (
-        db.query(CategoryModel)
-        .filter(CategoryModel.user_id == current_user.id)
-        .filter(CategoryModel.id == category_id)
-        .first()
+    service = CategoryService(db)
+    updated_category = service.update_category(
+        category_id, category_update, current_user.id
     )
-    if not category:
+
+    if not updated_category:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
         )
-    for field, value in category_update.model_dump(exclude_unset=True).items():
-        setattr(category, field, value)
-    db.commit()
-    db.refresh(category)
-    return category
+    return updated_category
 
 
 # 5. 카테고리 삭제
@@ -126,18 +103,12 @@ def delete_category(
     """
     카테고리 삭제(본인 것만)
     """
-    category = (
-        db.query(CategoryModel)
-        .filter(CategoryModel.user_id == current_user.id)
-        .filter(CategoryModel.id == category_id)
-        .first()
-    )
-    if not category:
+    service = CategoryService(db)
+    success = service.delete_category(category_id, current_user.id)
+    if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
         )
-    db.delete(category)
-    db.commit()
     return
 
 
@@ -149,13 +120,13 @@ def reorder_categories(
     db: Session = Depends(get_db),
 ):
     """카테고리 순서 일괄 업데이트"""
-    for item in reorder_data:
-        category = db.query(CategoryModel).filter(
-            CategoryModel.id == item.category_id,
-            CategoryModel.user_id == current_user.id,
-        ).first()
-        if category:
-            category.order = item.order
-    db.commit()
+    service = CategoryService(db)
+    success = service.reorder_categories(reorder_data, current_user.id)
+
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to reorder categories",
+        )
 
     return {"message": "Categories reordered successfully"}
