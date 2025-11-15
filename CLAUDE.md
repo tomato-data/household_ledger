@@ -94,24 +94,28 @@ household_ledger/
 │   │   ├── crud/                      # CRUD Layer (DB 쿼리)
 │   │   │   ├── category_crud.py
 │   │   │   ├── transaction_crud.py
-│   │   │   └── recurring_transaction_crud.py
+│   │   │   ├── recurring_transaction_crud.py
+│   │   │   └── backup_crud.py
 │   │   ├── services/                  # Service Layer (비즈니스 로직)
 │   │   │   ├── category_service.py
 │   │   │   ├── transaction_service.py
-│   │   │   └── recurring_transaction_service.py
+│   │   │   ├── recurring_transaction_service.py
+│   │   │   └── backup_service.py
 │   │   └── api/
 │   │       ├── dependencies/auth.py   # Clerk JWT 인증 + 기본 카테고리
 │   │       └── routes/                # Router Layer (HTTP 처리)
 │   │           ├── categories.py
 │   │           ├── transactions.py
-│   │           └── recurring_transactions.py
+│   │           ├── recurring_transactions.py
+│   │           └── backup.py
 │   ├── scripts/                       # 마이그레이션 및 유틸리티
 │   │   ├── migrate_indexeddb.py       # IndexedDB → PostgreSQL 마이그레이션
 │   │   └── backup_data.json           # IndexedDB 백업 데이터
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── docs/                              # 기술 문서
-│   └── architecture-refactoring.md    # 3-Layer Architecture 리팩토링 가이드
+│   ├── architecture-refactoring.md    # 3-Layer Architecture 리팩토링 가이드
+│   └── MIGRATION_HISTORY.md           # 마이그레이션 완료 작업 상세 내역
 ├── docker-compose.yml                 # Backend + DB + Redis 컨테이너
 └── CLAUDE.md                          # 이 파일
 ```
@@ -133,114 +137,34 @@ household_ledger/
 ## 마이그레이션 진행 상황
 
 ### 완료된 작업
-- [x] Clerk 인증 프론트엔드 통합
-- [x] Docker Compose 환경 구성 (Backend + PostgreSQL)
-- [x] FastAPI 기본 앱 및 헬스체크 구현
-- [x] SQLAlchemy 모델 정의 (User, Category, Transaction, RecurringTransaction)
-- [x] 데이터베이스 연결 설정 (PostgreSQL + SQLAlchemy)
-- [x] Alembic 마이그레이션 설정 및 초기 마이그레이션 생성
-- [x] Docker로 전체 스택 실행 (Backend + DB)
-- [x] Pydantic 스키마 정의 (Category, Transaction)
-- [x] Category API 구현 (CRUD 완료)
-  - GET /api/v1/categories/ - 목록 조회
-  - GET /api/v1/categories/{id} - 단일 조회
-  - POST /api/v1/categories/ - 생성
-  - PATCH /api/v1/categories/{id} - 수정
-  - DELETE /api/v1/categories/{id} - 삭제
-- [x] Transaction API 구현 (CRUD 완료 + 필터링)
-  - GET /api/v1/transactions/ - 목록 조회 (날짜/카테고리/타입 필터링)
-  - GET /api/v1/transactions/{id} - 단일 조회
-  - POST /api/v1/transactions/ - 생성 (category_id 검증)
-  - PATCH /api/v1/transactions/{id} - 수정
-  - DELETE /api/v1/transactions/{id} - 삭제
-- [x] RecurringTransaction API 구현 (CRUD 완료)
-  - GET /api/v1/recurring-transactions/ - 목록 조회 (활성화 상태 필터링)
-  - GET /api/v1/recurring-transactions/{id} - 단일 조회
-  - POST /api/v1/recurring-transactions/ - 생성
-  - PATCH /api/v1/recurring-transactions/{id} - 수정
-  - DELETE /api/v1/recurring-transactions/{id} - 삭제
-- [x] Clerk JWT 인증 미들웨어 (기본 구현 완료, Redis 캐싱 포함)
-  - Bearer 토큰 추출 및 검증
-  - 사용자 자동 생성 (첫 로그인 시)
-  - Redis 캐싱으로 성능 최적화 (5분 TTL)
-- [x] 기본 카테고리 자동 생성 (첫 로그인 시 13개 카테고리 bulk insert)
-  - 식비, 간식류, 카페/디저트, 교통, 생활, 의료, 쇼핑, 문화/여가, 교육, 월급, 용돈, 기타수입, 기타지출
-- [x] 프론트엔드 Category API 연동 완료
-  - axios 기반 API 클라이언트 구성 (utils/api.js)
-  - 환경별 설정 분리 (.env.development, .env.production)
-  - 서비스 레이어 구현 (services/categoryService.js)
-  - Context API 상태 관리 (context/CategoryContext.jsx)
-  - 메타 프로바이더 패턴 (context/AppProviders.jsx)
-- [x] 온보딩 UX 구현
-  - CategoryManagement.jsx - 재사용 가능한 카테고리 CRUD 컴포넌트
-  - OnboardingModal.jsx - 첫 로그인 시 카테고리 관리 모달 (localStorage 기반)
-  - 완전한 CSS 스타일링 (반응형, 애니메이션, 모바일 대응)
-- [x] Transaction 스키마 개선
-  - CategoryNested 스키마 추가로 중첩 객체 응답 지원
-  - Transaction 응답에 카테고리 전체 정보 포함 (id, name, emoji)
-  - 프론트엔드에서 카테고리 정보를 위한 추가 API 호출 불필요
-- [x] 프론트엔드 Transaction API 연동 완료
-  - axios 기반 transactionService.js 구현
-  - TransactionContext를 Backend API로 완전 전환
-  - IndexedDB 의존성 제거 (Transaction은 더 이상 IndexedDB 사용하지 않음)
-  - Home, TransactionForm, CalendarBox 컴포넌트 업데이트
-  - Category와 동일한 3계층 패턴 적용 (Service → Context → Component)
-- [x] IndexedDB 마이그레이션 도구 구현 및 실행 완료
-  - Python 스크립트 (migrate_indexeddb.py): JSON → PostgreSQL 변환 로직
-    - UTC → KST 타임존 변환 (+9시간) 적용
-    - 카테고리 매핑 실패 시 상세 로그 추가
-  - JavaScript 스크립트 (export_all_indexeddb.js): 브라우저 콘솔에서 데이터 추출
-  - backup_data.json 최신화 (2025-10-12 기준)
-  - 마이그레이션 실행 완료: 261개 트랜잭션 성공적으로 이전
-  - 데이터 검증 완료: 월급 날짜 30일, 월세 데이터 4건 모두 정상 확인
-- [x] 프론트엔드 이중 상태 관리 구현
-  - TransactionContext: allTransactions + filteredTransactions 분리
-  - hasActiveFilters() 헬퍼 함수로 불필요한 API 호출 방지
-  - Home.jsx: 전체 자산(allTransactions), 월별 요약(filteredTransactions) 분리
-- [x] 달력 성능 최적화
-  - 필터 범위 확장: 달력 표시 범위(이전/다음 달 포함) 전체 로드
-  - startOfWeek/endOfWeek 사용으로 약 35-42일분만 필터링
-  - 방법 1(전체 데이터) 대비 6.5배 성능 향상 (9,135회 → 1,400회 비교)
-  - 이전/다음 달 날짜에도 트랜잭션 표시로 UX 개선
-- [x] 통계 API 구현 완료
-  - GET /api/v1/transactions/stats/summary - 전체 수입/지출/순자산 합계
-  - GET /api/v1/transactions/stats/category-breakdown - 카테고리별 지출/수입 통계 (날짜 범위 필터링)
-  - 프론트엔드: StatsPage.jsx + CategoryPieChart.jsx 구현 (Recharts 라이브러리)
-  - PostgreSQL GROUP BY 집계 + Backend에서 percentage 계산
-- [x] 프론트엔드 RecurringTransaction API 연동 완료
-  - 서비스 레이어: recurringTransactionService.js (CRUD 5개 함수)
-  - Context 레이어: RecurringTransactionContext.jsx (CategoryContext 패턴 적용)
-  - AppProviders에 RecurringTransactionProvider 추가
-  - RecurringTransactionForm 수정 (IndexedDB → Backend API)
-  - Home.jsx 업데이트 (IndexedDB 의존성 제거)
-  - Category, Transaction과 동일한 3계층 패턴 완성
-- [x] RecurringTransaction Soft Delete 구현
-  - DB 스키마: deleted_at 컬럼 추가 (Alembic migration 완료)
-  - 삭제 로직: confirmed Transaction 보호, scheduled만 삭제
-  - DELETE API: Soft Delete (deleted_at + is_active = false)
-  - 프론트엔드: 삭제 확인 모달 추가
-  - TransactionItem에 recurring 배지(🔄) 표시
-- [x] Timezone 전략 확립
-  - DB + Backend: UTC 저장 (func.now() 사용)
-  - Frontend: 로컬 타임존(KST) 표시 (formatDate.js)
-  - 다국적 서비스 대비 완료
-- [x] **Backend 3-Layer Architecture 리팩토링 완료** (2025-11-02)
-  - CRUD Layer: 순수 DB 쿼리 분리 (category, transaction, recurring_transaction)
-    - `flush()` 사용, `commit()`은 Service에서
-    - 재사용 가능한 쿼리 함수 제공
-  - Service Layer: 비즈니스 로직 + 트랜잭션 관리
-    - 여러 CRUD 조합
-    - `commit()` + `refresh()` 담당
-    - 클래스 기반 설계 (의존성 주입 패턴)
-  - Router Layer: HTTP 요청/응답 처리만
-    - Service 호출만
-    - None/False → HTTPException
-  - 코드 간결화 (평균 17-41% 감소)
-  - 테스트 용이성 및 유지보수성 향상
-  - 상세 문서: [docs/architecture-refactoring.md](docs/architecture-refactoring.md)
+> 📄 전체 상세 내역은 [MIGRATION_HISTORY.md](MIGRATION_HISTORY.md) 참조
+
+**주요 완료 항목**:
+- ✅ Backend 3-Layer Architecture (CRUD/Service/Router 분리)
+- ✅ Category, Transaction, RecurringTransaction API 구현
+- ✅ Backend 백업/복원 API (gzip 압축, UUID 매핑, 미리보기)
+- ✅ Frontend API 연동 (Category, Transaction, RecurringTransaction)
+- ✅ Clerk 인증 + 자동 사용자 생성 + 기본 카테고리 생성
+- ✅ Docker Compose 환경 (Backend + PostgreSQL + Redis)
+- ✅ IndexedDB → PostgreSQL 마이그레이션 완료 (261건)
+- ✅ 통계 API + 시각화 (Recharts)
+- ✅ Soft Delete 패턴 (RecurringTransaction)
+- ✅ Timezone 전략 (UTC → KST)
 
 ### 진행 중인 작업
-- [ ] 백업/복원 기능을 Backend API로 전환
+- [ ] **프론트엔드 백업/복원 기능 Backend API 전환** (다음 작업)
+  - 백업 서비스 레이어 작성 (services/backupService.js)
+    - exportBackup(): Blob 응답 처리 (responseType: 'blob')
+    - previewBackup(file): FormData 파일 업로드
+    - importBackup(file, overwrite): 복원 API 호출
+  - Home.jsx 수정
+    - handleBackup(): IndexedDB → Backend API (exportBackup)
+    - restoreFromFile(): FileReader → Backend API (previewBackup + importBackup)
+    - 파일 확장자: .json → .json.gz
+    - Context API 새로고침 (복원 후)
+  - IndexedDB 의존성 제거
+    - Home.jsx에서 `import db from '../utils/db'` 삭제
+    - 백업/복원 관련 IndexedDB 코드 모두 제거
 - [ ] 반복 트랜잭션 자동 생성 스케줄러 (Backend로 이동)
 
 ### 예정된 작업
@@ -255,14 +179,16 @@ household_ledger/
 - 카테고리: 이모지와 함께 분류, 드래그 앤 드롭 순서 변경 (Backend API 연동 완료)
 - 달력 뷰: react-calendar로 일별 트랜잭션 표시, lazy loading 최적화
 - 통계: 전체 자산, 카테고리별 지출 분석, 파이 차트 시각화
-- 백업/복원: JSON 파일 export/import (아직 IndexedDB 사용)
+- 백업/복원: gzip 압축 JSON 파일 export/import (Backend API 구현 완료, Frontend 전환 대기)
 
 ### 마이그레이션 완료 현황
 - ✅ 사용자별 데이터 격리: Clerk 사용자 ID 기반 완료
-- ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction 모두 Backend 연동 완료
+- ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction, Backup 모두 Backend 연동 완료
 - ✅ 통계 및 분석 기능: 카테고리별 지출 통계 API + 시각화 완료
+- ✅ Backend 백업/복원 API: gzip 압축, UUID 매핑, 미리보기 기능 완료
 - 🔄 컨테이너 배포: Docker Compose 완료, Kubernetes 대기
-- 🔄 IndexedDB 제거: 백업/복원 기능만 남음
+- 🔄 IndexedDB 제거: Frontend 백업 기능 전환 후 완전 제거 예정
+- 🔄 트랜잭션 '수정' 기능에 날짜 수정기능 추가
 
 ## 한국어 지원
 - 모든 UI 텍스트와 주석은 한국어로 작성
@@ -275,8 +201,8 @@ household_ledger/
 ### 현재 구현
 - 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
 - react-calendar 라이브러리로 날짜 선택 구현
-- **모든 도메인 Backend API 연동 완료**: Category, Transaction, RecurringTransaction
-- IndexedDB는 백업/복원 기능에만 남아있음 (제거 예정)
+- **모든 도메인 Backend API 연동 완료**: Category, Transaction, RecurringTransaction, Backup
+- IndexedDB는 Home.jsx 백업 기능에만 남아있음 (Frontend 전환 후 제거 예정)
 - 반복 트랜잭션 자동 생성은 아직 Frontend(recurringScheduler.js)에서 처리 (Backend 이동 예정)
 
 ### 프론트엔드 아키텍처 패턴 (Category/Transaction API 연동으로 확립)
@@ -284,6 +210,8 @@ household_ledger/
    - **Service 레이어**: axios로 API 호출, 순수 함수
      - categoryService.js: 카테고리 CRUD
      - transactionService.js: 트랜잭션 CRUD + 필터링
+     - recurringTransactionService.js: 반복 트랜잭션 CRUD
+     - backupService.js: 백업/복원 (구현 대기)
    - **Context 레이어**: 상태 관리, useAuth로 토큰 주입
      - CategoryContext.jsx: 카테고리 전역 상태
      - TransactionContext.jsx: 트랜잭션 전역 상태
@@ -335,6 +263,18 @@ household_ledger/
 - **Frontend**: 로컬 타임존(KST) 자동 표시 (formatDate.js 유틸리티)
 - **다국적 대비**: 글로벌 서비스 확장 준비 완료
 - **일관성**: DateTime(timezone=True) 사용으로 모든 시간 필드 통일
+
+### 백업/복원 구현 패턴 (Backend)
+- **gzip 압축**: Python `gzip.compress()`로 파일 크기 감소
+- **UUID 매핑**: 백업 시 UUID → 복원 시 신규 UUID로 자동 재매핑
+  - `category_id_map`, `recurring_id_map`으로 FK 관계 유지
+  - Pydantic 스키마 → SQLAlchemy 모델 변환 시 ID 재생성
+- **미리보기 기능**: 복원 전 BackupData 파싱 → BackupMetadata 추출 (UX 개선)
+- **overwrite 옵션**:
+  - `overwrite=true`: 기존 데이터 삭제 후 복원
+  - `overwrite=false`: 병합 (ID 충돌 가능성 주의)
+- **Blob 응답**: FastAPI `StreamingResponse`로 바이너리 파일 다운로드
+- **FormData 업로드**: `UploadFile`로 multipart/form-data 처리
 
 ## 중요 알림
 

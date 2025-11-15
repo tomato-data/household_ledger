@@ -36,6 +36,7 @@ function Home() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editTarget, setEditTarget] = useState(null);  // 수정할 거래 상태 추가
     const [showBackupAlert, setShowBackupAlert] = useState(false);
+    const [backupDismissed, setBackupDismissed] = useState(false);
     const [showAssets, setShowAssets] = useState(false);
     const [modalTab, setModalTab] = useState('transaction'); // 'transaction' or 'recurring'
 
@@ -54,8 +55,12 @@ function Home() {
             category_id: null,
             type: null,
         });
+    }, [selectedDate]);
+
+    // 백업 상태 체크 (마운트 시 1회만)
+    useEffect(() => {
         checkBackupStatus();
-    }, [selectedDate, setFilters]);
+    }, []);
 
     // ESC 키로 모달 닫기
     useEffect(() => {
@@ -86,6 +91,9 @@ function Home() {
 
     // 백업 상태 체크 (30일마다)
     const checkBackupStatus = () => {
+        // 이미 "나중에" 버튼을 눌렀다면 체크하지 않음
+        if (backupDismissed) return;
+
         const lastBackup = localStorage.getItem('lastBackupDate');
         const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
 
@@ -400,7 +408,10 @@ function Home() {
                             <button className="backup-btn" onClick={handleBackup}>
                                 📥 지금 백업하기
                             </button>
-                            <button className="backup-later-btn" onClick={() => setShowBackupAlert(false)}>
+                            <button className="backup-later-btn" onClick={() => {
+                                setShowBackupAlert(false);
+                                setBackupDismissed(true);
+                            }}>
                                 나중에 하기
                             </button>
                         </div>
