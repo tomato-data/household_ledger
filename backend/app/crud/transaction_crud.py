@@ -18,6 +18,7 @@ def get_transactions_by_user(
     end_date: Optional[date] = None,
     category_id: Optional[UUID] = None,
     type: Optional[TransactionType] = None,
+    recurring_id: Optional[UUID] = None,
 ) -> List[TransactionModel]:
     """
     트랜잭션 목록 조회 (필터링 지원)
@@ -35,6 +36,8 @@ def get_transactions_by_user(
         query = query.filter(TransactionModel.category_id == category_id)
     if type:
         query = query.filter(TransactionModel.type == type)
+    if recurring_id:
+        query = query.filter(TransactionModel.recurring_id == recurring_id)
 
     return query.order_by(TransactionModel.date.desc()).offset(skip).limit(limit).all()
 
