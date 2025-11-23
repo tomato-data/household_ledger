@@ -76,14 +76,16 @@ household_ledger/
 │   │   │   └── AppProviders.jsx       # 메타 프로바이더
 │   │   ├── services/                  # API 서비스 레이어
 │   │   │   ├── categoryService.js     # 카테고리 API 호출
-│   │   │   └── transactionService.js  # 트랜잭션 API 호출
+│   │   │   ├── transactionService.js  # 트랜잭션 API 호출
+│   │   │   ├── recurringTransactionService.js  # 반복 트랜잭션 API 호출
+│   │   │   └── backupService.js       # 백업/복원 API 호출
 │   │   ├── utils/
 │   │   │   ├── api.js                 # axios 인스턴스 설정
-│   │   │   └── db.js                  # Dexie (RecurringTransaction만 사용)
+│   │   │   ├── formatDate.js          # 날짜 포맷 유틸리티
+│   │   │   └── recurringScheduler.js  # 반복 거래 스케줄러 (의존성 주입 패턴)
 │   │   └── App.jsx                    # Clerk 인증 + 프로바이더
 │   ├── .env.development               # 개발 환경 변수
 │   ├── .env.production                # 프로덕션 환경 변수
-│   ├── export_all_indexeddb.js        # IndexedDB 데이터 추출 스크립트
 │   └── package.json
 ├── backend/                           # FastAPI 백엔드
 │   ├── app/
@@ -143,29 +145,19 @@ household_ledger/
 - ✅ Backend 3-Layer Architecture (CRUD/Service/Router 분리)
 - ✅ Category, Transaction, RecurringTransaction API 구현
 - ✅ Backend 백업/복원 API (gzip 압축, UUID 매핑, 미리보기)
-- ✅ Frontend API 연동 (Category, Transaction, RecurringTransaction)
+- ✅ Frontend API 연동 (Category, Transaction, RecurringTransaction, Backup)
 - ✅ Clerk 인증 + 자동 사용자 생성 + 기본 카테고리 생성
 - ✅ Docker Compose 환경 (Backend + PostgreSQL + Redis)
 - ✅ IndexedDB → PostgreSQL 마이그레이션 완료 (261건)
 - ✅ 통계 API + 시각화 (Recharts)
 - ✅ Soft Delete 패턴 (RecurringTransaction)
 - ✅ Timezone 전략 (UTC → KST)
+- ✅ Frontend 백업/복원 기능 Backend API 전환 완료
+- ✅ IndexedDB 완전 제거 (Dexie 의존성 삭제)
 
 ### 진행 중인 작업
-- [ ] **프론트엔드 백업/복원 기능 Backend API 전환** (다음 작업)
-  - 백업 서비스 레이어 작성 (services/backupService.js)
-    - exportBackup(): Blob 응답 처리 (responseType: 'blob')
-    - previewBackup(file): FormData 파일 업로드
-    - importBackup(file, overwrite): 복원 API 호출
-  - Home.jsx 수정
-    - handleBackup(): IndexedDB → Backend API (exportBackup)
-    - restoreFromFile(): FileReader → Backend API (previewBackup + importBackup)
-    - 파일 확장자: .json → .json.gz
-    - Context API 새로고침 (복원 후)
-  - IndexedDB 의존성 제거
-    - Home.jsx에서 `import db from '../utils/db'` 삭제
-    - 백업/복원 관련 IndexedDB 코드 모두 제거
 - [ ] 반복 트랜잭션 자동 생성 스케줄러 (Backend로 이동)
+- [ ] 트랜잭션 '수정' 기능에 날짜 수정기능 추가
 
 ### 예정된 작업
 - [ ] Clerk JWT 서명 검증 강화 (JWKS)
@@ -179,15 +171,15 @@ household_ledger/
 - 카테고리: 이모지와 함께 분류, 드래그 앤 드롭 순서 변경 (Backend API 연동 완료)
 - 달력 뷰: react-calendar로 일별 트랜잭션 표시, lazy loading 최적화
 - 통계: 전체 자산, 카테고리별 지출 분석, 파이 차트 시각화
-- 백업/복원: gzip 압축 JSON 파일 export/import (Backend API 구현 완료, Frontend 전환 대기)
+- 백업/복원: gzip 압축 JSON 파일 export/import (Frontend + Backend API 연동 완료)
 
 ### 마이그레이션 완료 현황
 - ✅ 사용자별 데이터 격리: Clerk 사용자 ID 기반 완료
-- ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction, Backup 모두 Backend 연동 완료
+- ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction, Backup 모두 Frontend + Backend 연동 완료
 - ✅ 통계 및 분석 기능: 카테고리별 지출 통계 API + 시각화 완료
 - ✅ Backend 백업/복원 API: gzip 압축, UUID 매핑, 미리보기 기능 완료
+- ✅ IndexedDB 완전 제거: Dexie 의존성 삭제 완료
 - 🔄 컨테이너 배포: Docker Compose 완료, Kubernetes 대기
-- 🔄 IndexedDB 제거: Frontend 백업 기능 전환 후 완전 제거 예정
 - 🔄 트랜잭션 '수정' 기능에 날짜 수정기능 추가
 
 ## 한국어 지원
@@ -202,8 +194,8 @@ household_ledger/
 - 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
 - react-calendar 라이브러리로 날짜 선택 구현
 - **모든 도메인 Backend API 연동 완료**: Category, Transaction, RecurringTransaction, Backup
-- IndexedDB는 Home.jsx 백업 기능에만 남아있음 (Frontend 전환 후 제거 예정)
-- 반복 트랜잭션 자동 생성은 아직 Frontend(recurringScheduler.js)에서 처리 (Backend 이동 예정)
+- **IndexedDB 완전 제거됨**: Dexie 의존성 삭제, 모든 데이터는 Backend API 사용
+- 반복 트랜잭션 자동 생성은 recurringScheduler.js에서 의존성 주입 패턴으로 준비됨 (현재 미사용, Backend 스케줄러로 이동 예정)
 
 ### 프론트엔드 아키텍처 패턴 (Category/Transaction API 연동으로 확립)
 1. **3계층 구조**: Service → Context → Component
@@ -211,7 +203,7 @@ household_ledger/
      - categoryService.js: 카테고리 CRUD
      - transactionService.js: 트랜잭션 CRUD + 필터링
      - recurringTransactionService.js: 반복 트랜잭션 CRUD
-     - backupService.js: 백업/복원 (구현 대기)
+     - backupService.js: 백업/복원 (구현 완료)
    - **Context 레이어**: 상태 관리, useAuth로 토큰 주입
      - CategoryContext.jsx: 카테고리 전역 상태
      - TransactionContext.jsx: 트랜잭션 전역 상태
