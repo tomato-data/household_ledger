@@ -2,7 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import test_db_connection, engine, Base
-from app.api.routes import categories, transactions, recurring_transactions, backup
+from app.api.routes import (
+    categories,
+    transactions,
+    recurring_transactions,
+    backup,
+    asset_adjustment,
+)
 
 
 app = FastAPI(
@@ -27,6 +33,7 @@ app.include_router(categories.router, prefix="/api/v1")
 app.include_router(transactions.router, prefix="/api/v1")
 app.include_router(recurring_transactions.router, prefix="/api/v1")
 app.include_router(backup.router, prefix="/api/v1")
+app.include_router(asset_adjustment.router, prefix="/api/v1")
 
 
 @app.on_event("startup")

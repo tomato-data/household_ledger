@@ -44,3 +44,6 @@ class User(Base):
     recurring_transactions = relationship(
         "RecurringTransaction", back_populates="user", cascade="all, delete-orphan"
     )
+    asset_adjustments = relationship(
+        "AssetAdjustment", back_populates="user", cascade="all, delete-orphan"
+    )
