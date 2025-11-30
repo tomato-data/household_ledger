@@ -22,3 +22,10 @@ class RecurringFrequency(str, Enum):
     WEEKLY = "weekly"  # 매주
     MONTHLY = "monthly"  # 매월
     YEARLY = "yearly"  # 매년
+
+
+class AdjustmentType(str, Enum):
+    """조정 유형"""
+
+    INCOME_MISSING = "income_missing"
+    EXPENSE_MISSING = "expense_missing"

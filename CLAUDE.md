@@ -9,11 +9,13 @@ React 기반 가계부 애플리케이션으로, 현재 IndexedDB 로컬 전용�
 ## 핵심 학습 목표 및 중요 지침
 
 ### 기본 원칙
+
 - 이 프로젝트는 React, FastAPI, PostgreSQL, Docker 학습이 주목적입니다
 - Claude는 직접 코드를 작성하지 말고, 개발자가 수동으로 코딩할 수 있도록 상세한 설명을 제공해주세요
 - 모든 대화는 한국어로 진행해주세요
 
 ### 응답 방식
+
 Claude는 다음과 같은 방식으로 응답해야 합니다:
 
 1. 코드 작성 대신 설명 우선: 코드를 직접 수정하지 말고, 어떻게 작성해야 하는지 단계별로 설명
@@ -23,17 +25,20 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
 5. 학습 포인트 강조: 각 단계에서 배울 수 있는 개념이나 기술을 명확히 설명
 
 ### 예시
+
 ❌ 나쁜 응답: "이렇게 코드를 작성하세요" + 바로 코드 제시
 ✅ 좋은 응답: "FastAPI에서 라우터를 만들 때는 다음과 같은 원리로 작동합니다. 먼저 APIRouter를 import하는 이유는... 그리고 이 라우터가 main.py의 app 인스턴스와 연결되는 방식은... 따라서 당신이 작성해야 할 코드의 구조는..."
 
 ## 개발 명령어
 
 ### 프론트엔드
+
 - 개발 서버 시작: `cd frontend && npm run dev`
 - 프로덕션 빌드: `cd frontend && npm run build`
 - 프리뷰: `cd frontend && npm run preview`
 
 ### 백엔드 + 데이터베이스
+
 - 컨테이너 시작: `docker-compose up -d`
 - 컨테이너 중지: `docker-compose down`
 - 로그 확인: `docker-compose logs -f backend`
@@ -41,6 +46,7 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
 ## 현재 아키텍처
 
 ### 프론트엔드 (React + Vite)
+
 - 인증: Clerk 통합 완료
 - 데이터 계층: Context API + Backend API (Category 완료, Transaction/RecurringTransaction 마이그레이션 중)
 - 상태 관리: React Context API 패턴 (AppProviders 메타 프로바이더)
@@ -54,6 +60,7 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
   - OnboardingModal.jsx - 첫 로그인 온보딩 모달
 
 ### 백엔드 (FastAPI)
+
 - 프레임워크: FastAPI + Python 3.11
 - **아키텍처**: 3-Layer Architecture (Router → Service → CRUD → Model)
 - 데이터베이스: PostgreSQL 15
@@ -62,6 +69,7 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
 - 인증: Clerk JWT 토큰 검증 완료 (자동 사용자 생성 + 기본 카테고리 생성)
 
 ### 프로젝트 구조
+
 ```
 household_ledger/
 ├── frontend/                           # React + Vite 앱
@@ -125,11 +133,13 @@ household_ledger/
 ## 데이터 스키마
 
 ### 현재 IndexedDB 스키마
+
 - transactions: id, date, description, amount, type, category, status, recurring_id
 - recurring_transactions: id, template_name, description, amount, type, frequency, start_date, end_date, day_of_month, is_active, is_variable_amount
 - categories: id, name, emoji
 
 ### PostgreSQL 스키마 (구현 완료)
+
 - **users**: id (UUID), clerk_user_id, email, created_at, updated_at
 - **categories**: id (UUID), user_id, name, emoji, created_at, updated_at
 - **transactions**: id (UUID), user_id, date, description, amount, type, category_id, status, recurring_id, created_at, updated_at
@@ -139,9 +149,11 @@ household_ledger/
 ## 마이그레이션 진행 상황
 
 ### 완료된 작업
+
 > 📄 전체 상세 내역은 [MIGRATION_HISTORY.md](MIGRATION_HISTORY.md) 참조
 
 **주요 완료 항목**:
+
 - ✅ Backend 3-Layer Architecture (CRUD/Service/Router 분리)
 - ✅ Category, Transaction, RecurringTransaction API 구현
 - ✅ Backend 백업/복원 API (gzip 압축, UUID 매핑, 미리보기)
@@ -156,16 +168,26 @@ household_ledger/
 - ✅ IndexedDB 완전 제거 (Dexie 의존성 삭제)
 
 ### 진행 중인 작업
+
 - [ ] 반복 트랜잭션 자동 생성 스케줄러 (Backend로 이동)
 - [ ] 트랜잭션 '수정' 기능에 날짜 수정기능 추가
 
 ### 예정된 작업
+
 - [ ] Clerk JWT 서명 검증 강화 (JWKS)
-- [ ] Terraform + Ansible 배포 스크립트
+- [ ] **Proxmox Self-hosting 배포**
+  - [ ] Proxmox VM/LXC 구성
+  - [ ] Caddy 리버스 프록시 + SSL (Let's Encrypt)
+  - [ ] Docker Compose 프로덕션 설정
+  - [ ] DNS 설정 (도메인 → 공인 IP)
+  - [ ] 포트 포워딩 (공유기)
+  - [ ] DDNS 설정 (동적 IP인 경우)
+  - [ ] Terraform + Ansible 자동화
 
 ## 주요 기능
 
 ### 현재 기능
+
 - 트랜잭션 관리: 수입/지출 추가, 수정, 삭제 (Backend API 연동 완료)
 - 반복 트랜잭션: 템플릿 관리 (Backend API 연동 완료, 자동 생성은 Frontend 스케줄러)
 - 카테고리: 이모지와 함께 분류, 드래그 앤 드롭 순서 변경 (Backend API 연동 완료)
@@ -174,6 +196,7 @@ household_ledger/
 - 백업/복원: gzip 압축 JSON 파일 export/import (Frontend + Backend API 연동 완료)
 
 ### 마이그레이션 완료 현황
+
 - ✅ 사용자별 데이터 격리: Clerk 사용자 ID 기반 완료
 - ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction, Backup 모두 Frontend + Backend 연동 완료
 - ✅ 통계 및 분석 기능: 카테고리별 지출 통계 API + 시각화 완료
@@ -183,14 +206,16 @@ household_ledger/
 - 🔄 트랜잭션 '수정' 기능에 날짜 수정기능 추가
 
 ## 한국어 지원
+
 - 모든 UI 텍스트와 주석은 한국어로 작성
 - 카테고리명과 트랜잭션 설명은 한국어 용어 사용
-- 파일명에 한국어 포함 (가계부_백업_*.json)
+- 파일명에 한국어 포함 (가계부*백업*\*.json)
 - ESC 키 모달 닫기, 30일 백업 알림 등 한국 사용자 중심 UX
 
 ## 중요 구현 노트
 
 ### 현재 구현
+
 - 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
 - react-calendar 라이브러리로 날짜 선택 구현
 - **모든 도메인 Backend API 연동 완료**: Category, Transaction, RecurringTransaction, Backup
@@ -198,6 +223,7 @@ household_ledger/
 - 반복 트랜잭션 자동 생성은 recurringScheduler.js에서 의존성 주입 패턴으로 준비됨 (현재 미사용, Backend 스케줄러로 이동 예정)
 
 ### 프론트엔드 아키텍처 패턴 (Category/Transaction API 연동으로 확립)
+
 1. **3계층 구조**: Service → Context → Component
    - **Service 레이어**: axios로 API 호출, 순수 함수
      - categoryService.js: 카테고리 CRUD
@@ -220,6 +246,7 @@ household_ledger/
    - N+1 쿼리 문제 방지
 
 ### 백엔드 아키텍처 패턴 (3-Layer Architecture, 2025-11-02 확립)
+
 1. **CRUD Layer** (`app/crud/*.py`):
    - 순수 DB 쿼리만 담당
    - `flush()` 사용 (commit은 Service에서)
@@ -238,12 +265,14 @@ household_ledger/
    - 직접 DB 쿼리 금지
 
 ### 백엔드 성능 최적화
+
 - **Bulk Insert**: 기본 카테고리 생성 시 `db.bulk_save_objects()` 사용 (13개 INSERT → 1 트랜잭션)
 - **Redis 캐싱**: 사용자 정보 5분 TTL, DB 쿼리 감소
 - **인덱싱**: user_id 기반 쿼리 최적화 (SQLAlchemy 모델에 ForeignKey 인덱스)
 - **N+1 방지**: joinedload() 사용 + 이미 조회한 객체 재사용
 
 ### RecurringTransaction Soft Delete 패턴
+
 - **Soft Delete 구현**: 실제 삭제 대신 `deleted_at` 컬럼 설정 + `is_active = false`
 - **confirmed Transaction 보호**: 이미 발생한 거래는 유지 (recurring_id 유지)
 - **scheduled Transaction 삭제**: 예정된 거래만 삭제
@@ -251,12 +280,14 @@ household_ledger/
 - **Foreign Key 무결성**: CASCADE 대신 수동 관리로 데이터 보호
 
 ### Timezone 전략
+
 - **Backend + DB**: UTC로 통일 (func.now() 사용, PostgreSQL timezone=UTC)
 - **Frontend**: 로컬 타임존(KST) 자동 표시 (formatDate.js 유틸리티)
 - **다국적 대비**: 글로벌 서비스 확장 준비 완료
 - **일관성**: DateTime(timezone=True) 사용으로 모든 시간 필드 통일
 
 ### 백업/복원 구현 패턴 (Backend)
+
 - **gzip 압축**: Python `gzip.compress()`로 파일 크기 감소
 - **UUID 매핑**: 백업 시 UUID → 복원 시 신규 UUID로 자동 재매핑
   - `category_id_map`, `recurring_id_map`으로 FK 관계 유지
