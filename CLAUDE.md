@@ -4,13 +4,14 @@
 
 ## 프로젝트 개요
 
-React 기반 가계부 애플리케이션으로, 현재 IndexedDB 로컬 전용에서 FastAPI 백엔드, PostgreSQL 데이터베이스, Clerk 인증을 포함한 풀스택 애플리케이션으로 마이그레이션 중입니다.
+Ruby on Rails 기반 가계부(Household Ledger) 풀스택 모놀리스 애플리케이션입니다.
+기존 React + FastAPI + PostgreSQL 프로젝트에서 Rails로 전면 이관 중이며, 기존 코드는 `legacy/react-fastapi` 브랜치에 보존되어 있습니다.
 
 ## 핵심 학습 목표 및 중요 지침
 
 ### 기본 원칙
 
-- 이 프로젝트는 React, FastAPI, PostgreSQL, Docker 학습이 주목적입니다
+- 이 프로젝트는 Ruby on Rails 학습이 주목적입니다
 - Claude는 직접 코드를 작성하지 말고, 개발자가 수동으로 코딩할 수 있도록 상세한 설명을 제공해주세요
 - 모든 대화는 한국어로 진행해주세요
 
@@ -21,283 +22,175 @@ Claude는 다음과 같은 방식으로 응답해야 합니다:
 1. 코드 작성 대신 설명 우선: 코드를 직접 수정하지 말고, 어떻게 작성해야 하는지 단계별로 설명
 2. 작동 원리 설명: 해당 코드가 왜 그렇게 작성되어야 하는지, 어떤 원리로 동작하는지 설명
 3. 다른 코드와의 연계성: 작성할 코드가 다른 파일이나 모듈과 어떻게 상호작용하는지 설명
-4. 모범 사례 및 주의사항: 코딩 패턴, 보안, 성능 등에 대한 모범 사례 제시
+4. 모범 사례 및 주의사항: Rails Convention, 보안, 성능 등에 대한 모범 사례 제시
 5. 학습 포인트 강조: 각 단계에서 배울 수 있는 개념이나 기술을 명확히 설명
 
 ### 예시
 
-❌ 나쁜 응답: "이렇게 코드를 작성하세요" + 바로 코드 제시
-✅ 좋은 응답: "FastAPI에서 라우터를 만들 때는 다음과 같은 원리로 작동합니다. 먼저 APIRouter를 import하는 이유는... 그리고 이 라우터가 main.py의 app 인스턴스와 연결되는 방식은... 따라서 당신이 작성해야 할 코드의 구조는..."
+- 나쁜 응답: "이렇게 코드를 작성하세요" + 바로 코드 제시
+- 좋은 응답: "Rails에서 Controller를 만들 때는 다음과 같은 원리로 작동합니다. RESTful 라우팅이 자동으로 7개의 액션을 매핑하는 이유는... 그리고 Strong Parameters로 매스 어사인먼트를 방지하는 방식은... 따라서 당신이 작성해야 할 코드의 구조는..."
+
+## 기술 스택
+
+| 영역         | 기술                             | 비고                            |
+| ------------ | -------------------------------- | ------------------------------- |
+| 프레임워크   | Ruby on Rails 8                  | 풀스택 모놀리스                 |
+| 언어         | Ruby 3.3+                        | rbenv로 버전 관리               |
+| 데이터베이스 | SQLite                           | 파일 기반, 서버 불필요          |
+| 인증         | Devise                           | 이메일/비밀번호, session/cookie |
+| 프론트엔드   | ERB + Hotwire (Turbo + Stimulus) | SPA 없이 SPA 같은 UX            |
+| CSS          | Tailwind CSS                     | rails 통합                      |
+| JS 패키지    | importmap-rails                  | npm 불필요                      |
+| 배경 작업    | Solid Queue (Rails 8 내장)       | DB 기반 Job 큐                  |
+| 캐싱         | Solid Cache (Rails 8 내장)       | DB 기반 캐시                    |
+| WebSocket    | Solid Cable (Rails 8 내장)       | DB 기반 ActionCable             |
 
 ## 개발 명령어
 
-### 프론트엔드
+### Rails 서버
 
-- 개발 서버 시작: `cd frontend && npm run dev`
-- 프로덕션 빌드: `cd frontend && npm run build`
-- 프리뷰: `cd frontend && npm run preview`
+- 개발 서버 시작: `bin/dev` (Procfile.dev 기반, Rails + Tailwind CSS watch)
+- Rails 서버만 시작: `bin/rails server`
+- Rails 콘솔: `bin/rails console`
+- DB 마이그레이션: `bin/rails db:migrate`
+- DB 초기화: `bin/rails db:reset`
+- 라우트 확인: `bin/rails routes`
+- 테스트 실행: `bin/rails test`
 
-### 백엔드 + 데이터베이스
+### 코드 생성 (scaffold/generator)
 
-- 컨테이너 시작: `docker-compose up -d`
-- 컨테이너 중지: `docker-compose down`
-- 로그 확인: `docker-compose logs -f backend`
+- 모델 생성: `bin/rails generate model ModelName field:type`
+- 컨트롤러 생성: `bin/rails generate controller ControllerName action1 action2`
+- 마이그레이션 생성: `bin/rails generate migration AddFieldToTable field:type`
 
-## 현재 아키텍처
+## 아키텍처
 
-### 프론트엔드 (React + Vite)
+### Rails MVC 패턴
 
-- 인증: Clerk 통합 완료
-- 데이터 계층: Context API + Backend API (Category 완료, Transaction/RecurringTransaction 마이그레이션 중)
-- 상태 관리: React Context API 패턴 (AppProviders 메타 프로바이더)
-- API 통신: axios 기반 서비스 레이어 (Service → Context → Component 3계층 구조)
-- 주요 컴포넌트:
-  - Home.jsx - 메인 컨테이너, 비즈니스 로직 포함
-  - CalendarBox.jsx - React Calendar 통합
-  - TransactionForm.jsx - 트랜잭션 추가/수정 모달
-  - RecurringTransactionForm.jsx - 반복 트랜잭션 관리
-  - CategoryManagement.jsx - 카테고리 CRUD 재사용 컴포넌트
-  - OnboardingModal.jsx - 첫 로그인 온보딩 모달
+```
+Request → Router (config/routes.rb)
+           → Controller (app/controllers/)
+              → Model (app/models/) ← ActiveRecord ORM
+              → View (app/views/)   ← ERB + Turbo
+           → Response (HTML / Turbo Stream)
+```
 
-### 백엔드 (FastAPI)
-
-- 프레임워크: FastAPI + Python 3.11
-- **아키텍처**: 3-Layer Architecture (Router → Service → CRUD → Model)
-- 데이터베이스: PostgreSQL 15
-- 캐싱: Redis (사용자 정보 5분 TTL)
-- 컨테이너: Docker + Docker Compose
-- 인증: Clerk JWT 토큰 검증 완료 (자동 사용자 생성 + 기본 카테고리 생성)
-
-### 프로젝트 구조
+### 프로젝트 구조 (목표)
 
 ```
 household_ledger/
-├── frontend/                           # React + Vite 앱
-│   ├── src/
-│   │   ├── pages/Home.jsx             # 메인 페이지
-│   │   ├── components/                # 재사용 컴포넌트
-│   │   │   ├── CategoryManagement.jsx  # 카테고리 CRUD UI
-│   │   │   └── OnboardingModal.jsx     # 첫 로그인 온보딩
-│   │   ├── context/                   # React Context API
-│   │   │   ├── CategoryContext.jsx    # 카테고리 상태 관리
-│   │   │   ├── TransactionContext.jsx # 트랜잭션 상태 관리
-│   │   │   └── AppProviders.jsx       # 메타 프로바이더
-│   │   ├── services/                  # API 서비스 레이어
-│   │   │   ├── categoryService.js     # 카테고리 API 호출
-│   │   │   ├── transactionService.js  # 트랜잭션 API 호출
-│   │   │   ├── recurringTransactionService.js  # 반복 트랜잭션 API 호출
-│   │   │   └── backupService.js       # 백업/복원 API 호출
-│   │   ├── utils/
-│   │   │   ├── api.js                 # axios 인스턴스 설정
-│   │   │   ├── formatDate.js          # 날짜 포맷 유틸리티
-│   │   │   └── recurringScheduler.js  # 반복 거래 스케줄러 (의존성 주입 패턴)
-│   │   └── App.jsx                    # Clerk 인증 + 프로바이더
-│   ├── .env.development               # 개발 환경 변수
-│   ├── .env.production                # 프로덕션 환경 변수
-│   └── package.json
-├── backend/                           # FastAPI 백엔드
-│   ├── app/
-│   │   ├── main.py                    # FastAPI 앱 진입점
-│   │   ├── core/                      # 설정, DB 연결, Redis
-│   │   ├── models/                    # SQLAlchemy 모델
-│   │   ├── schemas/                   # Pydantic 스키마
-│   │   ├── crud/                      # CRUD Layer (DB 쿼리)
-│   │   │   ├── category_crud.py
-│   │   │   ├── transaction_crud.py
-│   │   │   ├── recurring_transaction_crud.py
-│   │   │   └── backup_crud.py
-│   │   ├── services/                  # Service Layer (비즈니스 로직)
-│   │   │   ├── category_service.py
-│   │   │   ├── transaction_service.py
-│   │   │   ├── recurring_transaction_service.py
-│   │   │   └── backup_service.py
-│   │   └── api/
-│   │       ├── dependencies/auth.py   # Clerk JWT 인증 + 기본 카테고리
-│   │       └── routes/                # Router Layer (HTTP 처리)
-│   │           ├── categories.py
-│   │           ├── transactions.py
-│   │           ├── recurring_transactions.py
-│   │           └── backup.py
-│   ├── scripts/                       # 마이그레이션 및 유틸리티
-│   │   ├── migrate_indexeddb.py       # IndexedDB → PostgreSQL 마이그레이션
-│   │   └── backup_data.json           # IndexedDB 백업 데이터
-│   ├── requirements.txt
-│   └── Dockerfile
-├── docs/                              # 기술 문서
-│   ├── architecture-refactoring.md    # 3-Layer Architecture 리팩토링 가이드
-│   └── MIGRATION_HISTORY.md           # 마이그레이션 완료 작업 상세 내역
-├── docker-compose.yml                 # Backend + DB + Redis 컨테이너
-└── CLAUDE.md                          # 이 파일
+├── app/
+│   ├── controllers/          # Controller (HTTP 처리)
+│   │   ├── application_controller.rb
+│   │   ├── transactions_controller.rb
+│   │   ├── categories_controller.rb
+│   │   ├── recurring_transactions_controller.rb
+│   │   ├── asset_adjustments_controller.rb
+│   │   ├── statistics_controller.rb
+│   │   └── backups_controller.rb
+│   ├── models/               # Model (비즈니스 로직 + ORM)
+│   │   ├── application_record.rb
+│   │   ├── user.rb
+│   │   ├── transaction.rb
+│   │   ├── category.rb
+│   │   ├── recurring_transaction.rb
+│   │   └── asset_adjustment.rb
+│   ├── views/                # View (ERB 템플릿)
+│   │   ├── layouts/
+│   │   ├── transactions/
+│   │   ├── categories/
+│   │   └── shared/           # 재사용 partial
+│   ├── javascript/           # Stimulus controllers
+│   │   └── controllers/
+│   └── services/             # Service Objects (복잡한 비즈니스 로직)
+│       └── backup_service.rb
+├── config/
+│   ├── routes.rb             # RESTful 라우팅
+│   ├── recurring.yml         # Solid Queue 반복 작업 스케줄
+│   └── locales/
+│       └── ko.yml            # 한국어 로케일
+├── db/
+│   ├── migrate/              # 마이그레이션 파일
+│   ├── seeds.rb              # 기본 데이터 (13개 카테고리 등)
+│   ├── development.sqlite3   # 개발 DB
+│   └── production.sqlite3    # 프로덕션 DB
+├── docs/
+│   └── rails-migration-guide.md  # 마이그레이션 가이드
+├── lib/
+│   └── tasks/
+│       └── data_migration.rake   # 기존 데이터 이관 Rake 태스크
+├── Gemfile                   # Ruby 의존성 (pip의 requirements.txt)
+├── Gemfile.lock
+└── CLAUDE.md                 # 이 파일
 ```
 
-## 데이터 스키마
+## 데이터 스키마 (목표)
 
-### 현재 IndexedDB 스키마
+### ActiveRecord 모델
 
-- transactions: id, date, description, amount, type, category, status, recurring_id
-- recurring_transactions: id, template_name, description, amount, type, frequency, start_date, end_date, day_of_month, is_active, is_variable_amount
-- categories: id, name, emoji
+- **User**: email, encrypted_password (Devise 관리), created_at, updated_at
+- **Category**: user_id (FK), name, emoji, position (acts_as_list), created_at, updated_at
+- **Transaction**: user_id (FK), date, description, amount, transaction_type (enum: income/expense), category_id (FK), status (enum: confirmed/scheduled/pending), recurring_transaction_id (FK), created_at, updated_at
+- **RecurringTransaction**: user_id (FK), template_name, description, amount, transaction_type (enum), frequency (enum: weekly/monthly/yearly), start_date, end_date, day_of_month, is_active, is_variable_amount, discarded_at (Soft Delete), created_at, updated_at
+- **AssetAdjustment**: user_id (FK), adjustment_date, amount, adjustment_type (enum: income_missing/expense_missing), description, created_at, updated_at
 
-### PostgreSQL 스키마 (구현 완료)
+### 주요 설계 참고사항
 
-- **users**: id (UUID), clerk_user_id, email, created_at, updated_at
-- **categories**: id (UUID), user_id, name, emoji, created_at, updated_at
-- **transactions**: id (UUID), user_id, date, description, amount, type, category_id, status, recurring_id, created_at, updated_at
-- **recurring_transactions**: id (UUID), user_id, template_name, description, amount, type, frequency, start_date, end_date, day_of_month, is_active, is_variable_amount, created_at, updated_at
-- **Enum 타입**: TransactionType (INCOME, EXPENSE), TransactionStatus (CONFIRMED, SCHEDULED, PENDING), RecurringFrequency (WEEKLY, MONTHLY, YEARLY)
+- `type` 컬럼 사용 금지: Rails STI(Single Table Inheritance) 예약어이므로 `transaction_type`, `adjustment_type`으로 명명
+- Soft Delete: `discard` gem 사용 (`discarded_at` 컬럼)
+- 순서 관리: `acts_as_list` gem 사용 (`position` 컬럼, 기존 `order` 대응)
+- Enum: Rails 내장 `enum` 매크로 사용 (별도 Enum 파일 불필요)
 
 ## 마이그레이션 진행 상황
 
-### 완료된 작업
+### 참조 정보
 
-> 📄 전체 상세 내역은 [MIGRATION_HISTORY.md](MIGRATION_HISTORY.md) 참조
+- 마이그레이션 가이드: `docs/rails-migration-guide.md` (9개 Phase)
+- 기존 코드 브랜치: `legacy/react-fastapi`
+- 데이터 백업: `~/household_ledger_backup/` (JSON + SQL dump)
+  - users 3건, categories 24건, transactions 596건, recurring_transactions 1건
 
-**주요 완료 항목**:
+### Phase 진행 현황
 
-- ✅ Backend 3-Layer Architecture (CRUD/Service/Router 분리)
-- ✅ Category, Transaction, RecurringTransaction API 구현
-- ✅ Backend 백업/복원 API (gzip 압축, UUID 매핑, 미리보기)
-- ✅ Frontend API 연동 (Category, Transaction, RecurringTransaction, Backup)
-- ✅ Clerk 인증 + 자동 사용자 생성 + 기본 카테고리 생성
-- ✅ Docker Compose 환경 (Backend + PostgreSQL + Redis)
-- ✅ IndexedDB → PostgreSQL 마이그레이션 완료 (261건)
-- ✅ 통계 API + 시각화 (Recharts)
-- ✅ Soft Delete 패턴 (RecurringTransaction)
-- ✅ Timezone 전략 (UTC → KST)
-- ✅ Frontend 백업/복원 기능 Backend API 전환 완료
-- ✅ IndexedDB 완전 제거 (Dexie 의존성 삭제)
+- [ ] Phase 0: 환경 설정 (rbenv, Ruby, Rails 설치)
+- [ ] Phase 1: Rails 프로젝트 초기화 + Devise 인증
+- [ ] Phase 2: 데이터베이스 모델 + 마이그레이션
+- [ ] Phase 3: 핵심 CRUD 기능
+- [ ] Phase 4: 달력 뷰 + 통계
+- [ ] Phase 5: 고급 기능 (반복거래 스케줄러, 백업/복원)
+- [ ] Phase 6: 데이터 마이그레이션 (기존 596건 이관)
+- [ ] Phase 7: Docker 설정 (선택)
+- [ ] Phase 8: 정리 + 기능 검증
 
-### 진행 중인 작업
+## 주요 기능 (구현 예정)
 
-- [ ] 반복 트랜잭션 자동 생성 스케줄러 (Backend로 이동)
-- [ ] 트랜잭션 '수정' 기능에 날짜 수정기능 추가
-
-### 예정된 작업
-
-- [ ] Clerk JWT 서명 검증 강화 (JWKS)
-- [ ] **Proxmox Self-hosting 배포**
-  - [ ] Proxmox VM/LXC 구성
-  - [ ] Caddy 리버스 프록시 + SSL (Let's Encrypt)
-  - [ ] Docker Compose 프로덕션 설정
-  - [ ] DNS 설정 (도메인 → 공인 IP)
-  - [ ] 포트 포워딩 (공유기)
-  - [ ] DDNS 설정 (동적 IP인 경우)
-  - [ ] Terraform + Ansible 자동화
-
-## 주요 기능
-
-### 현재 기능
-
-- 트랜잭션 관리: 수입/지출 추가, 수정, 삭제 (Backend API 연동 완료)
-- 반복 트랜잭션: 템플릿 관리 (Backend API 연동 완료, 자동 생성은 Frontend 스케줄러)
-- 카테고리: 이모지와 함께 분류, 드래그 앤 드롭 순서 변경 (Backend API 연동 완료)
-- 달력 뷰: react-calendar로 일별 트랜잭션 표시, lazy loading 최적화
-- 통계: 전체 자산, 카테고리별 지출 분석, 파이 차트 시각화
-- 백업/복원: gzip 압축 JSON 파일 export/import (Frontend + Backend API 연동 완료)
-
-### 마이그레이션 완료 현황
-
-- ✅ 사용자별 데이터 격리: Clerk 사용자 ID 기반 완료
-- ✅ API 기반 아키텍처: Category, Transaction, RecurringTransaction, Backup 모두 Frontend + Backend 연동 완료
-- ✅ 통계 및 분석 기능: 카테고리별 지출 통계 API + 시각화 완료
-- ✅ Backend 백업/복원 API: gzip 압축, UUID 매핑, 미리보기 기능 완료
-- ✅ IndexedDB 완전 제거: Dexie 의존성 삭제 완료
-- 🔄 컨테이너 배포: Docker Compose 완료, Kubernetes 대기
-- 🔄 트랜잭션 '수정' 기능에 날짜 수정기능 추가
+- 트랜잭션 관리: 수입/지출 추가, 수정, 삭제
+- 반복 트랜잭션: 템플릿 관리 + Solid Queue 자동 생성
+- 카테고리: 이모지 분류, 드래그앤드롭 순서 변경
+- 달력 뷰: simple_calendar로 일별 트랜잭션 표시
+- 통계: chartkick + groupdate로 카테고리별 지출 분석
+- 백업/복원: gzip JSON export/import
+- 온보딩: 첫 로그인 시 기본 카테고리 13개 자동 생성
+- 자산 보정: 실제 자산과 기록 차이 조정
 
 ## 한국어 지원
 
-- 모든 UI 텍스트와 주석은 한국어로 작성
-- 카테고리명과 트랜잭션 설명은 한국어 용어 사용
-- 파일명에 한국어 포함 (가계부*백업*\*.json)
-- ESC 키 모달 닫기, 30일 백업 알림 등 한국 사용자 중심 UX
+- 모든 UI 텍스트는 한국어 (config/locales/ko.yml)
+- 기본 카테고리 13개: 식비, 간식류, 카페, 교통, 생활용품, 건강/의료, 문화/여가, 의류/미용, 통신, 교육, 경조사/선물, 기타지출, 저축/투자
+- 날짜 형식: YYYY년 MM월 DD일 (한국식)
+- 통화: 원(KRW) 단위
 
-## 중요 구현 노트
+## Rails Convention 참고
 
-### 현재 구현
+### 현재 프로젝트에서 알아야 할 Rails 규칙
 
-- 트랜잭션 편집은 Home 컴포넌트의 editTarget 상태로 관리
-- react-calendar 라이브러리로 날짜 선택 구현
-- **모든 도메인 Backend API 연동 완료**: Category, Transaction, RecurringTransaction, Backup
-- **IndexedDB 완전 제거됨**: Dexie 의존성 삭제, 모든 데이터는 Backend API 사용
-- 반복 트랜잭션 자동 생성은 recurringScheduler.js에서 의존성 주입 패턴으로 준비됨 (현재 미사용, Backend 스케줄러로 이동 예정)
-
-### 프론트엔드 아키텍처 패턴 (Category/Transaction API 연동으로 확립)
-
-1. **3계층 구조**: Service → Context → Component
-   - **Service 레이어**: axios로 API 호출, 순수 함수
-     - categoryService.js: 카테고리 CRUD
-     - transactionService.js: 트랜잭션 CRUD + 필터링
-     - recurringTransactionService.js: 반복 트랜잭션 CRUD
-     - backupService.js: 백업/복원 (구현 완료)
-   - **Context 레이어**: 상태 관리, useAuth로 토큰 주입
-     - CategoryContext.jsx: 카테고리 전역 상태
-     - TransactionContext.jsx: 트랜잭션 전역 상태
-   - **Component 레이어**: 커스텀 훅으로 상태/함수 사용
-     - useCategories() 훅
-     - useTransactions() 훅
-2. **메타 프로바이더 패턴**: AppProviders.jsx로 모든 Context 중앙 관리 (Provider Hell 방지)
-3. **환경 변수 분리**: .env.development / .env.production (Vite 자동 선택)
-4. **Naming Convention**: 백엔드 API와 일관성 유지 (updateCategory, deleteCategory)
-   - 충돌 방지: import 시 별칭 사용 (`updateCategory as updateCategoryAPI`)
-5. **재사용 컴포넌트**: CategoryManagement - 온보딩과 설정에서 공통 사용
-6. **중첩 객체 응답**: 백엔드가 관계 데이터를 함께 반환 (Transaction → Category)
-   - 프론트엔드에서 추가 API 호출 불필요
-   - N+1 쿼리 문제 방지
-
-### 백엔드 아키텍처 패턴 (3-Layer Architecture, 2025-11-02 확립)
-
-1. **CRUD Layer** (`app/crud/*.py`):
-   - 순수 DB 쿼리만 담당
-   - `flush()` 사용 (commit은 Service에서)
-   - None 반환 (에러는 상위 계층)
-   - 재사용 가능한 쿼리 함수
-2. **Service Layer** (`app/services/*.py`):
-   - 비즈니스 로직 처리
-   - 여러 CRUD 조합
-   - `commit()` + `refresh()` 담당
-   - None/False 반환 (HTTPException은 Router에서)
-   - 클래스 기반 설계 (의존성 주입)
-3. **Router Layer** (`app/api/routes/*.py`):
-   - HTTP 요청/응답만
-   - Service 호출
-   - None/False → HTTPException
-   - 직접 DB 쿼리 금지
-
-### 백엔드 성능 최적화
-
-- **Bulk Insert**: 기본 카테고리 생성 시 `db.bulk_save_objects()` 사용 (13개 INSERT → 1 트랜잭션)
-- **Redis 캐싱**: 사용자 정보 5분 TTL, DB 쿼리 감소
-- **인덱싱**: user_id 기반 쿼리 최적화 (SQLAlchemy 모델에 ForeignKey 인덱스)
-- **N+1 방지**: joinedload() 사용 + 이미 조회한 객체 재사용
-
-### RecurringTransaction Soft Delete 패턴
-
-- **Soft Delete 구현**: 실제 삭제 대신 `deleted_at` 컬럼 설정 + `is_active = false`
-- **confirmed Transaction 보호**: 이미 발생한 거래는 유지 (recurring_id 유지)
-- **scheduled Transaction 삭제**: 예정된 거래만 삭제
-- **히스토리 추적**: 삭제된 RecurringTransaction도 DB에 남아 추적 가능
-- **Foreign Key 무결성**: CASCADE 대신 수동 관리로 데이터 보호
-
-### Timezone 전략
-
-- **Backend + DB**: UTC로 통일 (func.now() 사용, PostgreSQL timezone=UTC)
-- **Frontend**: 로컬 타임존(KST) 자동 표시 (formatDate.js 유틸리티)
-- **다국적 대비**: 글로벌 서비스 확장 준비 완료
-- **일관성**: DateTime(timezone=True) 사용으로 모든 시간 필드 통일
-
-### 백업/복원 구현 패턴 (Backend)
-
-- **gzip 압축**: Python `gzip.compress()`로 파일 크기 감소
-- **UUID 매핑**: 백업 시 UUID → 복원 시 신규 UUID로 자동 재매핑
-  - `category_id_map`, `recurring_id_map`으로 FK 관계 유지
-  - Pydantic 스키마 → SQLAlchemy 모델 변환 시 ID 재생성
-- **미리보기 기능**: 복원 전 BackupData 파싱 → BackupMetadata 추출 (UX 개선)
-- **overwrite 옵션**:
-  - `overwrite=true`: 기존 데이터 삭제 후 복원
-  - `overwrite=false`: 병합 (ID 충돌 가능성 주의)
-- **Blob 응답**: FastAPI `StreamingResponse`로 바이너리 파일 다운로드
-- **FormData 업로드**: `UploadFile`로 multipart/form-data 처리
+- **Convention over Configuration**: 파일명, 클래스명, 테이블명의 명명 규칙이 자동 매핑됨
+  - 모델: `Transaction` (단수, CamelCase) → 테이블: `transactions` (복수, snake_case)
+  - 컨트롤러: `TransactionsController` → 파일: `transactions_controller.rb`
+- **RESTful 7 Actions**: index, show, new, create, edit, update, destroy
+- **Strong Parameters**: Controller에서 허용할 필드를 명시적으로 선언 (매스 어사인먼트 방지)
+- **Callbacks**: before_action, after_create 등으로 공통 로직 처리
+- **Scopes**: 자주 사용하는 쿼리를 Model에 scope로 정의
 
 ## 중요 알림
 
@@ -307,4 +200,4 @@ Claude는 반드시 다음 사항을 준수해주세요:
 2. 모든 대화는 한국어로 진행
 3. 학습 중심 설명 - 원리, 작동 방식, 연계성 포함
 4. 단계별 가이드 - 무엇을 어떻게 왜 작성해야 하는지 상세 설명
-5. 모범 사례 제시 - 보안, 성능, 유지보수성 고려사항 포함
+5. 모범 사례 제시 - Rails Convention, 보안, 성능, 유지보수성 고려사항 포함
