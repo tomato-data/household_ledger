@@ -108,7 +108,7 @@ export const TransactionProvider = ({ children }) => {
             }
             // 백그라운드에서 서버 데이터 동기화
             const token = await getToken();
-            const serverData = await getTransactions(token, filters);
+            const serverData = await getTransactions(token, { ...filters, limit: 10000 });
             setFilteredTransactions(sortTransactionsByDate(serverData));
         } catch (error) {
             console.error('필터링된 트랜잭션 로딩 실패:', error);
