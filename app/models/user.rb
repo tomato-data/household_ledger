@@ -3,4 +3,33 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+  has_many :categories, dependent: :destroy
+  has_many :transactions, dependent: :destroy
+  has_many :recurring_transactions, dependent: :destroy
+  has_many :asset_adjustments, dependent: :destroy
+
+  DEFAULT_CATEGORIES = [
+    { name: "식비", emoji: "🍽️", position: 1 },
+    { name: "간식류", emoji: "🍪", position: 2 },
+    { name: "카페", emoji: "☕", position: 3 },
+    { name: "교통비", emoji: "🚗", position: 4 },
+    { name: "문화생활", emoji: "🎭", position: 5 },
+    { name: "의류", emoji: "👔", position: 6 },
+    { name: "생필품", emoji: "🛒", position: 7 },
+    { name: "의료비", emoji: "🏥", position: 8 },
+    { name: "월급", emoji: "💰", position: 9 },
+    { name: "월세", emoji: "🏠", position: 10 },
+    { name: "통신비", emoji: "📱", position: 11 },
+    { name: "공과금", emoji: "⚡", position: 12 },
+    { name: "기타", emoji: "📝", position: 13 }
+  ].freeze
+
+  after_create :create_default_categories
+
+  private
+  def create_default_categories
+    DEFAULT_CATEGORIES.each do |category|
+      categories.create!(category)
+    end
+  end
 end
