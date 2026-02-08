@@ -118,6 +118,8 @@ GEM
     devise-i18n (1.16.0)
       devise (>= 5.0.0)
       rails-i18n
+    discard (1.4.0)
+      activerecord (>= 4.2, < 9.0)
     dotenv (3.2.0)
     drb (2.2.3)
     ed25519 (1.4.0)
@@ -432,6 +434,7 @@ DEPENDENCIES
   debug
   devise
   devise-i18n
+  discard
   image_processing (~> 1.2)
   importmap-rails
   jbuilder

@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "discard"
 gem "devise"
 gem "devise-i18n"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"

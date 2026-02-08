@@ -24,6 +24,27 @@
   </head>
 
   <body>
+    <%# ===== 1. 네비게이션 바 ===== %>
+    <nav>
+      <% if user_signed_in? %>
+        <%= current_user.email %>
+        <%# CSS 추가 예정 %>
+        <%= link_to "로그아웃", destroy_user_session_path, data: { turbo_method: :delete} %>
+      <% else %>
+        <%# 비로그인 상태: 로그인 + 회원가입 링크%>
+        <%= link_to "로그인", new_user_session_path %>
+        <%= link_to "회원가입", new_user_registration_path %>
+      <% end %>
+    </nav>
+
+    <%# ===== 2. Flash 메시지 ===== %>
+    <% flash.each do |type, message| %>
+      <p class="<%= type == 'notice' ? 'text-green-600' : 'text-red-600' %>">
+        <%= message %>
+      </p>
+    <% end %>
+
+    <%# ===== 3. 메인 콘텐츠 ===== %>
     <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>
