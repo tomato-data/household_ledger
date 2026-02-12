@@ -1,0 +1,6 @@
+<turbo-frame id="modal">
+  <%= render "layouts/modal" do %>
+    <h2 class="text-lg font-bold mb-4">새 거래</h2>
+    <%= render "form", transaction: @transaction, categories: @categories %>
+  <% end %>
+</turbo-frame>

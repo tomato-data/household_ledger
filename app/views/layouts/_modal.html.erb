@@ -1,0 +1,11 @@
+<%# 모달 래퍼 — new/edit 뷰에서 render "layouts/modal" 로 사용 %>
+<div data-controller="modal"
+     data-action="keydown.esc->modal#close click->modal#closeOnBackdrop"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     style="background-color: rgba(0, 0, 0, 0.6);">
+  <div data-modal-target="content"
+       class="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl p-6"
+       style="background-color: var(--color-bg-secondary);">
+    <%= yield %>
+  </div>
+</div>

@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-bg-primary: #0f0f0f;
+    --color-bg-secondary: #1a1a1a;
+    --color-bg-tertiary: #262626;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #a3a3a3;
+    --color-text-muted: #737373;
+    --color-border: #333333;
+    --color-income: #22d3ee;
+    --color-expense: #fb7185;
+    --color-assets: #f59e0b;
+    --color-accent: #8b5cf6;
+    --color-success: #4ade80;
+    --color-danger: #ef4444;
+  }
+}

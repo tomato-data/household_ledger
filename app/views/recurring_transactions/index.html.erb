@@ -1,0 +1,21 @@
+<div class="space-y-6 py-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-xl font-bold">반복 거래</h1>
+    <%= link_to new_recurring_transaction_path,
+        class: "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+        style: "background-color: var(--color-accent); color: var(--color-text-primary);",
+        data: { turbo_frame: "modal" } do %>
+      + 새 반복거래
+    <% end %>
+  </div>
+
+  <div class="space-y-3" id="recurring_transactions_list">
+    <% @recurring_transactions.each do |rt| %>
+      <%= render "recurring_transactions/recurring_transaction", recurring_transaction: rt %>
+    <% end %>
+
+    <% if @recurring_transactions.empty? %>
+      <%= render "shared/empty_state", message: "반복 거래가 없습니다" %>
+    <% end %>
+  </div>
+</div>

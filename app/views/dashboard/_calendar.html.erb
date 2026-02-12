@@ -1,0 +1,59 @@
+<div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);"
+     data-controller="calendar">
+
+  <%# 월 네비게이션 %>
+  <div class="flex items-center justify-between mb-4">
+    <%= link_to dashboard_index_path(date: date.prev_month.strftime("%Y-%m-%d")),
+        class: "p-2 rounded-lg hover:opacity-80",
+        data: { turbo_frame: "calendar_frame" } do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    <% end %>
+
+    <span class="text-lg font-bold">
+      <%= l(date, format: "%Y년 %m월") %>
+    </span>
+
+    <%= link_to dashboard_index_path(date: date.next_month.strftime("%Y-%m-%d")),
+        class: "p-2 rounded-lg hover:opacity-80",
+        data: { turbo_frame: "calendar_frame" } do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    <% end %>
+  </div>
+
+  <%# 요일 헤더 %>
+  <div class="grid grid-cols-7 text-center text-xs mb-2" style="color: var(--color-text-muted);">
+    <% %w[일 월 화 수 목 금 토].each do |day_name| %>
+      <div class="py-1"><%= day_name %></div>
+    <% end %>
+  </div>
+
+  <%# 달력 그리드 %>
+  <% start_date = date.beginning_of_month.beginning_of_week(:sunday) %>
+  <% end_date = date.end_of_month.end_of_week(:sunday) %>
+  <div class="grid grid-cols-7 gap-1">
+    <% (start_date..end_date).each do |day| %>
+      <% day_transactions = transactions_by_date[day] || [] %>
+      <% day_income = day_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount) %>
+      <% day_expense = day_transactions.select { |t| t.transaction_type == "expense" }.sum(&:amount) %>
+      <% is_current_month = day.month == date.month %>
+      <% is_today = day == Date.today %>
+
+      <%= link_to dashboard_daily_transactions_path(date: day.strftime("%Y-%m-%d")),
+          class: "rounded-lg p-1 text-center min-h-[60px] transition-colors hover:opacity-80 #{is_today ? 'ring-1' : ''}",
+          style: "background-color: #{is_today ? 'var(--color-bg-tertiary)' : 'transparent'}; opacity: #{is_current_month ? '1' : '0.3'}; #{'ring-color: var(--color-accent);' if is_today}",
+          data: { turbo_frame: "daily_transactions" } do %>
+        <div class="text-xs"><%= day.day %></div>
+        <% if day_income > 0 %>
+          <div class="text-[10px] truncate" style="color: var(--color-income);">+<%= number_to_human(day_income, precision: 0, units: { thousand: "천", million: "만" }) %></div>
+        <% end %>
+        <% if day_expense > 0 %>
+          <div class="text-[10px] truncate" style="color: var(--color-expense);">-<%= number_to_human(day_expense, precision: 0, units: { thousand: "천", million: "만" }) %></div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="grid grid-cols-3 gap-3">
+  <%# 수입 카드 %>
+  <div class="rounded-xl p-3 text-center"
+       style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+    <p class="text-xs mb-1" style="color: var(--color-text-secondary);">수입</p>
+    <p class="text-sm font-bold" style="color: var(--color-income);">
+      <%= format_currency(total_income) %>
+    </p>
+  </div>
+
+  <%# 지출 카드 %>
+  <div class="rounded-xl p-3 text-center"
+       style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+    <p class="text-xs mb-1" style="color: var(--color-text-secondary);">지출</p>
+    <p class="text-sm font-bold" style="color: var(--color-expense);">
+      <%= format_currency(total_expense) %>
+    </p>
+  </div>
+
+  <%# 총자산 카드 %>
+  <div class="rounded-xl p-3 text-center"
+       style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);"
+       data-controller="toggle">
+    <p class="text-xs mb-1" style="color: var(--color-text-secondary);">총자산</p>
+    <p class="text-sm font-bold" data-toggle-target="content" style="color: var(--color-assets);">
+      <%= format_currency(total_assets) %>
+    </p>
+    <button data-action="toggle#toggle" class="text-xs mt-1 opacity-50 hover:opacity-100">
+      표시/숨김
+    </button>
+  </div>
+</div>

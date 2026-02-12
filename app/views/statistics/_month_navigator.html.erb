@@ -1,0 +1,21 @@
+<div class="flex items-center justify-between">
+  <%= link_to statistics_path(date: date.prev_month.strftime("%Y-%m-%d"), type: @type),
+      class: "p-2 rounded-lg hover:opacity-80",
+      data: { turbo_frame: "stats_frame" } do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+  <% end %>
+
+  <span class="text-lg font-bold">
+    <%= l(date, format: "%Y년 %m월") %>
+  </span>
+
+  <%= link_to statistics_path(date: date.next_month.strftime("%Y-%m-%d"), type: @type),
+      class: "p-2 rounded-lg hover:opacity-80",
+      data: { turbo_frame: "stats_frame" } do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+  <% end %>
+</div>

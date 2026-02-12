@@ -1,0 +1,25 @@
+<div class="space-y-6 py-4">
+
+  <%# ===== 요약 카드 ===== %>
+  <turbo-frame id="summary_cards">
+    <%= render "dashboard/summary_cards",
+        total_income: @total_income || 0,
+        total_expense: @total_expense || 0,
+        total_assets: @total_assets || 0 %>
+  </turbo-frame>
+
+  <%# ===== 캘린더 ===== %>
+  <turbo-frame id="calendar_frame">
+    <%= render "dashboard/calendar",
+        date: @date || Date.today,
+        transactions_by_date: @transactions_by_date || {} %>
+  </turbo-frame>
+
+  <%# ===== 선택일 거래 목록 ===== %>
+  <turbo-frame id="daily_transactions">
+    <%= render "dashboard/daily_transactions",
+        selected_date: @selected_date || Date.today,
+        transactions: @daily_transactions || [] %>
+  </turbo-frame>
+
+</div>

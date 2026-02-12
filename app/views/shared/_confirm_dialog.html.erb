@@ -1,0 +1,18 @@
+<div data-controller="modal"
+     data-action="keydown.esc->modal#close"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     style="background-color: rgba(0, 0, 0, 0.6);">
+  <div data-modal-target="content"
+       class="w-full max-w-sm rounded-xl shadow-2xl p-6 text-center"
+       style="background-color: var(--color-bg-secondary);">
+    <p class="text-sm mb-4"><%= message %></p>
+    <div class="flex gap-3">
+      <button data-action="modal#close"
+              class="flex-1 py-2 rounded-lg text-sm"
+              style="background-color: var(--color-bg-tertiary); color: var(--color-text-secondary);">
+        취소
+      </button>
+      <%= yield %>
+    </div>
+  </div>
+</div>

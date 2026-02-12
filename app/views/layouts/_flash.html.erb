@@ -1,0 +1,12 @@
+<div class="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4 space-y-2">
+  <% flash.each do |type, message| %>
+    <div data-controller="flash"
+         class="px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-opacity duration-300"
+         style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border); color: <%= type == 'notice' ? 'var(--color-success)' : 'var(--color-danger)' %>;">
+      <div class="flex items-center justify-between">
+        <span><%= message %></span>
+        <button data-action="flash#dismiss" class="ml-3 opacity-60 hover:opacity-100">&times;</button>
+      </div>
+    </div>
+  <% end %>
+</div>
