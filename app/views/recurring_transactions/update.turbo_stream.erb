@@ -1,0 +1,7 @@
+<%= turbo_stream.replace @recurring_transaction do %>
+  <%= render partial: "recurring_transactions/recurring_transaction", locals: { recurring_transaction: @recurring_transaction } %>
+<% end %>
+
+<%= turbo_stream.replace "modal" do %>
+  <turbo-frame id="modal"></turbo-frame>
+<% end %>

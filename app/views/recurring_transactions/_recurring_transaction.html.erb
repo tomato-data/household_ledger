@@ -1,0 +1,47 @@
+<%= turbo_frame_tag recurring_transaction do %>
+  <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+    <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center gap-2">
+        <span class="font-medium"><%= recurring_transaction.template_name %></span>
+        <%= type_badge(recurring_transaction.transaction_type) %>
+      </div>
+      <div class="flex items-center gap-2">
+        <% if recurring_transaction.is_active %>
+          <span class="text-xs px-2 py-0.5 rounded-full" style="background-color: color-mix(in srgb, var(--color-success) 20%, transparent); color: var(--color-success);">활성</span>
+        <% else %>
+          <span class="text-xs px-2 py-0.5 rounded-full" style="background-color: color-mix(in srgb, var(--color-text-muted) 20%, transparent); color: var(--color-text-muted);">비활성</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="text-sm mb-2" style="color: var(--color-text-secondary);">
+      <% unless recurring_transaction.is_variable_amount %>
+        <span><%= format_currency(recurring_transaction.amount) %></span> ·
+      <% end %>
+      <span><%= { "weekly" => "매주", "monthly" => "매월", "yearly" => "매년" }[recurring_transaction.frequency] %></span>
+      <% if recurring_transaction.day_of_month %>
+        · <span><%= recurring_transaction.day_of_month %>일</span>
+      <% end %>
+    </div>
+
+    <% if recurring_transaction.description.present? %>
+      <p class="text-xs mb-3" style="color: var(--color-text-muted);"><%= recurring_transaction.description %></p>
+    <% end %>
+
+    <div class="flex items-center justify-end gap-2">
+      <%= link_to edit_recurring_transaction_path(recurring_transaction),
+          class: "text-xs px-3 py-1 rounded-lg transition-colors",
+          style: "background-color: var(--color-bg-tertiary); color: var(--color-text-secondary);",
+          data: { turbo_frame: "modal" } do %>
+        수정
+      <% end %>
+      <%= button_to recurring_transaction_path(recurring_transaction),
+          method: :delete,
+          class: "text-xs px-3 py-1 rounded-lg transition-colors",
+          style: "color: var(--color-danger);",
+          form: { data: { turbo_confirm: "이 반복 거래를 삭제하시겠습니까?" } } do %>
+        삭제
+      <% end %>
+    </div>
+  </div>
+<% end %>

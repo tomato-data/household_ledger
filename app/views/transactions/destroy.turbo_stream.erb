@@ -1,0 +1,10 @@
+<%= turbo_stream.remove @transaction %>
+
+<%= turbo_stream.replace "summary_cards" do %>
+  <turbo-frame id="summary_cards">
+    <%= render "dashboard/summary_cards",
+        total_income: @total_income,
+        total_expense: @total_expense,
+        total_assets: @total_assets %>
+  </turbo-frame>
+<% end %>

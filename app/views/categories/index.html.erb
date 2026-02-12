@@ -1,0 +1,24 @@
+<div class="space-y-6 py-4">
+  <h1 class="text-xl font-bold">카테고리 관리</h1>
+
+  <%# 새 카테고리 추가 폼 %>
+  <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+    <%= render "categories/form", category: Category.new %>
+  </div>
+
+  <%# 카테고리 목록 (드래그앤드롭) %>
+  <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);"
+       data-controller="sortable"
+       data-sortable-url-value="<%= reorder_categories_path %>">
+
+    <div data-sortable-target="list" class="space-y-2" id="categories_list">
+      <% @categories.each do |category| %>
+        <%= render "categories/category", category: category %>
+      <% end %>
+    </div>
+
+    <% if @categories.empty? %>
+      <%= render "shared/empty_state", message: "카테고리가 없습니다" %>
+    <% end %>
+  </div>
+</div>

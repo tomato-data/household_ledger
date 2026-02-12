@@ -1,0 +1,29 @@
+<div class="space-y-6 py-4">
+  <h1 class="text-xl font-bold">통계</h1>
+
+  <turbo-frame id="stats_frame">
+    <%# 월 네비게이션 %>
+    <%= render "statistics/month_navigator", date: @date || Date.today %>
+
+    <%# 수입/지출 토글 %>
+    <div class="flex gap-2 my-4" data-controller="stats-filter"
+         data-stats-filter-path-value="<%= statistics_path %>">
+      <%= link_to "지출",
+          statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: "expense"),
+          class: "flex-1 text-center py-2 rounded-lg text-sm font-medium transition-colors",
+          style: "#{'background-color: var(--color-expense); color: #000;' if @type.to_s != 'income'} border: 1px solid var(--color-border);",
+          data: { turbo_frame: "stats_frame" } %>
+      <%= link_to "수입",
+          statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: "income"),
+          class: "flex-1 text-center py-2 rounded-lg text-sm font-medium transition-colors",
+          style: "#{'background-color: var(--color-income); color: #000;' if @type.to_s == 'income'} border: 1px solid var(--color-border);",
+          data: { turbo_frame: "stats_frame" } %>
+    </div>
+
+    <%# 차트 %>
+    <%= render "statistics/chart", category_stats: @category_stats || [] %>
+
+    <%# 통계 테이블 %>
+    <%= render "statistics/stats_table", category_stats: @category_stats || [], total: @total || 0 %>
+  </turbo-frame>
+</div>

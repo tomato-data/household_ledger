@@ -1,0 +1,24 @@
+<nav class="fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-between px-4"
+     style="background-color: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border);">
+
+  <% if user_signed_in? %>
+    <button data-action="sidebar#toggle" class="p-2 rounded-lg transition-colors hover:opacity-80" aria-label="메뉴">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  <% else %>
+    <div></div>
+  <% end %>
+
+  <span class="text-lg font-bold">가계부</span>
+
+  <div class="flex items-center gap-3">
+    <% if user_signed_in? %>
+      <span class="text-sm" style="color: var(--color-text-secondary);"><%= current_user.email %></span>
+    <% else %>
+      <%= link_to "로그인", new_user_session_path, class: "text-sm hover:underline" %>
+      <%= link_to "회원가입", new_user_registration_path, class: "text-sm hover:underline", style: "color: var(--color-accent);" %>
+    <% end %>
+  </div>
+</nav>

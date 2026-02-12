@@ -1,0 +1,27 @@
+<% if category_stats.any? %>
+  <div class="rounded-xl overflow-hidden mt-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+    <% category_stats.each do |stat| %>
+      <% percentage = total > 0 ? (stat[:amount].to_f / total * 100).round(1) : 0 %>
+      <div class="flex items-center gap-3 px-4 py-3"
+           style="border-bottom: 1px solid var(--color-border);">
+        <span class="text-xl flex-shrink-0"><%= stat[:emoji] %></span>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm"><%= stat[:name] %></span>
+            <span class="text-sm font-bold"><%= format_currency(stat[:amount]) %></span>
+          </div>
+          <%# 비율 바 %>
+          <div class="w-full h-1.5 rounded-full" style="background-color: var(--color-bg-tertiary);">
+            <div class="h-full rounded-full transition-all duration-300"
+                 style="width: <%= percentage %>%; background-color: var(--color-accent);"></div>
+          </div>
+        </div>
+
+        <span class="text-xs flex-shrink-0" style="color: var(--color-text-muted);">
+          <%= percentage %>%
+        </span>
+      </div>
+    <% end %>
+  </div>
+<% end %>

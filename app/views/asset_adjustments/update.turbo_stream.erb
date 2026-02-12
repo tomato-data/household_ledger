@@ -1,0 +1,3 @@
+<%= turbo_stream.replace @asset_adjustment do %>
+  <%= render partial: "asset_adjustments/asset_adjustment", locals: { asset_adjustment: @asset_adjustment } %>
+<% end %>

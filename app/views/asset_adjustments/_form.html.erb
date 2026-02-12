@@ -1,0 +1,69 @@
+<%= form_with(model: asset_adjustment, data: { controller: "amount-input" }) do |f| %>
+
+  <% if asset_adjustment.errors.any? %>
+    <div class="mb-4 p-3 rounded-lg text-sm" style="background-color: color-mix(in srgb, var(--color-danger) 20%, transparent); color: var(--color-danger);">
+      <% asset_adjustment.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# 보정 타입 %>
+  <div class="flex gap-2 mb-4">
+    <label class="flex-1">
+      <input type="radio" name="asset_adjustment[adjustment_type]" value="income_missing"
+             <%= "checked" if asset_adjustment.adjustment_type == "income_missing" || asset_adjustment.new_record? %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm transition-colors peer-checked:font-bold"
+           style="border: 1px solid var(--color-border);">
+        누락 수입
+      </div>
+    </label>
+    <label class="flex-1">
+      <input type="radio" name="asset_adjustment[adjustment_type]" value="expense_missing"
+             <%= "checked" if asset_adjustment.adjustment_type == "expense_missing" %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm transition-colors peer-checked:font-bold"
+           style="border: 1px solid var(--color-border);">
+        누락 지출
+      </div>
+    </label>
+  </div>
+
+  <%# 금액 %>
+  <div class="mb-4">
+    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">금액</label>
+    <div class="flex items-center gap-2">
+      <input type="text"
+             data-amount-input-target="display"
+             data-action="input->amount-input#format"
+             value="<%= number_with_delimiter(asset_adjustment.amount) if asset_adjustment.amount %>"
+             placeholder="0"
+             class="flex-1 px-3 py-2 rounded-lg text-right"
+             style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);"
+             inputmode="numeric">
+      <span style="color: var(--color-text-secondary);">원</span>
+    </div>
+    <%= f.hidden_field :amount, data: { amount_input_target: "value" } %>
+  </div>
+
+  <%# 설명 %>
+  <div class="mb-4">
+    <%= f.text_field :description,
+        class: "w-full px-3 py-2 rounded-lg",
+        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);",
+        placeholder: "보정 사유" %>
+  </div>
+
+  <%# 날짜 %>
+  <div class="mb-4">
+    <%= f.date_field :adjustment_date,
+        value: asset_adjustment.adjustment_date || Date.today,
+        class: "w-full px-3 py-2 rounded-lg",
+        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+  </div>
+
+  <%= f.submit asset_adjustment.persisted? ? "수정" : "추가",
+      class: "w-full py-2 rounded-lg font-medium cursor-pointer transition-colors",
+      style: "background-color: var(--color-accent); color: var(--color-text-primary);" %>
+<% end %>

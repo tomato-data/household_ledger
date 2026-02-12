@@ -1,0 +1,16 @@
+<%= turbo_stream.replace @transaction do %>
+  <%= render partial: "transactions/transaction", locals: { transaction: @transaction } %>
+<% end %>
+
+<%= turbo_stream.replace "summary_cards" do %>
+  <turbo-frame id="summary_cards">
+    <%= render "dashboard/summary_cards",
+        total_income: @total_income,
+        total_expense: @total_expense,
+        total_assets: @total_assets %>
+  </turbo-frame>
+<% end %>
+
+<%= turbo_stream.replace "modal" do %>
+  <turbo-frame id="modal"></turbo-frame>
+<% end %>

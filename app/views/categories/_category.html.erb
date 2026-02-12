@@ -1,0 +1,56 @@
+<%= turbo_frame_tag category do %>
+  <div class="flex items-center gap-3 py-2 px-3 rounded-lg group"
+       style="background-color: var(--color-bg-tertiary);"
+       data-category-id="<%= category.id %>"
+       data-controller="inline-edit">
+
+    <%# 드래그 핸들 %>
+    <span class="cursor-grab active:cursor-grabbing text-lg" style="color: var(--color-text-muted);">☰</span>
+
+    <%# 이모지 + 이름 (표시 모드) %>
+    <div data-inline-edit-target="display" class="flex items-center gap-2 flex-1">
+      <span class="text-xl"><%= category.emoji %></span>
+      <span class="text-sm"><%= category.name %></span>
+    </div>
+
+    <%# 이모지 + 이름 (편집 모드 — 숨김) %>
+    <div data-inline-edit-target="editor" class="flex-1 hidden">
+      <%= form_with(model: category, class: "flex items-center gap-2") do |f| %>
+        <%= f.text_field :emoji,
+            class: "w-10 text-center text-lg px-1 py-0.5 rounded",
+            style: "background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);",
+            maxlength: 2 %>
+        <%= f.text_field :name,
+            class: "flex-1 px-2 py-0.5 rounded text-sm",
+            style: "background-color: var(--color-bg-secondary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+        <%= f.submit "저장",
+            class: "px-2 py-0.5 rounded text-xs cursor-pointer",
+            style: "background-color: var(--color-accent); color: var(--color-text-primary);" %>
+        <button type="button" data-action="inline-edit#cancel"
+                class="px-2 py-0.5 rounded text-xs" style="color: var(--color-text-muted);">
+          취소
+        </button>
+      <% end %>
+    </div>
+
+    <%# 액션 버튼 %>
+    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+         data-inline-edit-target="actions">
+      <button data-action="inline-edit#edit"
+              class="p-1 rounded hover:opacity-80" style="color: var(--color-text-muted);">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+      </button>
+      <%= button_to category_path(category),
+          method: :delete,
+          class: "p-1 rounded hover:opacity-80",
+          style: "color: var(--color-danger);",
+          form: { data: { turbo_confirm: "이 카테고리를 삭제하시겠습니까? 관련 거래도 함께 삭제됩니다." } } do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      <% end %>
+    </div>
+  </div>
+<% end %>

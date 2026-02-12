@@ -1,0 +1,18 @@
+<div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+  <h3 class="text-sm font-bold mb-3">
+    <%= l(selected_date, format: "%m월 %d일") %>
+    <span style="color: var(--color-text-secondary);">
+      (<%= %w[일 월 화 수 목 금 토][selected_date.wday] %>)
+    </span>
+  </h3>
+
+  <% if transactions.any? %>
+    <div class="space-y-2" id="daily_transactions_list">
+      <% transactions.each do |transaction| %>
+        <%= render "transactions/transaction", transaction: transaction %>
+      <% end %>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "이 날짜에 거래가 없습니다" %>
+  <% end %>
+</div>

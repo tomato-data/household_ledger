@@ -1,0 +1,17 @@
+<div data-controller="category-selector" class="grid grid-cols-4 gap-2">
+  <% categories.each do |category| %>
+    <label class="cursor-pointer">
+      <input type="radio" name="transaction[category_id]" value="<%= category.id %>"
+             <%= "checked" if selected_id == category.id %>
+             class="hidden peer"
+             data-action="category-selector#select">
+      <div class="flex flex-col items-center p-2 rounded-lg transition-colors peer-checked:ring-2"
+           style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); --tw-ring-color: var(--color-accent);">
+        <span class="text-xl"><%= category.emoji %></span>
+        <span class="text-[10px] mt-1 truncate w-full text-center" style="color: var(--color-text-secondary);">
+          <%= category.name %>
+        </span>
+      </div>
+    </label>
+  <% end %>
+</div>

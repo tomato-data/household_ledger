@@ -1,0 +1,130 @@
+<%= form_with(model: recurring_transaction, data: { controller: "amount-input" }) do |f| %>
+
+  <% if recurring_transaction.errors.any? %>
+    <div class="mb-4 p-3 rounded-lg text-sm" style="background-color: color-mix(in srgb, var(--color-danger) 20%, transparent); color: var(--color-danger);">
+      <% recurring_transaction.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# 템플릿 이름 %>
+  <div class="mb-4">
+    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">템플릿명</label>
+    <%= f.text_field :template_name,
+        class: "w-full px-3 py-2 rounded-lg",
+        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);",
+        placeholder: "예: 월급, 넷플릭스" %>
+  </div>
+
+  <%# 수입/지출 토글 %>
+  <div class="flex gap-2 mb-4">
+    <label class="flex-1">
+      <input type="radio" name="recurring_transaction[transaction_type]" value="income"
+             <%= "checked" if recurring_transaction.transaction_type == "income" %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer transition-colors peer-checked:font-bold"
+           style="border: 1px solid var(--color-border);">
+        수입
+      </div>
+    </label>
+    <label class="flex-1">
+      <input type="radio" name="recurring_transaction[transaction_type]" value="expense"
+             <%= "checked" if recurring_transaction.transaction_type != "income" %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer transition-colors peer-checked:font-bold"
+           style="border: 1px solid var(--color-border);">
+        지출
+      </div>
+    </label>
+  </div>
+
+  <%# 변동 금액 체크박스 %>
+  <div class="mb-4">
+    <label class="flex items-center gap-2 cursor-pointer">
+      <%= f.check_box :is_variable_amount, class: "rounded" %>
+      <span class="text-sm" style="color: var(--color-text-secondary);">변동 금액 (매번 다른 금액)</span>
+    </label>
+  </div>
+
+  <%# 금액 %>
+  <div class="mb-4">
+    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">금액</label>
+    <div class="flex items-center gap-2">
+      <input type="text"
+             data-amount-input-target="display"
+             data-action="input->amount-input#format"
+             value="<%= number_with_delimiter(recurring_transaction.amount) if recurring_transaction.amount %>"
+             placeholder="0"
+             class="flex-1 px-3 py-2 rounded-lg text-right"
+             style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);"
+             inputmode="numeric">
+      <span style="color: var(--color-text-secondary);">원</span>
+    </div>
+    <%= f.hidden_field :amount, data: { amount_input_target: "value" } %>
+  </div>
+
+  <%# 설명 %>
+  <div class="mb-4">
+    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">설명</label>
+    <%= f.text_field :description,
+        class: "w-full px-3 py-2 rounded-lg",
+        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);",
+        placeholder: "설명 (선택사항)" %>
+  </div>
+
+  <%# 반복 주기 %>
+  <div class="mb-4">
+    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">반복 주기</label>
+    <%= f.select :frequency,
+        options_for_select([["매월", "monthly"], ["매주", "weekly"], ["매년", "yearly"]], recurring_transaction.frequency),
+        {},
+        class: "w-full px-3 py-2 rounded-lg",
+        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+  </div>
+
+  <%# 실행일 %>
+  <div class="mb-4">
+    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">실행일 (매월 N일)</label>
+    <%= f.number_field :day_of_month,
+        min: 1, max: 31,
+        class: "w-full px-3 py-2 rounded-lg",
+        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+  </div>
+
+  <%# 시작일 / 종료일 %>
+  <div class="grid grid-cols-2 gap-3 mb-4">
+    <div>
+      <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">시작일</label>
+      <%= f.date_field :start_date,
+          class: "w-full px-3 py-2 rounded-lg",
+          style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+    </div>
+    <div>
+      <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">종료일 (선택)</label>
+      <%= f.date_field :end_date,
+          class: "w-full px-3 py-2 rounded-lg",
+          style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+    </div>
+  </div>
+
+  <%# 활성 토글 %>
+  <div class="mb-6">
+    <label class="flex items-center gap-2 cursor-pointer">
+      <%= f.check_box :is_active, class: "rounded", checked: recurring_transaction.new_record? ? true : recurring_transaction.is_active %>
+      <span class="text-sm" style="color: var(--color-text-secondary);">활성화</span>
+    </label>
+  </div>
+
+  <%# 버튼 %>
+  <div class="flex gap-3">
+    <button type="button" data-action="modal#close"
+            class="flex-1 py-2 rounded-lg transition-colors"
+            style="background-color: var(--color-bg-tertiary); color: var(--color-text-secondary);">
+      취소
+    </button>
+    <%= f.submit recurring_transaction.persisted? ? "수정" : "저장",
+        class: "flex-1 py-2 rounded-lg font-bold cursor-pointer transition-colors",
+        style: "background-color: var(--color-accent); color: var(--color-text-primary);" %>
+  </div>
+<% end %>
