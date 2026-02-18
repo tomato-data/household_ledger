@@ -5,7 +5,7 @@
   <div class="flex items-center justify-between mb-4">
     <%= link_to dashboard_index_path(date: date.prev_month.strftime("%Y-%m-%d")),
         class: "p-2 rounded-lg hover:opacity-80",
-        data: { turbo_frame: "calendar_frame" } do %>
+        data: { turbo_frame: "month_frame" } do %>
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -17,7 +17,7 @@
 
     <%= link_to dashboard_index_path(date: date.next_month.strftime("%Y-%m-%d")),
         class: "p-2 rounded-lg hover:opacity-80",
-        data: { turbo_frame: "calendar_frame" } do %>
+        data: { turbo_frame: "month_frame" } do %>
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
       </svg>
@@ -34,7 +34,7 @@
   <%# 달력 그리드 %>
   <% start_date = date.beginning_of_month.beginning_of_week(:sunday) %>
   <% end_date = date.end_of_month.end_of_week(:sunday) %>
-  <div class="grid grid-cols-7 gap-1">
+  <div class="grid grid-cols-7 gap-0.5 sm:gap-1">
     <% (start_date..end_date).each do |day| %>
       <% day_transactions = transactions_by_date[day] || [] %>
       <% day_income = day_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount) %>
@@ -43,15 +43,15 @@
       <% is_today = day == Date.today %>
 
       <%= link_to dashboard_daily_transactions_path(date: day.strftime("%Y-%m-%d")),
-          class: "rounded-lg p-1 text-center min-h-[60px] transition-colors hover:opacity-80 #{is_today ? 'ring-1' : ''}",
+          class: "rounded-lg p-0.5 sm:p-1 text-center min-h-[52px] sm:min-h-[60px] transition-colors hover:opacity-80 #{is_today ? 'ring-1' : ''}",
           style: "background-color: #{is_today ? 'var(--color-bg-tertiary)' : 'transparent'}; opacity: #{is_current_month ? '1' : '0.3'}; #{'ring-color: var(--color-accent);' if is_today}",
           data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", calendar_today: is_today ? "" : nil } do %>
         <div class="text-xs"><%= day.day %></div>
         <% if day_income > 0 %>
-          <div class="text-[10px] truncate" style="color: var(--color-income);">+<%= number_to_human(day_income, precision: 0, units: { thousand: "천", million: "만" }) %></div>
+          <div class="calendar-amount" style="color: var(--color-income);">+<%= number_with_delimiter(day_income) %></div>
         <% end %>
         <% if day_expense > 0 %>
-          <div class="text-[10px] truncate" style="color: var(--color-expense);">-<%= number_to_human(day_expense, precision: 0, units: { thousand: "천", million: "만" }) %></div>
+          <div class="calendar-amount" style="color: var(--color-expense);">-<%= number_with_delimiter(day_expense) %></div>
         <% end %>
       <% end %>
     <% end %>
