@@ -1,1 +1,5 @@
 <%= turbo_stream.remove @asset_adjustment %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("자산 보정이 삭제되었습니다")</script>
+<% end %>

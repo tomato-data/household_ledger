@@ -12,3 +12,7 @@
         selected_date: @transaction.date %>
   </turbo-frame>
 <% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("거래가 삭제되었습니다")</script>
+<% end %>
