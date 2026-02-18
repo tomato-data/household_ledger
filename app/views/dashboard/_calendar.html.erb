@@ -45,7 +45,7 @@
       <%= link_to dashboard_daily_transactions_path(date: day.strftime("%Y-%m-%d")),
           class: "rounded-lg p-1 text-center min-h-[60px] transition-colors hover:opacity-80 #{is_today ? 'ring-1' : ''}",
           style: "background-color: #{is_today ? 'var(--color-bg-tertiary)' : 'transparent'}; opacity: #{is_current_month ? '1' : '0.3'}; #{'ring-color: var(--color-accent);' if is_today}",
-          data: { turbo_frame: "daily_transactions" } do %>
+          data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", calendar_today: is_today ? "" : nil } do %>
         <div class="text-xs"><%= day.day %></div>
         <% if day_income > 0 %>
           <div class="text-[10px] truncate" style="color: var(--color-income);">+<%= number_to_human(day_income, precision: 0, units: { thousand: "천", million: "만" }) %></div>
