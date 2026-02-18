@@ -6,13 +6,13 @@ Rails.application.routes.draw do
   end
 
   unauthenticated do
-    root "devise/sessions#new", as: :unauthenticated_root
+    root to: redirect("/users/sign_in"), as: :unauthenticated_root
   end
 
-  resource :dashboard, only: [] do
-    get :index, on: :collection
-    get :daily_transactions, on: :collection
-  end
+
+  get "dashboard", to: "dashboard#index", as: :dashboard_index
+  get "dashboard/daily_transactions", to: "dashboard#daily_transactions", as: :dashboard_daily_transactions
+
 
   resources :transactions
   resource :statistics, only: [ :show ] do
