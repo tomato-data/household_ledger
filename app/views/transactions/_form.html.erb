@@ -14,7 +14,7 @@
       <input type="radio" name="transaction[transaction_type]" value="income"
              data-action="transaction-form#selectType"
              data-transaction-form-target="typeRadio"
-             <%= "checked" if transaction.transaction_type == "income" || transaction.new_record? %>
+             <%= "checked" if transaction.transaction_type == "income" %>
              class="hidden peer">
       <div class="text-center py-2 rounded-lg cursor-pointer transition-colors peer-checked:font-bold"
            data-transaction-form-target="incomeButton"
@@ -26,7 +26,7 @@
       <input type="radio" name="transaction[transaction_type]" value="expense"
              data-action="transaction-form#selectType"
              data-transaction-form-target="typeRadio"
-             <%= "checked" if transaction.transaction_type == "expense" %>
+             <%= "checked" if transaction.transaction_type == "expense" || transaction.new_record? %>
              class="hidden peer">
       <div class="text-center py-2 rounded-lg cursor-pointer transition-colors peer-checked:font-bold"
            data-transaction-form-target="expenseButton"
@@ -40,18 +40,22 @@
   <div class="flex gap-2 mb-4">
     <label class="flex-1">
       <input type="radio" name="transaction[status]" value="confirmed"
+             data-action="transaction-form#selectStatus"
              <%= "checked" if transaction.status == "confirmed" || transaction.new_record? %>
              class="hidden peer">
       <div class="text-center py-1.5 rounded-lg cursor-pointer text-sm transition-colors"
+           data-transaction-form-target="confirmedButton"
            style="border: 1px solid var(--color-border);">
         확정
       </div>
     </label>
     <label class="flex-1">
       <input type="radio" name="transaction[status]" value="scheduled"
+             data-action="transaction-form#selectStatus"
              <%= "checked" if transaction.status == "scheduled" %>
              class="hidden peer">
       <div class="text-center py-1.5 rounded-lg cursor-pointer text-sm transition-colors"
+           data-transaction-form-target="scheduledButton"
            style="border: 1px solid var(--color-border);">
         예정
       </div>

@@ -32,7 +32,8 @@
     <turbo-frame id="modal"></turbo-frame>
 
     <% if user_signed_in? %>
-      <%= link_to new_transaction_path,
+      <%= link_to new_transaction_path(date: Date.today),
+          id: "new-transaction-btn",
           class: "fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg z-40 transition-colors",
           style: "background-color: var(--color-accent); color: var(--color-text-primary);",
           data: { turbo_frame: "modal" } do %>

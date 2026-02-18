@@ -2,12 +2,13 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["day"]
+  static values = { selectedDate: String }
 
   connect() {
-    // 페이지 로드 시 오늘 날짜를 기본 선택
-    const today = this.element.querySelector("[data-calendar-today]")
-    if (today) {
-      today.classList.add("calendar-selected")
+    const dateToSelect = this.selectedDateValue || new Date().toISOString().split("T")[0]
+    const target = this.dayTargets.find(el => el.dataset.date === dateToSelect)
+    if (target) {
+      target.classList.add("calendar-selected")
     }
   }
 
@@ -17,5 +18,16 @@ export default class extends Controller {
 
     // 새 선택 적용
     event.currentTarget.classList.add("calendar-selected")
+
+    // + 버튼의 href를 선택된 날짜로 업데이트
+    const selectedDate = event.currentTarget.dataset.date
+    if (selectedDate) {
+      const btn = document.getElementById("new-transaction-btn")
+      if (btn) {
+        const btnUrl = new URL(btn.getAttribute("href"), window.location.origin)
+        btnUrl.searchParams.set("date", selectedDate)
+        btn.setAttribute("href", btnUrl.pathname + btnUrl.search)
+      }
+    }
   }
 }

@@ -1,5 +1,7 @@
+<% selected_date ||= Date.today %>
 <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);"
-     data-controller="calendar">
+     data-controller="calendar"
+     data-calendar-selected-date-value="<%= selected_date.strftime('%Y-%m-%d') %>">
 
   <%# 월 네비게이션 %>
   <div class="flex items-center justify-between mb-4">
@@ -45,7 +47,7 @@
       <%= link_to dashboard_daily_transactions_path(date: day.strftime("%Y-%m-%d")),
           class: "rounded-lg p-0.5 sm:p-1 text-center min-h-[52px] sm:min-h-[60px] transition-colors hover:opacity-80 #{is_today ? 'ring-1' : ''}",
           style: "background-color: #{is_today ? 'var(--color-bg-tertiary)' : 'transparent'}; opacity: #{is_current_month ? '1' : '0.3'}; #{'ring-color: var(--color-accent);' if is_today}",
-          data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", calendar_today: is_today ? "" : nil } do %>
+          data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", date: day.strftime("%Y-%m-%d"), calendar_today: is_today ? "" : nil } do %>
         <div class="text-xs"><%= day.day %></div>
         <% if day_income > 0 %>
           <div class="calendar-amount" style="color: var(--color-income);">+<%= number_with_delimiter(day_income) %></div>

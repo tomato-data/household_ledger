@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["incomeButton", "expenseButton", "typeRadio"]
+  static targets = ["incomeButton", "expenseButton", "confirmedButton", "scheduledButton", "typeRadio"]
 
   selectType() {
     const selected = this.element.querySelector('input[name="transaction[transaction_type]"]:checked')
@@ -23,7 +23,28 @@ export default class extends Controller {
     }
   }
 
+  selectStatus() {
+    const selected = this.element.querySelector('input[name="transaction[status]"]:checked')
+    if (!selected) return
+
+    const confirmedDiv = this.confirmedButtonTarget
+    const scheduledDiv = this.scheduledButtonTarget
+
+    if (selected.value === "confirmed") {
+      confirmedDiv.style.backgroundColor = "var(--color-accent)"
+      confirmedDiv.style.color = "var(--color-text-primary)"
+      scheduledDiv.style.backgroundColor = "transparent"
+      scheduledDiv.style.color = "var(--color-text-secondary)"
+    } else {
+      scheduledDiv.style.backgroundColor = "var(--color-accent)"
+      scheduledDiv.style.color = "var(--color-text-primary)"
+      confirmedDiv.style.backgroundColor = "transparent"
+      confirmedDiv.style.color = "var(--color-text-secondary)"
+    }
+  }
+
   connect() {
     this.selectType()
+    this.selectStatus()
   }
 }

@@ -1,10 +1,14 @@
 <%= turbo_stream.remove @transaction %>
 
-<%= turbo_stream.replace "summary_cards" do %>
-  <turbo-frame id="summary_cards">
+<%= turbo_stream.replace "month_frame" do %>
+  <turbo-frame id="month_frame">
     <%= render "dashboard/summary_cards",
         total_income: @total_income,
         total_expense: @total_expense,
         total_assets: @total_assets %>
+    <%= render "dashboard/calendar",
+        date: @date,
+        transactions_by_date: @transactions_by_date,
+        selected_date: @transaction.date %>
   </turbo-frame>
 <% end %>
