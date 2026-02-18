@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   get "dashboard/daily_transactions", to: "dashboard#daily_transactions", as: :dashboard_daily_transactions
 
 
-  resources :transactions
+  resources :transactions, except: [ :index, :show ]
   resource :statistics, only: [ :show ] do
     get :chart_data, on: :member
   end

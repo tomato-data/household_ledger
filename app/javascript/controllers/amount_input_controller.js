@@ -3,6 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["display", "value"]
 
+  connect() {
+    this.displayTarget.focus()
+  }
+
   format() {
     const raw = this.displayTarget.value.replace(/[^\d]/g, "")
     const number = parseInt(raw, 10)
