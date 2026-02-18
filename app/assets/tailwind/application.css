@@ -24,4 +24,18 @@
     color: var(--color-text-primary);
     border-radius: 0.5rem;
   }
+
+  .calendar-amount {
+    font-size: 9px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .calendar-amount {
+      font-size: 11px;
+    }
+  }
 }

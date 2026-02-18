@@ -1,15 +1,11 @@
 <div class="space-y-6 py-4">
 
-  <%# ===== 요약 카드 ===== %>
-  <turbo-frame id="summary_cards">
+  <%# ===== 요약 카드 + 캘린더 ===== %>
+  <turbo-frame id="month_frame">
     <%= render "dashboard/summary_cards",
         total_income: @total_income || 0,
         total_expense: @total_expense || 0,
         total_assets: @total_assets || 0 %>
-  </turbo-frame>
-
-  <%# ===== 캘린더 ===== %>
-  <turbo-frame id="calendar_frame">
     <%= render "dashboard/calendar",
         date: @date || Date.today,
         transactions_by_date: @transactions_by_date || {} %>
