@@ -26,34 +26,36 @@
     <%= link_to authenticated_root_path,
         class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:opacity-80",
         style: "background-color: var(--color-bg-tertiary);" do %>
-      <span>🏠</span><span>홈</span>
+      <%= lucide_icon("home", size: 18) %><span>홈</span>
     <% end %>
 
     <%= link_to statistics_path,
         class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:opacity-80" do %>
-      <span>📊</span><span>통계</span>
+      <%= lucide_icon("bar-chart-3", size: 18) %><span>통계</span>
     <% end %>
 
     <%= link_to categories_path,
         class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:opacity-80" do %>
-      <span>📂</span><span>카테고리 관리</span>
+      <%= lucide_icon("folder-open", size: 18) %><span>카테고리 관리</span>
     <% end %>
 
     <%= link_to recurring_transactions_path,
         class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:opacity-80" do %>
-      <span>🔄</span><span>반복 거래</span>
+      <%= lucide_icon("repeat", size: 18) %><span>반복 거래</span>
     <% end %>
 
     <%= link_to asset_adjustments_path,
         class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:opacity-80" do %>
-      <span>💰</span><span>자산 보정</span>
+      <%= lucide_icon("scale", size: 18) %><span>자산 보정</span>
     <% end %>
   </nav>
 
   <div class="absolute bottom-0 left-0 right-0 p-4" style="border-top: 1px solid var(--color-border);">
-    <%= link_to "로그아웃", destroy_user_session_path,
+    <%= link_to destroy_user_session_path,
         data: { turbo_method: :delete },
         class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:opacity-80",
-        style: "color: var(--color-danger);" %>
+        style: "color: var(--color-danger);" do %>
+      <%= lucide_icon("log-out", size: 18) %><span>로그아웃</span>
+    <% end %>
   </div>
 </aside>

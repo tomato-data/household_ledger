@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_08_105554) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_18_065359) do
   create_table "asset_adjustments", force: :cascade do |t|
     t.date "adjustment_date"
     t.string "adjustment_type"
@@ -24,8 +24,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_105554) do
   end
 
   create_table "categories", force: :cascade do |t|
+    t.string "color", default: "#a3a3a3"
     t.datetime "created_at", null: false
-    t.string "emoji"
+    t.string "icon"
     t.string "name"
     t.integer "position"
     t.datetime "updated_at", null: false

@@ -13,7 +13,7 @@
       <% current_user.categories.each do |category| %>
         <div class="flex items-center gap-2 px-3 py-2 rounded-lg"
              style="background-color: var(--color-bg-tertiary);">
-          <span class="text-xl"><%= category.emoji %></span>
+          <span style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 20) %></span>
           <span class="text-sm"><%= category.name %></span>
         </div>
       <% end %>

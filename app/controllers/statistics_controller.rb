@@ -8,8 +8,8 @@ class StatisticsController < ApplicationController
                       .where(date: start_date..end_date)
                       .where(transaction_type: @type)
                       .joins(:category)
-                      .group("categories.name", "categories.emoji").sum(:amount)
-    @category_stats = transactions.map { |key, amount | { name: key[0], emoji: key[1], amount: amount } }
+                      .group("categories.name", "categories.icon", "categories.color").sum(:amount)
+    @category_stats = transactions.map { |key, amount| { name: key[0], icon: key[1], color: key[2], amount: amount } }
     @total = @category_stats.sum { |stat| stat[:amount] }
   end
 end

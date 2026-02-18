@@ -9,6 +9,13 @@ module ApplicationHelper
     content_tag(:span, "#{prefix}#{format_currency(amount.abs)}", style: "color: #{css_color};")
   end
 
+  def lucide_icon(name, size: 16, css_class: "", **options)
+    content_tag(:i, nil,
+      data: { lucide: name },
+      class: "lucide-icon #{css_class}",
+      style: "width: #{size}px; height: #{size}px; #{options[:style]}")
+  end
+
   def type_badge(type)
     if type.to_s == "income"
       content_tag(:span, "수입",

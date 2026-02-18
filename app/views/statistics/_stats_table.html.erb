@@ -4,7 +4,9 @@
       <% percentage = total > 0 ? (stat[:amount].to_f / total * 100).round(1) : 0 %>
       <div class="flex items-center gap-3 px-4 py-3"
            style="border-bottom: 1px solid var(--color-border);">
-        <span class="text-xl flex-shrink-0"><%= stat[:emoji] %></span>
+        <span class="flex-shrink-0" style="color: <%= stat[:color] || '#a3a3a3' %>;">
+          <%= lucide_icon(stat[:icon] || "file-text", size: 20) %>
+        </span>
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1">
