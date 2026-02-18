@@ -1,3 +1,7 @@
 <%= turbo_stream.replace @asset_adjustment do %>
   <%= render partial: "asset_adjustments/asset_adjustment", locals: { asset_adjustment: @asset_adjustment } %>
 <% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("자산 보정이 수정되었습니다")</script>
+<% end %>

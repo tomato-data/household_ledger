@@ -31,6 +31,9 @@
 
     <turbo-frame id="modal"></turbo-frame>
 
+    <%# 공용 Toast 컨테이너 (좌측 하단) %>
+    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2" style="max-width: 300px;"></div>
+
     <% if user_signed_in? %>
       <%= link_to new_transaction_path(date: Date.today),
           id: "new-transaction-btn",

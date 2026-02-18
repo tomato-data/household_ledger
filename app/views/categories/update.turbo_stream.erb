@@ -1,3 +1,7 @@
 <%= turbo_stream.replace @category do %>
   <%= render partial: "categories/category", locals: { category: @category } %>
 <% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("카테고리가 수정되었습니다")</script>
+<% end %>

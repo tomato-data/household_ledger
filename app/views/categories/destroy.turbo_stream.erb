@@ -1,1 +1,5 @@
 <%= turbo_stream.remove @category %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("카테고리가 삭제되었습니다")</script>
+<% end %>
