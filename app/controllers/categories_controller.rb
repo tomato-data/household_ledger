@@ -48,6 +48,6 @@ class CategoriesController < ApplicationController
   end
 
   def category_params
-    params.require(:category).permit(:name, :emoji)
+    params.require(:category).permit(:name, :icon, :color)
   end
 end

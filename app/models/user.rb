@@ -9,19 +9,19 @@ class User < ApplicationRecord
   has_many :asset_adjustments, dependent: :destroy
 
   DEFAULT_CATEGORIES = [
-    { name: "식비", emoji: "🍽️", position: 1 },
-    { name: "간식류", emoji: "🍪", position: 2 },
-    { name: "카페", emoji: "☕", position: 3 },
-    { name: "교통비", emoji: "🚗", position: 4 },
-    { name: "문화생활", emoji: "🎭", position: 5 },
-    { name: "의류", emoji: "👔", position: 6 },
-    { name: "생필품", emoji: "🛒", position: 7 },
-    { name: "의료비", emoji: "🏥", position: 8 },
-    { name: "월급", emoji: "💰", position: 9 },
-    { name: "월세", emoji: "🏠", position: 10 },
-    { name: "통신비", emoji: "📱", position: 11 },
-    { name: "공과금", emoji: "⚡", position: 12 },
-    { name: "기타", emoji: "📝", position: 13 }
+    { name: "식비", icon: "utensils", position: 1 },
+    { name: "간식류", icon: "cookie", position: 2 },
+    { name: "카페", icon: "coffee", position: 3 },
+    { name: "교통비", icon: "car", position: 4 },
+    { name: "문화생활", icon: "film", position: 5 },
+    { name: "의류", icon: "shirt", position: 6 },
+    { name: "생필품", icon: "shopping-cart", position: 7 },
+    { name: "의료비", icon: "heart-pulse", position: 8 },
+    { name: "월급", icon: "wallet", position: 9 },
+    { name: "월세", icon: "home", position: 10 },
+    { name: "통신비", icon: "smartphone", position: 11 },
+    { name: "공과금", icon: "zap", position: 12 },
+    { name: "기타", icon: "file-text", position: 13 }
   ].freeze
 
   after_create :create_default_categories

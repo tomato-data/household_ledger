@@ -5,7 +5,9 @@
 
     <div class="flex items-center gap-3 flex-1 min-w-0">
       <%# 카테고리 이모지 %>
-      <span class="text-xl flex-shrink-0"><%= transaction.category&.emoji || "📝" %></span>
+      <span class="flex-shrink-0" style="color: <%= transaction.category&.color || '#a3a3a3' %>;">
+        <%= lucide_icon(transaction.category&.icon || "file-text", size: 20) %>
+      </span>
 
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium truncate"><%= transaction.description %></p>

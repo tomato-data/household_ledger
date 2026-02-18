@@ -19,6 +19,12 @@
 }
 
 @layer components {
+  .lucide-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .calendar-selected {
     background-color: var(--color-accent) !important;
     color: var(--color-text-primary);

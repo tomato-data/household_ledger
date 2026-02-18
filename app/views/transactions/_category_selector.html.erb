@@ -7,7 +7,9 @@
              data-action="category-selector#select">
       <div class="flex flex-col items-center p-2 rounded-lg transition-colors peer-checked:ring-2"
            style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); --tw-ring-color: var(--color-accent);">
-        <span class="text-xl"><%= category.emoji %></span>
+        <span style="color: <%= category.color || '#a3a3a3' %>;">
+          <%= lucide_icon(category.icon, size: 22) %>
+        </span>
         <span class="text-[10px] mt-1 truncate w-full text-center" style="color: var(--color-text-secondary);">
           <%= category.name %>
         </span>

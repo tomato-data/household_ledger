@@ -25,7 +25,7 @@ namespace :data do
     source_categories.sort_by { |c| c["order"] }.each do |cat|
       new_cat = user.categories.create!(
         name: cat["name"],
-        emoji: cat["emoji"],
+        icon: cat["emoji"],
         position: cat["order"].to_i + 1
       )
       category_id_map[cat["id"]] = new_cat.id
@@ -93,5 +93,49 @@ namespace :data do
     puts "카테고리: #{user.categories.count}개"
     puts "거래: #{user.transactions.count}개"
     puts "반복 거래: #{user.recurring_transactions.count}개"
+  end
+
+  desc "카테고리 이모지를 Lucide 아이콘 이름으로 변환"
+  task convert_icons: :environment do
+    EMOJI_TO_ICON = {
+      "🍽️" => "utensils", "🍚" => "utensils",
+      "🍪" => "cookie",
+      "☕" => "coffee",
+      "🚗" => "car",
+      "🎭" => "film",
+      "🎮" => "gamepad-2",
+      "👔" => "shirt",
+      "🛒" => "shopping-cart",
+      "💈" => "scissors",
+      "🏥" => "heart-pulse",
+      "📚" => "book-open",
+      "🕋" => "piggy-bank",
+      "💰" => "wallet",
+      "🏠" => "home",
+      "📱" => "smartphone",
+      "📺" => "tv",
+      "⚡" => "zap",
+      "📝" => "file-text",
+      "🏀" => "target",
+      "🎁" => "gift",
+      "🧪" => "flask-round"
+    }.freeze
+
+    converted = 0
+    Category.find_each do |cat|
+      icon_name = EMOJI_TO_ICON[cat.icon]
+      if icon_name
+        cat.update!(icon: icon_name)
+        puts "  #{cat.name}: → #{icon_name}"
+        converted += 1
+      elsif cat.icon && cat.icon.match?(/\A[a-z]/)
+        puts "  #{cat.name}: 이미 변환됨 (#{cat.icon})"
+      else
+        puts "  [WARN] #{cat.name}: 매핑 없음 (#{cat.icon}) → file-text"
+        cat.update!(icon: "file-text")
+        converted += 1
+      end
+    end
+    puts "\n#{converted}개 카테고리 아이콘 변환 완료"
   end
 end

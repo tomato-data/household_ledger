@@ -1,10 +1,15 @@
-<%= form_with(model: category, class: "flex items-center gap-3") do |f| %>
-  <div class="w-12">
-    <%= f.text_field :emoji,
-        class: "w-full text-center text-xl px-2 py-1.5 rounded-lg",
-        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border);",
-        placeholder: "😀",
-        maxlength: 2 %>
+<%= form_with(model: category, class: "flex items-center gap-3", data: { controller: "icon-picker" }) do |f| %>
+  <div class="relative">
+    <%= f.hidden_field :icon, data: { icon_picker_target: "input" }, value: category.icon || "file-text" %>
+    <%= f.hidden_field :color, data: { icon_picker_target: "colorInput" }, value: category.color || "#a3a3a3" %>
+    <button type="button" data-action="icon-picker#toggle"
+            class="w-10 h-10 flex items-center justify-center rounded-lg"
+            style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border);">
+      <span data-icon-picker-target="preview" style="color: <%= category.color || '#a3a3a3' %>;">
+        <%= lucide_icon(category.icon || "file-text", size: 20) %>
+      </span>
+    </button>
+    <%= render "categories/icon_color_picker", current_color: category.color %>
   </div>
 
   <div class="flex-1">

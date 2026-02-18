@@ -7,27 +7,31 @@
     <%# 드래그 핸들 %>
     <span class="cursor-grab active:cursor-grabbing text-lg" style="color: var(--color-text-muted);">☰</span>
 
-    <%# 이모지 + 이름 (표시 모드) %>
+    <%# 아이콘 + 이름 (표시 모드) %>
     <div data-inline-edit-target="display" class="flex items-center gap-2 flex-1">
-      <span class="text-xl"><%= category.emoji %></span>
+      <span style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 20) %></span>
       <span class="text-sm"><%= category.name %></span>
     </div>
 
-    <%# 이모지 + 이름 (편집 모드 — 숨김) %>
-    <div data-inline-edit-target="editor" class="flex-1 hidden">
-      <%= form_with(model: category, class: "flex items-center gap-2") do |f| %>
-        <%= f.text_field :emoji,
-            class: "w-10 text-center text-lg px-1 py-0.5 rounded",
-            style: "background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);",
-            maxlength: 2 %>
+    <%# 아이콘 + 이름 (편집 모드 — 숨김) %>
+    <div data-inline-edit-target="editor" class="flex-1 hidden relative">
+      <%= form_with(model: category, class: "flex items-center gap-2", data: { controller: "icon-picker" }) do |f| %>
+        <%= f.hidden_field :icon, data: { icon_picker_target: "input" } %>
+        <%= f.hidden_field :color, data: { icon_picker_target: "colorInput" } %>
+        <button type="button" data-action="icon-picker#toggle"
+                class="w-8 h-8 flex items-center justify-center rounded flex-shrink-0"
+                style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+          <span data-icon-picker-target="preview" style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 18) %></span>
+        </button>
+        <%= render "categories/icon_color_picker", current_color: category.color %>
         <%= f.text_field :name,
-            class: "flex-1 px-2 py-0.5 rounded text-sm",
+            class: "flex-1 px-2 py-0.5 rounded text-sm min-w-0",
             style: "background-color: var(--color-bg-secondary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
         <%= f.submit "저장",
-            class: "px-2 py-0.5 rounded text-xs cursor-pointer",
+            class: "px-2 py-0.5 rounded text-xs cursor-pointer flex-shrink-0",
             style: "background-color: var(--color-accent); color: var(--color-text-primary);" %>
         <button type="button" data-action="inline-edit#cancel"
-                class="px-2 py-0.5 rounded text-xs" style="color: var(--color-text-muted);">
+                class="px-2 py-0.5 rounded text-xs flex-shrink-0" style="color: var(--color-text-muted);">
           취소
         </button>
       <% end %>
