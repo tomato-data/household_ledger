@@ -17,3 +17,11 @@
     --color-danger: #ef4444;
   }
 }
+
+@layer components {
+  .calendar-selected {
+    background-color: var(--color-accent) !important;
+    color: var(--color-text-primary);
+    border-radius: 0.5rem;
+  }
+}
