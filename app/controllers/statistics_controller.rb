@@ -4,11 +4,25 @@ class StatisticsController < ApplicationController
     start_date = @date.beginning_of_month
     end_date = @date.end_of_month
     @type = params[:type] || "expense"
+    @date_mode = params[:date_mode] || "purchase" # purchase(긁은 날) / payment(빠져나가는 날)
 
-    transactions = current_user.transactions
-                      .where(date: start_date..end_date)
-                      .where(transaction_type: @type)
-                      .includes(category: :parent)
+    # 날짜 기준 선택: 카드 결제는 purchase_date, 일반은 date
+    if @date_mode == "purchase"
+      # 긁은 날 기준: 카드 거래는 purchase_date, 비카드 거래는 date
+      transactions = current_user.transactions
+                        .where(transaction_type: @type)
+                        .includes(category: :parent)
+                        .where(
+                          "(credit_card_id IS NOT NULL AND purchase_date BETWEEN ? AND ?) OR (credit_card_id IS NULL AND date BETWEEN ? AND ?)",
+                          start_date, end_date, start_date, end_date
+                        )
+    else
+      # 빠져나가는 날 기준: 모든 거래의 date 컬럼
+      transactions = current_user.transactions
+                        .where(date: start_date..end_date)
+                        .where(transaction_type: @type)
+                        .includes(category: :parent)
+    end
 
     # 부모 카테고리 기준 그룹핑
     parent_groups = {}
@@ -21,7 +35,6 @@ class StatisticsController < ApplicationController
       }
       parent_groups[parent.id][:amount] += t.amount
 
-      # 서브카테고리가 있는 경우만 하위 집계
       if cat.parent_id
         parent_groups[parent.id][:subcategories][cat.id] ||= {
           name: cat.name, icon: cat.icon, color: cat.color, amount: 0

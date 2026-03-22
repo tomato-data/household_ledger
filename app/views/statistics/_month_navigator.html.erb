@@ -1,17 +1,19 @@
 <div class="flex items-center justify-between">
-  <%= link_to statistics_path(date: date.prev_month.strftime("%Y-%m-%d"), type: @type),
+  <%= link_to statistics_path(date: date.prev_month.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode),
       class: "btn-ghost p-2 rounded-lg",
+      aria_label: "이전 달",
       data: { turbo_frame: "stats_frame" } do %>
-    <i data-lucide="chevron-left" class="lucide-icon" style="width: 18px; height: 18px;"></i>
+    <i data-lucide="chevron-left" aria-hidden="true" class="lucide-icon" style="width: 18px; height: 18px;"></i>
   <% end %>
 
   <span class="text-base font-bold">
     <%= l(date, format: "%Y년 %m월") %>
   </span>
 
-  <%= link_to statistics_path(date: date.next_month.strftime("%Y-%m-%d"), type: @type),
+  <%= link_to statistics_path(date: date.next_month.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode),
       class: "btn-ghost p-2 rounded-lg",
+      aria_label: "다음 달",
       data: { turbo_frame: "stats_frame" } do %>
-    <i data-lucide="chevron-right" class="lucide-icon" style="width: 18px; height: 18px;"></i>
+    <i data-lucide="chevron-right" aria-hidden="true" class="lucide-icon" style="width: 18px; height: 18px;"></i>
   <% end %>
 </div>
