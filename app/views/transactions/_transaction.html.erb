@@ -13,7 +13,7 @@
         <p class="text-sm font-medium truncate"><%= transaction.description %></p>
         <div class="flex items-center gap-1.5 mt-0.5">
           <span class="text-xs" style="color: var(--color-text-muted);">
-            <%= transaction.category&.name %>
+            <%= transaction.category&.full_name %>
           </span>
           <% if transaction.status == "scheduled" %>
             <%= lucide_icon("clock", size: 12, style: "color: var(--color-assets);") %>

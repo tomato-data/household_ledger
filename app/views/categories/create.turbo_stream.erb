@@ -1,5 +1,13 @@
-<%= turbo_stream.append "categories_list" do %>
-  <%= render partial: "categories/category", locals: { category: @category } %>
+<% if @category.parent_id.present? %>
+  <%# 서브카테고리: 부모 전체를 리프레시 %>
+  <%= turbo_stream.replace @category.parent do %>
+    <%= render partial: "categories/category", locals: { category: @category.parent.reload } %>
+  <% end %>
+<% else %>
+  <%# 상위 카테고리: 목록에 추가 %>
+  <%= turbo_stream.append "categories_list" do %>
+    <%= render partial: "categories/category", locals: { category: @category } %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.append "toast-container" do %>

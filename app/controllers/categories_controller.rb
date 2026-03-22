@@ -1,17 +1,20 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: [ :update, :destroy ]
+
   def index
-    @categories = current_user.categories
+    @categories = current_user.categories.top_level.includes(:subcategories)
   end
 
   def create
     @category = current_user.categories.build(category_params)
     if @category.save
+      @categories = current_user.categories.top_level.includes(:subcategories)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to root_path }
       end
     else
+      @categories = current_user.categories.top_level.includes(:subcategories)
       render :index
     end
   end
@@ -48,6 +51,6 @@ class CategoriesController < ApplicationController
   end
 
   def category_params
-    params.require(:category).permit(:name, :icon, :color)
+    params.require(:category).permit(:name, :icon, :color, :parent_id)
   end
 end

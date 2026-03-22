@@ -12,7 +12,6 @@ class DashboardController < ApplicationController
     @total_assets = current_user.transactions.where(transaction_type: :income).sum(:amount) -
                       current_user.transactions.where(transaction_type: :expense).sum(:amount)
 
-    # 초기 로드: 오늘 날짜의 거래
     @selected_dates = [ @date > Date.today ? start_date : Date.today ]
     load_selection_data
   end
@@ -37,21 +36,24 @@ class DashboardController < ApplicationController
   def load_selection_data
     @daily_transactions = current_user.transactions
                             .where(date: @selected_dates)
-                            .includes(:category)
+                            .includes(category: :parent)
                             .order(date: :desc, created_at: :desc)
 
-    # 선택된 날짜들의 카테고리별 통계
-    @selection_stats = current_user.transactions
-                         .where(date: @selected_dates)
-                         .where(transaction_type: :expense)
-                         .joins(:category)
-                         .group("categories.name", "categories.icon", "categories.color")
-                         .sum(:amount)
-                         .map { |key, amount| { name: key[0], icon: key[1], color: key[2], amount: amount } }
-                         .sort_by { |s| -s[:amount] }
+    # 부모 카테고리 기준 그룹핑
+    expense_txns = @daily_transactions.select { |t| t.transaction_type == "expense" }
+    parent_groups = {}
+    expense_txns.each do |t|
+      cat = t.category
+      parent = cat.parent || cat
+      parent_groups[parent.id] ||= {
+        name: parent.name, icon: parent.icon, color: parent.color, amount: 0
+      }
+      parent_groups[parent.id][:amount] += t.amount
+    end
 
+    @selection_stats = parent_groups.values.sort_by { |s| -s[:amount] }
     @selection_total = @selection_stats.sum { |s| s[:amount] }
     @selection_income = @daily_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount)
-    @selection_expense = @daily_transactions.select { |t| t.transaction_type == "expense" }.sum(&:amount)
+    @selection_expense = expense_txns.sum(&:amount)
   end
 end

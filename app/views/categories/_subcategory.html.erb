@@ -1,0 +1,41 @@
+<%= turbo_frame_tag subcategory do %>
+  <div class="flex items-center gap-2 py-1.5 px-3 rounded-md group/sub"
+       data-controller="inline-edit">
+
+    <%# 표시 모드 %>
+    <div data-inline-edit-target="display" class="flex items-center gap-2 flex-1">
+      <span class="text-xs" style="color: var(--color-text-muted);">└</span>
+      <div class="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
+           style="background-color: <%= subcategory.color || '#a3a3a3' %>20; color: <%= subcategory.color || '#a3a3a3' %>;">
+        <%= lucide_icon(subcategory.icon, size: 12) %>
+      </div>
+      <span class="text-xs font-medium"><%= subcategory.name %></span>
+    </div>
+
+    <%# 편집 모드 %>
+    <div data-inline-edit-target="editor" class="flex-1 hidden">
+      <%= form_with(model: subcategory, class: "flex items-center gap-2") do |f| %>
+        <%= f.text_field :name, class: "input flex-1 min-w-0 text-xs py-0.5" %>
+        <%= f.submit "저장", class: "btn btn-primary text-[10px] py-0.5 px-2" %>
+        <button type="button" data-action="inline-edit#cancel" class="btn btn-ghost text-[10px] py-0.5 px-1">취소</button>
+      <% end %>
+    </div>
+
+    <%# 액션 %>
+    <div class="flex items-center gap-0.5 opacity-0 group-hover/sub:opacity-100 transition-opacity"
+         data-inline-edit-target="actions">
+      <button data-action="inline-edit#edit"
+              class="btn-ghost p-1 rounded" style="color: var(--color-text-muted);" aria-label="수정">
+        <%= lucide_icon("pencil", size: 12) %>
+      </button>
+      <%= button_to category_path(subcategory),
+          method: :delete,
+          class: "btn-ghost p-1 rounded",
+          style: "color: var(--color-danger);",
+          aria_label: "삭제",
+          form: { data: { turbo_confirm: "이 하위 카테고리를 삭제하시겠습니까?" } } do %>
+        <%= lucide_icon("trash-2", size: 12) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
