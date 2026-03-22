@@ -1,0 +1,24 @@
+<turbo-frame id="category_trend_frame">
+  <% if @selected_trend.present? %>
+    <% trend_color = chart_color(nil, @color_index || 0) %>
+    <div class="card p-4">
+      <h3 class="text-xs font-medium mb-2" style="color: var(--color-text-muted);">
+        <span class="font-bold" style="color: var(--color-text-primary);"><%= @selected_category_name %></span> 월별 추이
+      </h3>
+      <div style="height: 200px;"
+           data-controller="trend-chart"
+           data-trend-chart-labels-value="<%= @months.map { |m| l(m, format: '%m월') }.to_json %>"
+           data-trend-chart-data-value="<%= @selected_trend.map { |t| t[:amount] }.to_json %>"
+           data-trend-chart-color-value="<%= trend_color %>"
+           data-trend-chart-highlight-value="<%= @months.length - 1 %>">
+        <canvas data-trend-chart-target="canvas"></canvas>
+      </div>
+    </div>
+  <% else %>
+    <div class="card p-4">
+      <p class="text-xs text-center py-6" style="color: var(--color-text-muted);">
+        카테고리를 클릭하면 월별 추이를 볼 수 있습니다
+      </p>
+    </div>
+  <% end %>
+</turbo-frame>

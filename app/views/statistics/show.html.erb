@@ -1,30 +1,44 @@
-<div class="space-y-6 py-4">
+<div class="space-y-5 py-4">
   <h1 class="text-xl font-bold">통계</h1>
 
   <turbo-frame id="stats_frame">
     <%# 월 네비게이션 %>
     <%= render "statistics/month_navigator", date: @date || Date.today %>
 
-    <%# 수입/지출 토글 + 날짜 기준 토글 %>
-    <div class="flex items-center gap-3 my-4">
+    <%# === 탭 네비게이션 === %>
+    <div class="flex items-center gap-1 mt-4 mb-4 p-1 rounded-lg" style="background-color: var(--color-bg-tertiary);">
+      <%= link_to statistics_path(date: @date.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode, tab: "category"),
+          class: "flex-1 text-center py-2 rounded-md text-sm font-medium transition-all #{@tab == 'category' ? '' : 'opacity-60'}",
+          style: @tab == "category" ? "background-color: var(--color-bg-secondary); box-shadow: var(--shadow-sm);" : "",
+          data: { turbo_frame: "stats_frame" } do %>
+        카테고리
+      <% end %>
+      <%= link_to statistics_path(date: @date.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode, tab: "trend"),
+          class: "flex-1 text-center py-2 rounded-md text-sm font-medium transition-all #{@tab == 'trend' ? '' : 'opacity-60'}",
+          style: @tab == "trend" ? "background-color: var(--color-bg-secondary); box-shadow: var(--shadow-sm);" : "",
+          data: { turbo_frame: "stats_frame" } do %>
+        추이
+      <% end %>
+    </div>
+
+    <%# 수입/지출 + 날짜 기준 토글 %>
+    <div class="flex items-center gap-3 mb-4">
       <div class="flex gap-2 flex-1">
         <%= link_to "지출",
-            statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: "expense", date_mode: @date_mode),
+            statistics_path(date: @date.strftime("%Y-%m-%d"), type: "expense", date_mode: @date_mode, tab: @tab),
             class: "btn flex-1 text-sm font-medium",
             style: "#{'background-color: var(--color-expense-bg); color: var(--color-expense); font-weight: 700;' if @type.to_s != 'income'} border: 1px solid var(--color-border);",
             data: { turbo_frame: "stats_frame" } %>
         <%= link_to "수입",
-            statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: "income", date_mode: @date_mode),
+            statistics_path(date: @date.strftime("%Y-%m-%d"), type: "income", date_mode: @date_mode, tab: @tab),
             class: "btn flex-1 text-sm font-medium",
             style: "#{'background-color: var(--color-income-bg); color: var(--color-income); font-weight: 700;' if @type.to_s == 'income'} border: 1px solid var(--color-border);",
             data: { turbo_frame: "stats_frame" } %>
       </div>
 
-      <%# 날짜 기준 토글 %>
       <% other_mode = @date_mode == "purchase" ? "payment" : "purchase" %>
-      <%= link_to statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: @type, date_mode: other_mode),
+      <%= link_to statistics_path(date: @date.strftime("%Y-%m-%d"), type: @type, date_mode: other_mode, tab: @tab),
           class: "btn btn-ghost text-xs gap-1 flex-shrink-0",
-          title: @date_mode == "purchase" ? "현재: 사용일 기준" : "현재: 결제일 기준",
           data: { turbo_frame: "stats_frame" } do %>
         <% if @date_mode == "purchase" %>
           <%= lucide_icon("shopping-bag", size: 13) %>
@@ -36,10 +50,13 @@
       <% end %>
     </div>
 
-    <%# 차트 %>
-    <%= render "statistics/chart", category_stats: @category_stats || [] %>
-
-    <%# 통계 테이블 %>
-    <%= render "statistics/stats_table", category_stats: @category_stats || [], total: @total || 0 %>
+    <%# === 탭 콘텐츠 === %>
+    <% if @tab == "category" %>
+      <%= render "statistics/chart", category_stats: @category_stats || [] %>
+      <%= render "statistics/stats_table", category_stats: @category_stats || [], total: @total || 0 %>
+    <% else %>
+      <%= render "statistics/trend", comparisons: @comparisons, months: @months, monthly_totals: @monthly_totals,
+          selected_trend: @selected_trend, selected_category_name: @selected_category_name %>
+    <% end %>
   </turbo-frame>
 </div>
