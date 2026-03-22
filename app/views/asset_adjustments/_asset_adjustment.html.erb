@@ -1,11 +1,9 @@
 <%= turbo_frame_tag asset_adjustment do %>
-  <div class="flex items-center justify-between py-3 px-4 rounded-xl"
-       style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+  <div class="card table-row">
     <div class="flex-1">
       <div class="flex items-center gap-2 mb-1">
         <span class="text-sm font-medium"><%= asset_adjustment.description %></span>
-        <span class="text-xs px-2 py-0.5 rounded-full"
-              style="background-color: color-mix(in srgb, var(--color-assets) 20%, transparent); color: var(--color-assets);">
+        <span class="badge" style="background-color: var(--color-assets-bg); color: var(--color-assets);">
           <%= asset_adjustment.adjustment_type == "income_missing" ? "누락 수입" : "누락 지출" %>
         </span>
       </div>
@@ -15,17 +13,15 @@
     </div>
 
     <div class="flex items-center gap-3">
-      <span class="font-bold" style="color: var(--color-assets);">
+      <span class="text-sm font-bold font-tabular" style="color: var(--color-assets);">
         <%= format_currency(asset_adjustment.amount) %>
       </span>
       <%= button_to asset_adjustment_path(asset_adjustment),
           method: :delete,
-          class: "p-1 rounded hover:opacity-80",
+          class: "btn-ghost p-1.5 rounded-lg",
           style: "color: var(--color-danger);",
           form: { data: { turbo_confirm: "이 보정 기록을 삭제하시겠습니까?" } } do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-        </svg>
+        <%= lucide_icon("trash-2", size: 14) %>
       <% end %>
     </div>
   </div>

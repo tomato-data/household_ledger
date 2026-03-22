@@ -4,14 +4,23 @@
 
 <%= turbo_stream.replace "month_frame" do %>
   <turbo-frame id="month_frame">
-    <%= render "dashboard/summary_cards",
-        total_income: @total_income,
-        total_expense: @total_expense,
-        total_assets: @total_assets %>
-    <%= render "dashboard/calendar",
-        date: @date,
-        transactions_by_date: @transactions_by_date,
-        selected_date: @transaction.date %>
+    <div class="relative">
+      <div class="lg:pr-[340px]">
+        <div class="space-y-4">
+          <%= render "dashboard/summary_cards",
+              total_income: @total_income,
+              total_expense: @total_expense,
+              total_assets: @total_assets %>
+          <%= render "dashboard/calendar",
+              date: @date,
+              transactions_by_date: @transactions_by_date,
+              selected_date: @transaction.date %>
+        </div>
+      </div>
+      <div class="hidden lg:block absolute top-0 right-0 w-[320px] h-full">
+        <turbo-frame id="daily_transactions" class="block h-full"></turbo-frame>
+      </div>
+    </div>
   </turbo-frame>
 <% end %>
 

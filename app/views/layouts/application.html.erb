@@ -6,42 +6,75 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="가계부">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" id="theme-color" content="#f4f4f5">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
+
+    <%# CDN preconnect (성능) %>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+    <%# Pretendard 한국어 최적화 폰트 %>
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <%= javascript_importmap_tags %>
+
+    <%# 다크모드 FOUC 방지 + theme-color 동기화 %>
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.getElementById('theme-color').content = '#09090b';
+        }
+      })();
+    </script>
   </head>
 
-  <body class="h-full min-h-screen"
-        style="background-color: var(--color-bg-primary); color: var(--color-text-primary);"
-        data-controller="sidebar">
+  <body class="h-full min-h-screen" data-controller="sidebar theme">
 
-    <%= render "layouts/navbar" %>
-    <%= render "layouts/sidebar" %>
+    <% if user_signed_in? %>
+      <%= render "layouts/sidebar" %>
+      <%= render "layouts/navbar" %>
+    <% else %>
+      <%= render "layouts/navbar" %>
+    <% end %>
+
     <%= render "layouts/flash" %>
 
-    <main class="min-h-screen pt-14 pb-20 px-4 max-w-lg mx-auto">
+    <%# 메인 컨텐츠: 페이지 전환 애니메이션 적용 %>
+    <main class="min-h-screen pb-24 lg:pb-8 pt-16 lg:pt-8 px-4 lg:px-10
+                 lg:ml-60 page-enter">
       <%= yield %>
     </main>
 
     <turbo-frame id="modal"></turbo-frame>
 
-    <%# 공용 Toast 컨테이너 (좌측 하단) %>
-    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2" style="max-width: 300px;"></div>
+    <%# Toast 컨테이너 (접근성: aria-live) %>
+    <div id="toast-container"
+         aria-live="polite"
+         role="status"
+         class="fixed bottom-24 lg:bottom-6 left-6 z-50 flex flex-col gap-2"
+         style="max-width: 300px;"></div>
 
     <% if user_signed_in? %>
       <%= link_to new_transaction_path(date: Date.today),
           id: "new-transaction-btn",
-          class: "fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg z-40 transition-colors",
-          style: "background-color: var(--color-accent); color: var(--color-text-primary);",
+          aria_label: "새 거래 추가",
+          class: "fixed bottom-24 lg:bottom-8 right-5 lg:right-8 w-13 h-13 rounded-full flex items-center justify-center text-xl z-40 btn-primary shadow-lg",
           data: { turbo_frame: "modal" } do %>
-        +
+        <i data-lucide="plus" aria-hidden="true" class="lucide-icon" style="width: 22px; height: 22px;"></i>
       <% end %>
+
+      <%= render "layouts/bottom_nav" %>
     <% end %>
   </body>
 </html>

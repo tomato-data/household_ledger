@@ -1,33 +1,31 @@
 <% selected_date ||= Date.today %>
-<div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);"
+<div class="card p-4"
      data-controller="calendar"
      data-calendar-selected-date-value="<%= selected_date.strftime('%Y-%m-%d') %>">
 
   <%# 월 네비게이션 %>
   <div class="flex items-center justify-between mb-4">
     <%= link_to dashboard_index_path(date: date.prev_month.strftime("%Y-%m-%d")),
-        class: "p-2 rounded-lg hover:opacity-80",
+        class: "btn-ghost p-2 rounded-lg",
+        aria_label: "이전 달",
         data: { turbo_frame: "month_frame" } do %>
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
+      <i data-lucide="chevron-left" aria-hidden="true" class="lucide-icon" style="width: 18px; height: 18px;"></i>
     <% end %>
 
-    <span class="text-lg font-bold">
+    <span class="text-base font-bold">
       <%= l(date, format: "%Y년 %m월") %>
     </span>
 
     <%= link_to dashboard_index_path(date: date.next_month.strftime("%Y-%m-%d")),
-        class: "p-2 rounded-lg hover:opacity-80",
+        class: "btn-ghost p-2 rounded-lg",
+        aria_label: "다음 달",
         data: { turbo_frame: "month_frame" } do %>
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-      </svg>
+      <i data-lucide="chevron-right" aria-hidden="true" class="lucide-icon" style="width: 18px; height: 18px;"></i>
     <% end %>
   </div>
 
   <%# 요일 헤더 %>
-  <div class="grid grid-cols-7 text-center text-xs mb-2" style="color: var(--color-text-muted);">
+  <div class="grid grid-cols-7 text-center text-xs font-medium mb-2" style="color: var(--color-text-muted);">
     <% %w[일 월 화 수 목 금 토].each do |day_name| %>
       <div class="py-1"><%= day_name %></div>
     <% end %>
@@ -45,15 +43,16 @@
       <% is_today = day == Date.today %>
 
       <%= link_to dashboard_daily_transactions_path(date: day.strftime("%Y-%m-%d")),
-          class: "rounded-lg p-0.5 sm:p-1 text-center min-h-[52px] sm:min-h-[60px] transition-colors hover:opacity-80 #{is_today ? 'ring-1' : ''}",
+          class: "calendar-day p-0.5 sm:p-1 text-center min-h-[52px] sm:min-h-[60px] #{is_today ? 'ring-1 ring-offset-1' : ''}",
           style: "background-color: #{is_today ? 'var(--color-bg-tertiary)' : 'transparent'}; opacity: #{is_current_month ? '1' : '0.3'}; #{'ring-color: var(--color-accent);' if is_today}",
+          aria_label: "#{day.month}월 #{day.day}일 거래 보기",
           data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", date: day.strftime("%Y-%m-%d"), calendar_today: is_today ? "" : nil } do %>
-        <div class="text-xs"><%= day.day %></div>
+        <div class="text-xs font-medium"><%= day.day %></div>
         <% if day_income > 0 %>
-          <div class="calendar-amount" style="color: var(--color-income);">+<%= number_with_delimiter(day_income) %></div>
+          <div class="calendar-amount font-tabular" style="color: var(--color-income);">+<%= number_with_delimiter(day_income) %></div>
         <% end %>
         <% if day_expense > 0 %>
-          <div class="calendar-amount" style="color: var(--color-expense);">-<%= number_with_delimiter(day_expense) %></div>
+          <div class="calendar-amount font-tabular" style="color: var(--color-expense);">-<%= number_with_delimiter(day_expense) %></div>
         <% end %>
       <% end %>
     <% end %>

@@ -1,7 +1,7 @@
 <%= form_with(model: transaction, data: { controller: "transaction-form amount-input" }) do |f| %>
 
   <% if transaction.errors.any? %>
-    <div class="mb-4 p-3 rounded-lg text-sm" style="background-color: color-mix(in srgb, var(--color-danger) 20%, transparent); color: var(--color-danger);">
+    <div class="mb-4 p-3 rounded-lg text-sm" style="background-color: var(--color-expense-bg); color: var(--color-danger);">
       <% transaction.errors.full_messages.each do |msg| %>
         <p><%= msg %></p>
       <% end %>
@@ -16,7 +16,7 @@
              data-transaction-form-target="typeRadio"
              <%= "checked" if transaction.transaction_type == "income" %>
              class="hidden peer">
-      <div class="text-center py-2 rounded-lg cursor-pointer transition-colors peer-checked:font-bold"
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all peer-checked:font-bold"
            data-transaction-form-target="incomeButton"
            style="border: 1px solid var(--color-border);">
         수입
@@ -28,7 +28,7 @@
              data-transaction-form-target="typeRadio"
              <%= "checked" if transaction.transaction_type == "expense" || transaction.new_record? %>
              class="hidden peer">
-      <div class="text-center py-2 rounded-lg cursor-pointer transition-colors peer-checked:font-bold"
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all peer-checked:font-bold"
            data-transaction-form-target="expenseButton"
            style="border: 1px solid var(--color-border);">
         지출
@@ -43,7 +43,7 @@
              data-action="transaction-form#selectStatus"
              <%= "checked" if transaction.status == "confirmed" || transaction.new_record? %>
              class="hidden peer">
-      <div class="text-center py-1.5 rounded-lg cursor-pointer text-sm transition-colors"
+      <div class="text-center py-1.5 rounded-lg cursor-pointer text-sm transition-all"
            data-transaction-form-target="confirmedButton"
            style="border: 1px solid var(--color-border);">
         확정
@@ -54,7 +54,7 @@
              data-action="transaction-form#selectStatus"
              <%= "checked" if transaction.status == "scheduled" %>
              class="hidden peer">
-      <div class="text-center py-1.5 rounded-lg cursor-pointer text-sm transition-colors"
+      <div class="text-center py-1.5 rounded-lg cursor-pointer text-sm transition-all"
            data-transaction-form-target="scheduledButton"
            style="border: 1px solid var(--color-border);">
         예정
@@ -64,43 +64,36 @@
 
   <%# 금액 %>
   <div class="mb-4">
-    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">금액</label>
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">금액</label>
     <div class="flex items-center gap-2">
       <input type="text"
              data-amount-input-target="display"
              data-action="input->amount-input#format"
              value="<%= number_with_delimiter(transaction.amount) if transaction.amount %>"
              placeholder="0"
-             class="flex-1 px-3 py-2 rounded-lg text-right text-lg"
-             style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);"
+             class="input flex-1 text-right text-lg font-tabular"
              inputmode="numeric"
              autocomplete="off">
-      <span style="color: var(--color-text-secondary);">원</span>
+      <span class="text-sm font-medium" style="color: var(--color-text-muted);">원</span>
     </div>
     <%= f.hidden_field :amount, data: { amount_input_target: "value" } %>
   </div>
 
   <%# 설명 %>
   <div class="mb-4">
-    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">설명</label>
-    <%= f.text_field :description,
-        class: "w-full px-3 py-2 rounded-lg",
-        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);",
-        placeholder: "내용을 입력하세요" %>
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">설명</label>
+    <%= f.text_field :description, class: "input", placeholder: "내용을 입력하세요" %>
   </div>
 
   <%# 날짜 %>
   <div class="mb-4">
-    <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">날짜</label>
-    <%= f.date_field :date,
-        value: transaction.date || Date.today,
-        class: "w-full px-3 py-2 rounded-lg",
-        style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">날짜</label>
+    <%= f.date_field :date, value: transaction.date || Date.today, class: "input" %>
   </div>
 
   <%# 카테고리 선택 %>
   <div class="mb-6">
-    <label class="block text-sm mb-2" style="color: var(--color-text-secondary);">카테고리</label>
+    <label class="block text-xs font-medium mb-2" style="color: var(--color-text-muted);">카테고리</label>
     <%= render "transactions/category_selector",
         categories: categories,
         selected_id: transaction.category_id %>
@@ -108,14 +101,10 @@
 
   <%# 버튼 %>
   <div class="flex gap-3">
-    <button type="button"
-            data-action="modal#close"
-            class="flex-1 py-2 rounded-lg transition-colors"
-            style="background-color: var(--color-bg-tertiary); color: var(--color-text-secondary);">
+    <button type="button" data-action="modal#close" class="btn btn-ghost flex-1 py-2.5">
       취소
     </button>
     <%= f.submit transaction.persisted? ? "수정" : "저장",
-        class: "flex-1 py-2 rounded-lg font-bold cursor-pointer transition-colors",
-        style: "background-color: var(--color-accent); color: var(--color-text-primary);" %>
+        class: "btn btn-primary flex-1 py-2.5 font-bold" %>
   </div>
 <% end %>

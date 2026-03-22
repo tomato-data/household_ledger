@@ -1,0 +1,14 @@
+<%= form_with(model: credit_card, class: "flex items-center gap-3") do |f| %>
+  <div class="flex-1">
+    <%= f.text_field :name, class: "input", placeholder: "카드 이름 (예: 삼성카드)" %>
+  </div>
+
+  <div class="w-24">
+    <%= f.select :payment_day,
+        (1..28).map { |d| ["#{d}일", d] },
+        { prompt: "결제일" },
+        class: "input text-center" %>
+  </div>
+
+  <%= f.submit credit_card.persisted? ? "수정" : "등록", class: "btn btn-primary" %>
+<% end %>

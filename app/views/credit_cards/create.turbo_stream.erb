@@ -1,0 +1,12 @@
+<%= turbo_stream.append "credit_cards_list" do %>
+  <%= render "credit_cards/credit_card", credit_card: @credit_card %>
+<% end %>
+
+<%# 폼 리셋 %>
+<%= turbo_stream.replace "new_credit_card" do %>
+  <%= render "credit_cards/form", credit_card: CreditCard.new %>
+<% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast('카드가 등록되었습니다')</script>
+<% end %>

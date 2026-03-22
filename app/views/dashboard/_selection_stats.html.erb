@@ -1,0 +1,41 @@
+<%# 선택 날짜 카테고리별 지출 통계 %>
+<% if stats.any? %>
+  <div class="card p-4">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-bold">
+        카테고리별 지출
+        <% if selected_dates.length > 1 %>
+          <span class="badge badge-accent ml-1"><%= selected_dates.length %>일</span>
+        <% end %>
+      </h3>
+      <span class="text-xs font-bold font-tabular" style="color: var(--color-expense);">
+        <%= format_currency(total) %>
+      </span>
+    </div>
+
+    <%# 가로 바 차트 %>
+    <div class="space-y-2">
+      <% stats.each do |stat| %>
+        <% percentage = total > 0 ? (stat[:amount].to_f / total * 100).round(1) : 0 %>
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+               style="background-color: <%= stat[:color] || '#a3a3a3' %>20; color: <%= stat[:color] || '#a3a3a3' %>;">
+            <%= lucide_icon(stat[:icon] || "file-text", size: 14) %>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-0.5">
+              <span class="text-xs font-medium truncate"><%= stat[:name] %></span>
+              <span class="text-xs font-bold font-tabular ml-2 flex-shrink-0"><%= format_currency(stat[:amount]) %></span>
+            </div>
+            <div class="w-full h-1.5 rounded-full" style="background-color: var(--color-bg-tertiary);">
+              <div class="h-full rounded-full" style="width: <%= percentage %>%; background-color: <%= stat[:color] || 'var(--color-accent)' %>; transition: width 0.4s ease;"></div>
+            </div>
+          </div>
+          <span class="text-[10px] font-tabular flex-shrink-0 w-9 text-right" style="color: var(--color-text-muted);">
+            <%= percentage %>%
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

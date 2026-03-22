@@ -1,18 +1,47 @@
-<div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
-  <h3 class="text-sm font-bold mb-3">
-    <%= l(selected_date, format: "%m월 %d일") %>
-    <span style="color: var(--color-text-secondary);">
-      (<%= %w[일 월 화 수 목 금 토][selected_date.wday] %>)
-    </span>
-  </h3>
+<%# 높이 100% = 부모(absolute 컨테이너)의 높이 = 왼쪽 컬럼 높이 %>
+<div class="card flex flex-col h-full">
 
-  <% if transactions.any? %>
-    <div class="space-y-2" id="daily_transactions_list">
-      <% transactions.each do |transaction| %>
-        <%= render "transactions/transaction", transaction: transaction %>
+  <%# 헤더 %>
+  <div class="px-4 pt-4 pb-3 flex-shrink-0" style="border-bottom: 1px solid var(--color-border-subtle);">
+    <div class="flex items-center justify-between mb-1">
+      <h3 class="text-sm font-bold">
+        <% if selected_dates.length == 1 %>
+          <%= l(selected_dates.first, format: "%m월 %d일") %>
+          <span style="color: var(--color-text-muted);">
+            (<%= %w[일 월 화 수 목 금 토][selected_dates.first.wday] %>)
+          </span>
+        <% else %>
+          <span><%= selected_dates.length %>일 선택</span>
+        <% end %>
+      </h3>
+    </div>
+    <div class="flex items-center gap-3 text-xs font-tabular">
+      <% if selection_income > 0 %>
+        <span style="color: var(--color-income);">+<%= format_currency(selection_income) %></span>
+      <% end %>
+      <% if selection_expense > 0 %>
+        <span style="color: var(--color-expense);">-<%= format_currency(selection_expense) %></span>
       <% end %>
     </div>
-  <% else %>
-    <%= render "shared/empty_state", message: "이 날짜에 거래가 없습니다" %>
-  <% end %>
+  </div>
+
+  <%# 거래 목록 (내부 스크롤) %>
+  <div class="flex-1 overflow-y-auto overscroll-contain min-h-0" id="daily_transactions_list">
+    <% if transactions.any? %>
+      <% transactions.group_by(&:date).sort_by { |d, _| d }.reverse.each do |date, day_txns| %>
+        <% if selected_dates.length > 1 %>
+          <div class="px-4 pt-3 pb-1">
+            <span class="text-[10px] font-medium" style="color: var(--color-text-muted);">
+              <%= l(date, format: "%m/%d") %> (<%= %w[일 월 화 수 목 금 토][date.wday] %>)
+            </span>
+          </div>
+        <% end %>
+        <% day_txns.each do |transaction| %>
+          <%= render "transactions/transaction", transaction: transaction %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= render "shared/empty_state", message: "거래가 없습니다" %>
+    <% end %>
+  </div>
 </div>

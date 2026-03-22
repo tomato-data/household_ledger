@@ -1,27 +1,24 @@
 <div class="flex items-center justify-center min-h-[80vh]">
-  <div class="w-full max-w-sm rounded-xl p-6"
-       style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+  <div class="card-elevated w-full max-w-sm p-6">
 
     <h2 class="text-xl font-bold text-center mb-6">로그인</h2>
 
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
 
       <div class="mb-4">
-        <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">이메일</label>
+        <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">이메일</label>
         <%= f.email_field :email,
             autofocus: true,
             autocomplete: "email",
-            class: "w-full px-3 py-2 rounded-lg",
-            style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);",
+            class: "input",
             placeholder: "email@example.com" %>
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm mb-1" style="color: var(--color-text-secondary);">비밀번호</label>
+        <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">비밀번호</label>
         <%= f.password_field :password,
             autocomplete: "current-password",
-            class: "w-full px-3 py-2 rounded-lg",
-            style: "background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border); color: var(--color-text-primary);" %>
+            class: "input" %>
       </div>
 
       <% if devise_mapping.rememberable? %>
@@ -33,9 +30,7 @@
         </div>
       <% end %>
 
-      <%= f.submit "로그인",
-          class: "w-full py-2 rounded-lg font-bold cursor-pointer transition-colors mb-4",
-          style: "background-color: var(--color-accent); color: var(--color-text-primary);" %>
+      <%= f.submit "로그인", class: "btn btn-primary w-full py-2.5 font-bold mb-4" %>
     <% end %>
 
     <div class="text-center text-sm" style="color: var(--color-text-muted);">

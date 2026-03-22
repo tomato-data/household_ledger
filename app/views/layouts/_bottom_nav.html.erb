@@ -1,0 +1,11 @@
+<%# 모바일 하단 탭 네비게이션 (lg 이상에서는 숨김) %>
+<nav class="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
+     style="background-color: var(--color-bg-secondary); border-top: 1px solid var(--color-border-subtle); box-shadow: 0 -2px 8px rgba(0,0,0,0.06);">
+  <div class="flex items-center justify-around h-16 px-2 max-w-lg mx-auto">
+    <%= bottom_nav_tab "홈", authenticated_root_path, "home" %>
+    <%= bottom_nav_tab "통계", statistics_path, "bar-chart-3" %>
+    <div class="w-14"></div> <%# FAB 버튼 공간 확보 %>
+    <%= bottom_nav_tab "카테고리", categories_path, "folder-open" %>
+    <%= bottom_nav_tab "더보기", credit_cards_path, "ellipsis" %>
+  </div>
+</nav>
