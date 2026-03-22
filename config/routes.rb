@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     patch :reorder, on: :collection
   end
 
+  resources :credit_cards
   resources :recurring_transactions
   resources :asset_adjustments
 

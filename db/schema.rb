@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_18_065359) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_050105) do
   create_table "asset_adjustments", force: :cascade do |t|
     t.date "adjustment_date"
     t.string "adjustment_type"
@@ -32,6 +32,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_065359) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
+  create_table "credit_cards", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "payment_day", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_credit_cards_on_user_id"
   end
 
   create_table "recurring_transactions", force: :cascade do |t|
@@ -84,6 +93,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_065359) do
 
   add_foreign_key "asset_adjustments", "users"
   add_foreign_key "categories", "users"
+  add_foreign_key "credit_cards", "users"
   add_foreign_key "recurring_transactions", "users"
   add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "recurring_transactions"

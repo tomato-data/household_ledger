@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :transactions, dependent: :destroy
   has_many :recurring_transactions, dependent: :destroy
   has_many :asset_adjustments, dependent: :destroy
+  has_many :credit_cards, dependent: :destroy
+
 
   DEFAULT_CATEGORIES = [
     { name: "식비", icon: "utensils", position: 1 },
