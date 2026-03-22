@@ -1,60 +1,98 @@
 <% if category_stats.any? %>
-  <div class="card overflow-hidden mt-4">
-    <% category_stats.each do |stat| %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-4">
+    <% category_stats.each_with_index do |stat, idx| %>
       <% percentage = total > 0 ? (stat[:amount].to_f / total * 100).round(1) : 0 %>
       <% has_subs = stat[:subcategories].present? && stat[:subcategories].any? %>
+      <% color = chart_color(stat[:color], idx) %>
 
-      <%# 상위 카테고리 행 %>
-      <div class="table-row gap-3 <%= 'cursor-pointer' if has_subs %>"
-           <% if has_subs %>
-             data-controller="toggle"
-             data-action="click->toggle#toggle"
-           <% end %>>
-        <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
-             style="background-color: <%= stat[:color] || '#a3a3a3' %>20; color: <%= stat[:color] || '#a3a3a3' %>;">
-          <%= lucide_icon(stat[:icon] || "file-text", size: 16) %>
-        </div>
-
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-sm font-medium">
-              <%= stat[:name] %>
-              <% if has_subs %>
-                <span class="text-[10px] ml-1" style="color: var(--color-text-muted);">▾ <%= stat[:subcategories].size %></span>
-              <% end %>
-            </span>
-            <span class="text-sm font-bold font-tabular"><%= format_currency(stat[:amount]) %></span>
+      <div class="card overflow-hidden" data-controller="toggle">
+        <%# 카테고리 버튼 (클릭하면 세부 바 토글) %>
+        <button class="w-full text-left p-3 flex items-center gap-3 transition-colors hover:bg-[var(--color-bg-tertiary)] cursor-pointer"
+                data-action="toggle#toggle">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+               style="background-color: <%= color %>20; color: <%= color %>;">
+            <%= lucide_icon(stat[:icon] || "file-text", size: 16) %>
           </div>
-          <div class="w-full h-1 rounded-full" style="background-color: var(--color-bg-tertiary);">
-            <div class="h-full rounded-full" style="width: <%= percentage %>%; background-color: <%= stat[:color] || 'var(--color-accent)' %>; transition: width 0.4s ease;"></div>
-          </div>
-        </div>
 
-        <span class="text-xs font-medium font-tabular flex-shrink-0 w-10 text-right" style="color: var(--color-text-muted);">
-          <%= percentage %>%
-        </span>
-      </div>
-
-      <%# 서브카테고리 행 (접힘) %>
-      <% if has_subs %>
-        <div data-toggle-target="content" style="display: none;">
-          <% stat[:subcategories].each do |sub| %>
-            <% sub_pct = stat[:amount] > 0 ? (sub[:amount].to_f / stat[:amount] * 100).round(1) : 0 %>
-            <div class="flex items-center gap-3 pl-14 pr-4 py-2"
-                 style="border-bottom: 1px solid var(--color-border-subtle); background-color: var(--color-bg-tertiary);">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs" style="color: var(--color-text-secondary);"><%= sub[:name] %></span>
-                  <span class="text-xs font-bold font-tabular"><%= format_currency(sub[:amount]) %></span>
-                </div>
-              </div>
-              <span class="text-[10px] font-tabular flex-shrink-0 w-9 text-right" style="color: var(--color-text-muted);">
-                <%= sub_pct %>%
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium">
+                <%= stat[:name] %>
+                <% if has_subs %>
+                  <span class="text-[10px] ml-0.5" style="color: var(--color-text-muted);">+<%= stat[:subcategories].size %></span>
+                <% end %>
               </span>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold font-tabular"><%= format_currency(stat[:amount]) %></span>
+                <span class="text-[10px] font-tabular" style="color: var(--color-text-muted);"><%= percentage %>%</span>
+              </div>
             </div>
-          <% end %>
+            <%# 전체 비율 바 %>
+            <div class="w-full h-1 rounded-full mt-1.5" style="background-color: var(--color-bg-tertiary);">
+              <div class="h-full rounded-full" style="width: <%= percentage %>%; background-color: <%= color %>; transition: width 0.4s ease;"></div>
+            </div>
+          </div>
+        </button>
+
+        <%# 세부 카테고리 바 (토글) %>
+        <div data-toggle-target="content" style="display: none;">
+          <div class="px-3 pb-3">
+            <% if has_subs %>
+              <%# 100% 스택 바 %>
+              <div class="flex w-full h-6 rounded-md overflow-hidden mb-2">
+                <% stat[:subcategories].each_with_index do |sub, j| %>
+                  <% sub_pct = stat[:amount] > 0 ? (sub[:amount].to_f / stat[:amount] * 100) : 0 %>
+                  <% step = stat[:subcategories].length > 1 ? j.to_f / (stat[:subcategories].length - 1) : 0.5 %>
+                  <% lightness = 65 - (step * 20).to_i %>
+                  <div class="h-full relative group/seg"
+                       style="width: <%= sub_pct %>%; background-color: hsl(var(--hue-<%= idx %>), 55%, <%= lightness %>%);"
+                       title="<%= sub[:name] %>: <%= format_currency(sub[:amount]) %>">
+                  </div>
+                <% end %>
+              </div>
+
+              <%# 범례 %>
+              <div class="flex flex-wrap gap-x-4 gap-y-1">
+                <% stat[:subcategories].each_with_index do |sub, j| %>
+                  <% sub_pct = stat[:amount] > 0 ? (sub[:amount].to_f / stat[:amount] * 100).round(1) : 0 %>
+                  <% step = stat[:subcategories].length > 1 ? j.to_f / (stat[:subcategories].length - 1) : 0.5 %>
+                  <% lightness = 65 - (step * 20).to_i %>
+                  <div class="flex items-center gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-sm flex-shrink-0"
+                         style="background-color: hsl(var(--hue-<%= idx %>), 55%, <%= lightness %>%);"></div>
+                    <span class="text-[11px]" style="color: var(--color-text-secondary);"><%= sub[:name] %></span>
+                    <span class="text-[11px] font-bold font-tabular"><%= format_currency(sub[:amount]) %></span>
+                    <span class="text-[10px] font-tabular" style="color: var(--color-text-muted);"><%= sub_pct %>%</span>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-xs py-1" style="color: var(--color-text-muted);">하위 카테고리가 없습니다</p>
+            <% end %>
+          </div>
         </div>
-      <% end %>
+      </div>
     <% end %>
   </div>
+
+  <%# 각 카테고리의 hue 값을 CSS 변수로 설정 %>
+  <style>
+    <% category_stats.each_with_index do |stat, idx| %>
+      <% hex = chart_color(stat[:color], idx) %>
+      <% r = hex[1..2].to_i(16) / 255.0 %>
+      <% g = hex[3..4].to_i(16) / 255.0 %>
+      <% b = hex[5..6].to_i(16) / 255.0 %>
+      <% max_c = [r, g, b].max; min_c = [r, g, b].min; d = max_c - min_c %>
+      <% if d == 0 %>
+        <% h = 0 %>
+      <% elsif max_c == r %>
+        <% h = 60 * (((g - b) / d) % 6) %>
+      <% elsif max_c == g %>
+        <% h = 60 * (((b - r) / d) + 2) %>
+      <% else %>
+        <% h = 60 * (((r - g) / d) + 4) %>
+      <% end %>
+      :root { --hue-<%= idx %>: <%= h.round %>; }
+    <% end %>
+  </style>
 <% end %>
