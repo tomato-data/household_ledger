@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :transactions, except: [ :index, :show ]
   resource :statistics, only: [ :show ] do
     get :chart_data, on: :member
+    get :category_trend, on: :member
   end
 
   resources :categories do

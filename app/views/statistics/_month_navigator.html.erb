@@ -1,5 +1,5 @@
 <div class="flex items-center justify-between">
-  <%= link_to statistics_path(date: date.prev_month.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode),
+  <%= link_to statistics_path(date: date.prev_month.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode, tab: @tab, category_id: params[:category_id]),
       class: "btn-ghost p-2 rounded-lg",
       aria_label: "이전 달",
       data: { turbo_frame: "stats_frame" } do %>
@@ -10,7 +10,7 @@
     <%= l(date, format: "%Y년 %m월") %>
   </span>
 
-  <%= link_to statistics_path(date: date.next_month.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode),
+  <%= link_to statistics_path(date: date.next_month.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode, tab: @tab, category_id: params[:category_id]),
       class: "btn-ghost p-2 rounded-lg",
       aria_label: "다음 달",
       data: { turbo_frame: "stats_frame" } do %>

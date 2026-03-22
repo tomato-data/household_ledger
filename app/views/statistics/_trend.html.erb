@@ -1,0 +1,86 @@
+<%# === 월별 총액 꺾은선 그래프 === %>
+<div class="card p-4 mb-4">
+  <h3 class="text-xs font-medium mb-2" style="color: var(--color-text-muted);">월별 총액</h3>
+  <div style="height: 180px;"
+       data-controller="trend-chart"
+       data-trend-chart-labels-value="<%= months.map { |m| l(m, format: '%m월') }.to_json %>"
+       data-trend-chart-data-value="<%= monthly_totals.map { |m| m[:total] }.to_json %>"
+       data-trend-chart-color-value="#6366f1"
+       data-trend-chart-highlight-value="<%= months.length - 1 %>">
+    <canvas data-trend-chart-target="canvas"></canvas>
+  </div>
+</div>
+
+<%# === 전월 대비 카테고리별 변동 === %>
+<div class="card p-4 mb-4">
+  <h3 class="text-xs font-medium mb-3" style="color: var(--color-text-muted);">전월 대비</h3>
+
+  <% if comparisons.any? %>
+    <div class="space-y-1">
+      <% comparisons.each_with_index do |comp, idx| %>
+        <% color = chart_color(comp[:color], idx) %>
+        <% cat_record = current_user.categories.top_level.find_by(name: comp[:name]) %>
+        <% is_selected = cat_record && params[:category_id].to_i == cat_record.id %>
+        <%# 카테고리 트렌드 프레임만 업데이트 %>
+        <%= link_to category_trend_statistics_path(date: @date.strftime("%Y-%m-%d"), type: @type, date_mode: @date_mode, category_id: cat_record&.id),
+            class: "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-[var(--color-bg-tertiary)]",
+            style: is_selected ? "background-color: var(--color-bg-tertiary);" : "",
+            data: { turbo_frame: "category_trend_frame" } do %>
+
+          <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+               style="background-color: <%= color %>20; color: <%= color %>;">
+            <%= lucide_icon(comp[:icon] || "file-text", size: 14) %>
+          </div>
+
+          <span class="text-sm font-medium flex-1 min-w-0 truncate"><%= comp[:name] %></span>
+
+          <div class="flex items-center gap-2.5 flex-shrink-0 font-tabular">
+            <span class="text-[10px]" style="color: var(--color-text-muted);"><%= format_currency(comp[:prev_amount]) %></span>
+            <i data-lucide="arrow-right" aria-hidden="true" class="lucide-icon" style="width: 10px; height: 10px; color: var(--color-text-muted);"></i>
+            <span class="text-xs font-bold"><%= format_currency(comp[:this_amount]) %></span>
+
+            <% if comp[:change] %>
+              <% if comp[:change] > 0 %>
+                <span class="badge text-[10px] font-bold" style="background-color: var(--color-expense-bg); color: var(--color-expense);">▲<%= comp[:change] %>%</span>
+              <% elsif comp[:change] < 0 %>
+                <span class="badge text-[10px] font-bold" style="background-color: var(--color-income-bg); color: var(--color-income);">▼<%= comp[:change].abs %>%</span>
+              <% else %>
+                <span class="text-[10px]" style="color: var(--color-text-muted);">—</span>
+              <% end %>
+            <% elsif comp[:this_amount] > 0 %>
+              <span class="badge text-[10px] font-bold" style="background-color: var(--color-expense-bg); color: var(--color-expense);">NEW</span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state", message: "데이터가 없습니다" %>
+  <% end %>
+</div>
+
+<%# === 선택 카테고리 트렌드 (별도 Turbo Frame) === %>
+<turbo-frame id="category_trend_frame">
+  <% if selected_trend.present? %>
+    <% trend_color = chart_color(nil, comparisons.index { |c| c[:name] == selected_category_name } || 0) %>
+    <div class="card p-4">
+      <h3 class="text-xs font-medium mb-2" style="color: var(--color-text-muted);">
+        <span class="font-bold" style="color: var(--color-text-primary);"><%= selected_category_name %></span> 월별 추이
+      </h3>
+      <div style="height: 200px;"
+           data-controller="trend-chart"
+           data-trend-chart-labels-value="<%= months.map { |m| l(m, format: '%m월') }.to_json %>"
+           data-trend-chart-data-value="<%= selected_trend.map { |t| t[:amount] }.to_json %>"
+           data-trend-chart-color-value="<%= trend_color %>"
+           data-trend-chart-highlight-value="<%= months.length - 1 %>">
+        <canvas data-trend-chart-target="canvas"></canvas>
+      </div>
+    </div>
+  <% else %>
+    <div class="card p-4">
+      <p class="text-xs text-center py-6" style="color: var(--color-text-muted);">
+        카테고리를 클릭하면 월별 추이를 볼 수 있습니다
+      </p>
+    </div>
+  <% end %>
+</turbo-frame>
