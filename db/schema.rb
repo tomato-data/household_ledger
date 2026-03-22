@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_060000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_070000) do
   create_table "asset_adjustments", force: :cascade do |t|
     t.date "adjustment_date"
     t.string "adjustment_type"
@@ -38,6 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_060000) do
 
   create_table "credit_cards", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "is_default", default: false
     t.string "name", null: false
     t.integer "payment_day", null: false
     t.datetime "updated_at", null: false
@@ -68,14 +69,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_060000) do
     t.integer "amount", null: false
     t.integer "category_id", null: false
     t.datetime "created_at", null: false
+    t.integer "credit_card_id"
     t.date "date", null: false
     t.string "description", limit: 255, null: false
+    t.integer "installment_count"
+    t.string "installment_group"
+    t.integer "installment_number"
     t.integer "recurring_transaction_id"
     t.string "status", default: "confirmed", null: false
     t.string "transaction_type", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["credit_card_id"], name: "index_transactions_on_credit_card_id"
     t.index ["date"], name: "index_transactions_on_date"
     t.index ["recurring_transaction_id"], name: "index_transactions_on_recurring_transaction_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
@@ -99,6 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_060000) do
   add_foreign_key "credit_cards", "users"
   add_foreign_key "recurring_transactions", "users"
   add_foreign_key "transactions", "categories"
+  add_foreign_key "transactions", "credit_cards"
   add_foreign_key "transactions", "recurring_transactions"
   add_foreign_key "transactions", "users"
 end

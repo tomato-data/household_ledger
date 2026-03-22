@@ -4,6 +4,7 @@ class Transaction < ApplicationRecord
   belongs_to :user
   belongs_to :category
   belongs_to :recurring_transaction, optional: true
+  belongs_to :credit_card, optional: true
 
   validates :description, presence: true, length: { maximum: 255 }
   validates :amount, presence: true, numericality: { only_integer: true }
@@ -13,4 +14,17 @@ class Transaction < ApplicationRecord
   scope :by_category, ->(category_id) { where(category_id: category_id) }
   scope :by_type, ->(type) { where(transaction_type: type) }
   scope :confirmed_only, -> { where(status: :confirmed) }
+
+  def card_payment?
+    credit_card_id.present?
+  end
+
+  def installment?
+    installment_count.present? && installment_count > 1
+  end
+
+  def installment_label
+    return nil unless installment?
+    "#{installment_number}/#{installment_count}"
+  end
 end

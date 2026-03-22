@@ -47,6 +47,6 @@ class CreditCardsController < ApplicationController
   end
 
   def credit_card_params
-    params.require(:credit_card).permit(:name, :payment_day)
+    params.require(:credit_card).permit(:name, :payment_day, :is_default)
   end
 end

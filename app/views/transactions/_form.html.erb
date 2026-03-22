@@ -36,8 +36,8 @@
     </label>
   </div>
 
-  <%# 상태 토글 %>
-  <div class="flex gap-2 mb-4">
+  <%# 상태 토글 (카드 결제 시 자동으로 예정) %>
+  <div class="flex gap-2 mb-4" data-transaction-form-target="statusSection">
     <label class="flex-1">
       <input type="radio" name="transaction[status]" value="confirmed"
              data-action="transaction-form#selectStatus"
@@ -61,6 +61,55 @@
       </div>
     </label>
   </div>
+
+  <%# === 카드 결제 섹션 === %>
+  <% if defined?(credit_cards) && credit_cards&.any? %>
+    <div class="mb-4 p-3 rounded-lg" style="border: 1px solid var(--color-border-subtle); background-color: var(--color-bg-tertiary);"
+         data-controller="card-payment">
+      <%# 카드 결제 토글 %>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" name="card_payment" value="1"
+               data-action="card-payment#toggle"
+               data-card-payment-target="toggle"
+               class="rounded">
+        <span class="text-sm font-medium flex items-center gap-1.5">
+          <%= lucide_icon("credit-card", size: 14) %>
+          카드 결제
+        </span>
+      </label>
+
+      <%# 카드 선택 + 할부 (토글 시 표시) %>
+      <div data-card-payment-target="details" class="hidden mt-3 space-y-2.5">
+        <%# 카드 선택 %>
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-medium flex-shrink-0" style="color: var(--color-text-muted);">카드</label>
+          <% default_card = credit_cards.find(&:is_default) || credit_cards.first %>
+          <select name="credit_card_id" class="input flex-1 text-sm py-1.5">
+            <% credit_cards.each do |card| %>
+              <option value="<%= card.id %>" <%= "selected" if card == default_card %>>
+                <%= card.name %> (매월 <%= card.payment_day %>일)
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <%# 할부 %>
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-medium flex-shrink-0" style="color: var(--color-text-muted);">할부</label>
+          <select name="installment_count" class="input flex-1 text-sm py-1.5">
+            <option value="1">일시불</option>
+            <% (2..12).each do |n| %>
+              <option value="<%= n %>"><%= n %>개월</option>
+            <% end %>
+          </select>
+        </div>
+
+        <p class="text-[10px]" style="color: var(--color-text-muted);">
+          결제일에 자동으로 예정 거래가 생성됩니다
+        </p>
+      </div>
+    </div>
+  <% end %>
 
   <%# 금액 %>
   <div class="mb-4">

@@ -1,22 +1,22 @@
 <div class="space-y-6 py-4">
-  <div class="flex items-center justify-between">
-    <h1 class="text-xl font-bold">신용카드</h1>
-  </div>
+  <h1 class="text-xl font-bold">신용카드</h1>
 
-  <%# 새 카드 등록 폼 %>
+  <%# 카드 등록 폼 %>
   <div class="card p-4">
     <h2 class="text-xs font-medium mb-3" style="color: var(--color-text-muted);">카드 등록</h2>
     <%= render "credit_cards/form", credit_card: CreditCard.new %>
   </div>
 
   <%# 카드 목록 %>
-  <div class="space-y-3" id="credit_cards_list">
-    <% @credit_cards.each do |card| %>
-      <%= render "credit_cards/credit_card", credit_card: card %>
-    <% end %>
-
-    <% if @credit_cards.empty? %>
+  <% if @credit_cards.any? %>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3" id="credit_cards_list">
+      <% @credit_cards.each do |card| %>
+        <%= render "credit_cards/credit_card", credit_card: card %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="card p-4">
       <%= render "shared/empty_state", message: "등록된 신용카드가 없습니다" %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
