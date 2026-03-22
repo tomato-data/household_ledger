@@ -1,3 +1,27 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="red"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 둥근 사각형 배경 -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <!-- 장부 카드 -->
+  <rect x="120" y="112" width="272" height="288" rx="20" fill="rgba(255,255,255,0.15)"/>
+
+  <!-- 바인딩 라인 -->
+  <line x1="176" y1="112" x2="176" y2="400" stroke="rgba(255,255,255,0.2)" stroke-width="2.5"/>
+
+  <!-- 항목 3줄 (여유롭게) -->
+  <circle cx="148" cy="196" r="10" fill="#34d399"/>
+  <rect x="200" y="190" width="148" height="12" rx="6" fill="rgba(255,255,255,0.3)"/>
+
+  <circle cx="148" cy="260" r="10" fill="#fb7185"/>
+  <rect x="200" y="254" width="120" height="12" rx="6" fill="rgba(255,255,255,0.3)"/>
+
+  <circle cx="148" cy="324" r="10" fill="#34d399"/>
+  <rect x="200" y="318" width="136" height="12" rx="6" fill="rgba(255,255,255,0.3)"/>
 </svg>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_070000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_080000) do
   create_table "asset_adjustments", force: :cascade do |t|
     t.date "adjustment_date"
     t.string "adjustment_type"
@@ -75,6 +75,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_070000) do
     t.integer "installment_count"
     t.string "installment_group"
     t.integer "installment_number"
+    t.date "purchase_date"
     t.integer "recurring_transaction_id"
     t.string "status", default: "confirmed", null: false
     t.string "transaction_type", null: false

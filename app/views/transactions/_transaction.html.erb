@@ -20,7 +20,12 @@
           </span>
           <% if transaction.card_payment? %>
             <%= lucide_icon("credit-card", size: 10, style: "color: var(--color-accent);") %>
-            <span class="text-[9px]" style="color: var(--color-text-muted);"><%= transaction.credit_card&.name %></span>
+            <span class="text-[9px]" style="color: var(--color-text-muted);">
+              <%= transaction.credit_card&.name %>
+              <% if transaction.purchase_date.present? %>
+                · <%= l(transaction.purchase_date, format: "%m/%d") %> 사용
+              <% end %>
+            </span>
           <% end %>
           <% if transaction.installment? %>
             <span class="text-[9px] font-bold" style="color: var(--color-accent);"><%= transaction.installment_label %></span>

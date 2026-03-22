@@ -88,6 +88,7 @@ class TransactionsController < ApplicationController
 
       t = current_user.transactions.create!(
         date: payment_date,
+        purchase_date: purchase_date,
         description: installment_count > 1 ? "#{@transaction.description} (#{i + 1}/#{installment_count})" : @transaction.description,
         amount: per_amount,
         transaction_type: @transaction.transaction_type,
