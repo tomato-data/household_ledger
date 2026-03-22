@@ -119,5 +119,13 @@ class TransactionsController < ApplicationController
     @total_income = month_transactions.where(transaction_type: :income).sum(:amount)
     @total_expense = month_transactions.where(transaction_type: :expense).sum(:amount)
     @total_assets = current_user.transactions.where(transaction_type: :income).sum(:amount) - current_user.transactions.where(transaction_type: :expense).sum(:amount)
+
+    @selected_dates = [ @transaction.date ]
+    @daily_transactions = current_user.transactions
+                            .where(date: @selected_dates)
+                            .includes(category: :parent)
+                            .order(date: :desc, created_at: :desc)
+    @selection_income = @daily_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount)
+    @selection_expense = @daily_transactions.select { |t| t.transaction_type == "expense" }.sum(&:amount)
   end
 end

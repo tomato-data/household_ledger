@@ -1,77 +1,86 @@
 <%# 2단계 카테고리 선택 %>
 <div data-controller="category-selector">
-  <div class="grid grid-cols-4 gap-2">
+  <%# 상위 카테고리 그리드 %>
+  <div class="grid grid-cols-4 lg:grid-cols-5 gap-2">
     <% categories.select(&:top_level?).each do |category| %>
       <% has_subs = category.subcategories.any? %>
       <% is_selected = selected_id == category.id %>
       <% is_parent_of_selected = category.subcategories.any? { |s| s.id == selected_id } %>
 
-      <%# 상위 카테고리 타일 %>
-      <div>
-        <label class="cursor-pointer block">
+      <label class="cursor-pointer block">
+        <% if has_subs %>
+          <input type="radio" name="_parent_selector" value="<%= category.id %>"
+                 <%= "checked" if is_selected || is_parent_of_selected %>
+                 class="hidden peer"
+                 data-action="click->category-selector#expandParent"
+                 data-category-id="<%= category.id %>">
+        <% else %>
+          <input type="radio" name="transaction[category_id]" value="<%= category.id %>"
+                 <%= "checked" if is_selected %>
+                 class="hidden peer"
+                 data-action="category-selector#selectDirect"
+                 data-category-id="<%= category.id %>">
+        <% end %>
+        <div class="flex flex-col items-center p-2 rounded-lg transition-all peer-checked:ring-2"
+             data-category-selector-target="parentTile"
+             data-parent-id="<%= category.id %>"
+             style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border-subtle); --tw-ring-color: var(--color-accent);">
+          <div class="w-7 h-7 rounded-md flex items-center justify-center"
+               style="background-color: <%= category.color || '#a3a3a3' %>20; color: <%= category.color || '#a3a3a3' %>;">
+            <%= lucide_icon(category.icon, size: 16) %>
+          </div>
+          <span class="text-[10px] mt-1 truncate w-full text-center font-medium" style="color: var(--color-text-secondary);">
+            <%= category.name %>
+          </span>
           <% if has_subs %>
-            <input type="radio" name="_parent_selector" value="<%= category.id %>"
-                   <%= "checked" if is_selected || is_parent_of_selected %>
-                   class="hidden peer"
-                   data-action="category-selector#expandParent"
-                   data-category-id="<%= category.id %>">
-          <% else %>
-            <input type="radio" name="transaction[category_id]" value="<%= category.id %>"
-                   <%= "checked" if is_selected %>
-                   class="hidden peer"
-                   data-action="category-selector#selectDirect"
-                   data-category-id="<%= category.id %>">
+            <span class="text-[8px] transition-transform" style="color: var(--color-text-muted);"
+                  data-category-selector-target="arrow" data-parent-id="<%= category.id %>">▼</span>
           <% end %>
-          <div class="flex flex-col items-center p-2 rounded-lg transition-all peer-checked:ring-2"
-               data-category-selector-target="parentTile"
-               data-parent-id="<%= category.id %>"
-               style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border-subtle); --tw-ring-color: var(--color-accent);">
-            <div class="w-7 h-7 rounded-md flex items-center justify-center"
-                 style="background-color: <%= category.color || '#a3a3a3' %>20; color: <%= category.color || '#a3a3a3' %>;">
-              <%= lucide_icon(category.icon, size: 16) %>
-            </div>
-            <span class="text-[10px] mt-1 truncate w-full text-center font-medium" style="color: var(--color-text-secondary);">
-              <%= category.name %>
-            </span>
-            <% if has_subs %>
-              <span class="text-[8px]" style="color: var(--color-text-muted);">▼</span>
-            <% end %>
+        </div>
+      </label>
+    <% end %>
+  </div>
+
+  <%# 하위 카테고리 패널 (그리드 아래 전체 너비, 가로 chip 레이아웃) %>
+  <% categories.select(&:top_level?).each do |category| %>
+    <% next unless category.subcategories.any? %>
+    <% is_selected = selected_id == category.id %>
+    <% is_parent_of_selected = category.subcategories.any? { |s| s.id == selected_id } %>
+
+    <div class="<%= 'hidden' unless is_selected || is_parent_of_selected %> mt-2.5 p-2.5 rounded-lg"
+         style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border-subtle);"
+         data-category-selector-target="subcategories"
+         data-parent-id="<%= category.id %>">
+      <div class="flex flex-wrap gap-1.5">
+        <%# 전체 (부모 카테고리 자체 선택) %>
+        <label class="cursor-pointer">
+          <input type="radio" name="transaction[category_id]" value="<%= category.id %>"
+                 <%= "checked" if is_selected %>
+                 class="hidden peer"
+                 data-action="category-selector#select">
+          <div class="px-3 py-1.5 rounded-full text-[11px] font-medium transition-all
+                      bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]
+                      peer-checked:ring-2 peer-checked:font-bold"
+               style="border: 1px solid var(--color-border-subtle); --tw-ring-color: var(--color-accent); --tw-ring-offset-width: 0px;">
+            전체
           </div>
         </label>
 
-        <%# 하위 카테고리: 부모 바로 아래에 표시 %>
-        <% if has_subs %>
-          <div class="hidden mt-1.5 rounded-md overflow-hidden"
-               style="background-color: var(--color-bg-tertiary);"
-               data-category-selector-target="subcategories"
-               data-parent-id="<%= category.id %>">
-
-            <label class="cursor-pointer block">
-              <input type="radio" name="transaction[category_id]" value="<%= category.id %>"
-                     <%= "checked" if is_selected %>
-                     class="hidden peer"
-                     data-action="category-selector#select">
-              <div class="px-2 py-1.5 text-center text-[10px] font-medium transition-all peer-checked:font-bold"
-                   style="color: var(--color-text-secondary); border-bottom: 1px solid var(--color-border-subtle);">
-                전체
-              </div>
-            </label>
-
-            <% category.subcategories.each do |sub| %>
-              <label class="cursor-pointer block">
-                <input type="radio" name="transaction[category_id]" value="<%= sub.id %>"
-                       <%= "checked" if selected_id == sub.id %>
-                       class="hidden peer"
-                       data-action="category-selector#select">
-                <div class="px-2 py-1.5 text-center text-[10px] font-medium transition-all peer-checked:font-bold"
-                     style="color: var(--color-text-secondary); border-bottom: 1px solid var(--color-border-subtle);">
-                  <%= sub.name %>
-                </div>
-              </label>
-            <% end %>
-          </div>
+        <% category.subcategories.each do |sub| %>
+          <label class="cursor-pointer">
+            <input type="radio" name="transaction[category_id]" value="<%= sub.id %>"
+                   <%= "checked" if selected_id == sub.id %>
+                   class="hidden peer"
+                   data-action="category-selector#select">
+            <div class="px-3 py-1.5 rounded-full text-[11px] font-medium transition-all
+                        bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]
+                        peer-checked:ring-2 peer-checked:font-bold"
+                 style="border: 1px solid var(--color-border-subtle); --tw-ring-color: var(--color-accent); --tw-ring-offset-width: 0px;">
+              <%= sub.name %>
+            </div>
+          </label>
         <% end %>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
