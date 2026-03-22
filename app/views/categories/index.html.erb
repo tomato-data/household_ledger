@@ -2,16 +2,16 @@
   <h1 class="text-xl font-bold">카테고리 관리</h1>
 
   <%# 새 카테고리 추가 폼 %>
-  <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+  <div class="card p-4">
     <%= render "categories/form", category: Category.new %>
   </div>
 
   <%# 카테고리 목록 (드래그앤드롭) %>
-  <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);"
+  <div class="card p-4"
        data-controller="sortable"
        data-sortable-url-value="<%= reorder_categories_path %>">
 
-    <div data-sortable-target="list" class="space-y-2" id="categories_list">
+    <div data-sortable-target="list" class="space-y-1.5" id="categories_list">
       <% @categories.each do |category| %>
         <%= render "categories/category", category: category %>
       <% end %>

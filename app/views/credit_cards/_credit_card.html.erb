@@ -1,0 +1,46 @@
+<%= turbo_frame_tag credit_card do %>
+  <div class="card table-row group" data-controller="inline-edit">
+    <%# 카드 아이콘 %>
+    <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+         style="background-color: var(--color-accent-bg); color: var(--color-accent);">
+      <%= lucide_icon("credit-card", size: 16) %>
+    </div>
+
+    <%# 카드 정보 (표시 모드) %>
+    <div data-inline-edit-target="display" class="flex-1 flex items-center justify-between">
+      <span class="text-sm font-medium"><%= credit_card.name %></span>
+      <span class="badge badge-accent">매월 <%= credit_card.payment_day %>일</span>
+    </div>
+
+    <%# 카드 정보 (편집 모드) %>
+    <div data-inline-edit-target="editor" class="flex-1 hidden">
+      <%= form_with(model: credit_card, class: "flex items-center gap-2") do |f| %>
+        <%= f.text_field :name, class: "input flex-1 text-sm py-1 min-w-0" %>
+        <%= f.select :payment_day,
+            (1..28).map { |d| ["#{d}일", d] },
+            {},
+            class: "input w-20 text-sm py-1 text-center" %>
+        <%= f.submit "저장", class: "btn btn-primary text-xs py-1 px-3" %>
+        <button type="button" data-action="inline-edit#cancel" class="btn btn-ghost text-xs py-1 px-2">
+          취소
+        </button>
+      <% end %>
+    </div>
+
+    <%# 액션 버튼 %>
+    <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+         data-inline-edit-target="actions">
+      <button data-action="inline-edit#edit"
+              class="btn-ghost p-1.5 rounded-lg" style="color: var(--color-text-muted);">
+        <%= lucide_icon("pencil", size: 14) %>
+      </button>
+      <%= button_to credit_card_path(credit_card),
+          method: :delete,
+          class: "btn-ghost p-1.5 rounded-lg",
+          style: "color: var(--color-danger);",
+          form: { data: { turbo_confirm: "이 카드를 삭제하시겠습니까?" } } do %>
+        <%= lucide_icon("trash-2", size: 14) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

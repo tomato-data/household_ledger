@@ -1,5 +1,14 @@
 <turbo-frame id="daily_transactions">
   <%= render "dashboard/daily_transactions",
-      selected_date: @selected_date,
-      transactions: @daily_transactions %>
+      selected_dates: @selected_dates,
+      transactions: @daily_transactions,
+      selection_income: @selection_income || 0,
+      selection_expense: @selection_expense || 0 %>
+</turbo-frame>
+
+<turbo-frame id="selection_stats">
+  <%= render "dashboard/selection_stats",
+      stats: @selection_stats || [],
+      total: @selection_total || 0,
+      selected_dates: @selected_dates %>
 </turbo-frame>

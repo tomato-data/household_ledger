@@ -10,13 +10,13 @@
          data-stats-filter-path-value="<%= statistics_path %>">
       <%= link_to "지출",
           statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: "expense"),
-          class: "flex-1 text-center py-2 rounded-lg text-sm font-medium transition-colors",
-          style: "#{'background-color: var(--color-expense); color: #000;' if @type.to_s != 'income'} border: 1px solid var(--color-border);",
+          class: "btn flex-1 text-sm font-medium",
+          style: "#{'background-color: var(--color-expense-bg); color: var(--color-expense); font-weight: 700;' if @type.to_s != 'income'} border: 1px solid var(--color-border);",
           data: { turbo_frame: "stats_frame" } %>
       <%= link_to "수입",
           statistics_path(date: (@date || Date.today).strftime("%Y-%m-%d"), type: "income"),
-          class: "flex-1 text-center py-2 rounded-lg text-sm font-medium transition-colors",
-          style: "#{'background-color: var(--color-income); color: #000;' if @type.to_s == 'income'} border: 1px solid var(--color-border);",
+          class: "btn flex-1 text-sm font-medium",
+          style: "#{'background-color: var(--color-income-bg); color: var(--color-income); font-weight: 700;' if @type.to_s == 'income'} border: 1px solid var(--color-border);",
           data: { turbo_frame: "stats_frame" } %>
     </div>
 

@@ -1,0 +1,5 @@
+<%= turbo_stream.remove @credit_card %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast('카드가 삭제되었습니다')</script>
+<% end %>

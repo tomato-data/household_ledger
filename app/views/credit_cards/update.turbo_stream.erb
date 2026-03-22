@@ -1,0 +1,7 @@
+<%= turbo_stream.replace @credit_card do %>
+  <%= render "credit_cards/credit_card", credit_card: @credit_card %>
+<% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast('카드 정보가 수정되었습니다')</script>
+<% end %>

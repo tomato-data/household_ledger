@@ -1,20 +1,20 @@
 <%= turbo_frame_tag recurring_transaction do %>
-  <div class="rounded-xl p-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+  <div class="card p-4">
     <div class="flex items-center justify-between mb-2">
       <div class="flex items-center gap-2">
-        <span class="font-medium"><%= recurring_transaction.template_name %></span>
+        <span class="text-sm font-bold"><%= recurring_transaction.template_name %></span>
         <%= type_badge(recurring_transaction.transaction_type) %>
       </div>
       <div class="flex items-center gap-2">
         <% if recurring_transaction.is_active %>
-          <span class="text-xs px-2 py-0.5 rounded-full" style="background-color: color-mix(in srgb, var(--color-success) 20%, transparent); color: var(--color-success);">활성</span>
+          <span class="badge" style="background-color: var(--color-success); background-color: color-mix(in srgb, var(--color-success) 15%, transparent); color: var(--color-success);">활성</span>
         <% else %>
-          <span class="text-xs px-2 py-0.5 rounded-full" style="background-color: color-mix(in srgb, var(--color-text-muted) 20%, transparent); color: var(--color-text-muted);">비활성</span>
+          <span class="badge" style="background-color: color-mix(in srgb, var(--color-text-muted) 15%, transparent); color: var(--color-text-muted);">비활성</span>
         <% end %>
       </div>
     </div>
 
-    <div class="text-sm mb-2" style="color: var(--color-text-secondary);">
+    <div class="text-sm mb-2 font-tabular" style="color: var(--color-text-secondary);">
       <% unless recurring_transaction.is_variable_amount %>
         <span><%= format_currency(recurring_transaction.amount) %></span> ·
       <% end %>
@@ -30,17 +30,18 @@
 
     <div class="flex items-center justify-end gap-2">
       <%= link_to edit_recurring_transaction_path(recurring_transaction),
-          class: "text-xs px-3 py-1 rounded-lg transition-colors",
-          style: "background-color: var(--color-bg-tertiary); color: var(--color-text-secondary);",
+          class: "btn btn-ghost text-xs",
           data: { turbo_frame: "modal" } do %>
-        수정
+        <%= lucide_icon("pencil", size: 12) %>
+        <span>수정</span>
       <% end %>
       <%= button_to recurring_transaction_path(recurring_transaction),
           method: :delete,
-          class: "text-xs px-3 py-1 rounded-lg transition-colors",
+          class: "btn btn-ghost text-xs",
           style: "color: var(--color-danger);",
           form: { data: { turbo_confirm: "이 반복 거래를 삭제하시겠습니까?" } } do %>
-        삭제
+        <%= lucide_icon("trash-2", size: 12) %>
+        <span>삭제</span>
       <% end %>
     </div>
   </div>

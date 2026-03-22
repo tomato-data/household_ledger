@@ -16,15 +16,31 @@ module ApplicationHelper
       style: "width: #{size}px; height: #{size}px; #{options[:style]}")
   end
 
+  # 사이드바 네비게이션 링크
+  def sidebar_link(label, path, icon_name)
+    active = current_page?(path)
+    css = active ? "sidebar-link sidebar-link-active" : "sidebar-link"
+    link_to path, class: css, data: { action: "click->sidebar#close" } do
+      lucide_icon(icon_name, size: 18) + content_tag(:span, label)
+    end
+  end
+
+  # 모바일 하단 탭 네비게이션
+  def bottom_nav_tab(label, path, icon_name)
+    active = current_page?(path)
+    color = active ? "var(--color-accent)" : "var(--color-text-muted)"
+    link_to path, class: "flex flex-col items-center justify-center gap-0.5 flex-1 py-1",
+                  style: "color: #{color};" do
+      lucide_icon(icon_name, size: 20) +
+        content_tag(:span, label, class: "text-[10px] font-medium")
+    end
+  end
+
   def type_badge(type)
     if type.to_s == "income"
-      content_tag(:span, "수입",
-        class: "px-2 py-0.5 rounded-full text-xs font-medium",
-        style: "background-color: color-mix(in srgb, var(--color-income) 20%, transparent); color: var(--color-income);")
+      content_tag(:span, "수입", class: "badge badge-income")
     else
-      content_tag(:span, "지출",
-        class: "px-2 py-0.5 rounded-full text-xs font-medium",
-        style: "background-color: color-mix(in srgb, var(--color-expense) 20%, transparent); color: var(--color-expense);")
+      content_tag(:span, "지출", class: "badge badge-expense")
     end
   end
 

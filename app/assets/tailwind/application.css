@@ -1,38 +1,358 @@
 @import "tailwindcss";
 
+/* ========================================
+   Design System — Household Ledger
+   Dashboard-style, Light/Dark, Responsive
+   Web Interface Guidelines compliant
+   ======================================== */
+
 @layer base {
+  /* ---- Light Mode (기본) ---- */
   :root {
-    --color-bg-primary: #0f0f0f;
-    --color-bg-secondary: #1a1a1a;
-    --color-bg-tertiary: #262626;
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #a3a3a3;
-    --color-text-muted: #737373;
-    --color-border: #333333;
-    --color-income: #22d3ee;
+    color-scheme: light;
+
+    --color-bg-primary: #f4f4f5;
+    --color-bg-secondary: #ffffff;
+    --color-bg-tertiary: #e4e4e7;
+    --color-bg-elevated: #ffffff;
+
+    --color-text-primary: #18181b;
+    --color-text-secondary: #52525b;
+    --color-text-muted: #a1a1aa;
+
+    --color-border: #d4d4d8;
+    --color-border-subtle: #e4e4e7;
+
+    --color-income: #0d9488;
+    --color-expense: #e11d48;
+    --color-assets: #d97706;
+    --color-accent: #6366f1;
+    --color-success: #16a34a;
+    --color-danger: #dc2626;
+
+    --color-income-bg: #ccfbf1;
+    --color-expense-bg: #ffe4e6;
+    --color-assets-bg: #fef3c7;
+    --color-accent-bg: #e0e7ff;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+
+    --theme-color: #f4f4f5;
+  }
+
+  /* ---- Dark Mode ---- */
+  .dark {
+    color-scheme: dark;
+
+    --color-bg-primary: #09090b;
+    --color-bg-secondary: #18181b;
+    --color-bg-tertiary: #27272a;
+    --color-bg-elevated: #1e1e22;
+
+    --color-text-primary: #fafafa;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+
+    --color-border: #3f3f46;
+    --color-border-subtle: #27272a;
+
+    --color-income: #2dd4bf;
     --color-expense: #fb7185;
-    --color-assets: #f59e0b;
-    --color-accent: #8b5cf6;
+    --color-assets: #fbbf24;
+    --color-accent: #818cf8;
     --color-success: #4ade80;
-    --color-danger: #ef4444;
+    --color-danger: #f87171;
+
+    --color-income-bg: rgba(45, 212, 191, 0.12);
+    --color-expense-bg: rgba(251, 113, 133, 0.12);
+    --color-assets-bg: rgba(251, 191, 36, 0.12);
+    --color-accent-bg: rgba(129, 140, 248, 0.12);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+    --theme-color: #09090b;
+  }
+
+  /* ---- Typography ---- */
+  html {
+    font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+    /* 터치: 더블탭 줌 딜레이 제거 */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* 금액 표시 — 숫자 폭 동일 정렬 */
+  .font-tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* 헤딩: 줄바꿈 균형 (widow 방지) */
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  /* ---- Focus Visible (접근성) ---- */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* input/select는 자체 포커스 스타일 사용 */
+  .input:focus-visible {
+    outline: none;
+  }
+
+  /* ---- Reduced Motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
+  /* ---- Card ---- */
+  .card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-elevated {
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ---- Badge ---- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .badge-income {
+    background-color: var(--color-income-bg);
+    color: var(--color-income);
+  }
+
+  .badge-expense {
+    background-color: var(--color-expense-bg);
+    color: var(--color-expense);
+  }
+
+  .badge-accent {
+    background-color: var(--color-accent-bg);
+    color: var(--color-accent);
+  }
+
+  /* ---- Button ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+  }
+  .btn-ghost:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .btn-danger {
+    background-color: var(--color-danger);
+    color: #ffffff;
+  }
+  .btn-danger:hover {
+    opacity: 0.9;
+  }
+
+  /* ---- Stat Card ---- */
+  .stat-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-card-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .stat-card-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-top: 4px;
+  }
+
+  /* ---- Sidebar ---- */
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .sidebar-link:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .sidebar-link-active {
+    background-color: var(--color-accent-bg);
+    color: var(--color-accent);
+  }
+
+  /* ---- Form Input ---- */
+  .input {
+    width: 100%;
+    padding: 8px 12px;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-bg);
+  }
+
+  .input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  /* ---- Table Row ---- */
+  .table-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border-subtle);
+    transition: background-color 0.1s ease;
+  }
+
+  .table-row:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  .table-row:last-child {
+    border-bottom: none;
+  }
+
+  /* ---- Lucide Icon ---- */
   .lucide-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
+  /* 장식용 아이콘 접근성 */
+  .lucide-icon[aria-hidden] {
+    pointer-events: none;
+  }
+
+  /* ---- Calendar ---- */
   .calendar-selected {
     background-color: var(--color-accent) !important;
-    color: var(--color-text-primary);
-    border-radius: 0.5rem;
+    color: #ffffff !important;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .calendar-selected .calendar-amount {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* 멀티셀렉트 힌트 */
+  .calendar-day {
+    user-select: none;
+  }
+
+  .calendar-day {
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  }
+
+  .calendar-day:hover {
+    background-color: var(--color-bg-tertiary);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+
+  .calendar-day:active {
+    transform: scale(0.97);
   }
 
   .calendar-amount {
     font-size: 9px;
+    font-variant-numeric: tabular-nums;
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -43,5 +363,70 @@
     .calendar-amount {
       font-size: 11px;
     }
+  }
+
+  /* ---- Page Transition ---- */
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .page-enter {
+    animation: page-enter 0.25s ease-out;
+  }
+
+  /* Turbo 페이지 전환 */
+  turbo-frame {
+    display: block;
+  }
+
+  .turbo-progress-bar {
+    background-color: var(--color-accent);
+    height: 2px;
+  }
+
+  /* ---- Modal ---- */
+  @keyframes modal-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes overlay-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-overlay {
+    animation: overlay-enter 0.2s ease-out;
+  }
+
+  .modal-content {
+    animation: modal-enter 0.25s ease-out;
+  }
+
+  /* ---- Scrollbar (다크모드) ---- */
+  .dark ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: var(--color-bg-primary);
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
   }
 }

@@ -1,15 +1,12 @@
 <div data-controller="modal"
      data-action="keydown.esc->modal#close"
      class="fixed inset-0 z-50 flex items-center justify-center p-4"
-     style="background-color: rgba(0, 0, 0, 0.6);">
+     style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);">
   <div data-modal-target="content"
-       class="w-full max-w-sm rounded-xl shadow-2xl p-6 text-center"
-       style="background-color: var(--color-bg-secondary);">
+       class="card-elevated w-full max-w-sm p-6 text-center">
     <p class="text-sm mb-4"><%= message %></p>
     <div class="flex gap-3">
-      <button data-action="modal#close"
-              class="flex-1 py-2 rounded-lg text-sm"
-              style="background-color: var(--color-bg-tertiary); color: var(--color-text-secondary);">
+      <button data-action="modal#close" class="btn btn-ghost flex-1 py-2">
         취소
       </button>
       <%= yield %>

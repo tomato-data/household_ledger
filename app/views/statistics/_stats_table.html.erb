@@ -1,26 +1,26 @@
 <% if category_stats.any? %>
-  <div class="rounded-xl overflow-hidden mt-4" style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border);">
+  <div class="card overflow-hidden mt-4">
     <% category_stats.each do |stat| %>
       <% percentage = total > 0 ? (stat[:amount].to_f / total * 100).round(1) : 0 %>
-      <div class="flex items-center gap-3 px-4 py-3"
-           style="border-bottom: 1px solid var(--color-border);">
-        <span class="flex-shrink-0" style="color: <%= stat[:color] || '#a3a3a3' %>;">
-          <%= lucide_icon(stat[:icon] || "file-text", size: 20) %>
-        </span>
+      <div class="table-row gap-3">
+        <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+             style="background-color: <%= stat[:color] || '#a3a3a3' %>20; color: <%= stat[:color] || '#a3a3a3' %>;">
+          <%= lucide_icon(stat[:icon] || "file-text", size: 16) %>
+        </div>
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-sm"><%= stat[:name] %></span>
-            <span class="text-sm font-bold"><%= format_currency(stat[:amount]) %></span>
+            <span class="text-sm font-medium"><%= stat[:name] %></span>
+            <span class="text-sm font-bold font-tabular"><%= format_currency(stat[:amount]) %></span>
           </div>
           <%# 비율 바 %>
-          <div class="w-full h-1.5 rounded-full" style="background-color: var(--color-bg-tertiary);">
-            <div class="h-full rounded-full transition-all duration-300"
-                 style="width: <%= percentage %>%; background-color: var(--color-accent);"></div>
+          <div class="w-full h-1 rounded-full" style="background-color: var(--color-bg-tertiary);">
+            <div class="h-full rounded-full transition-all duration-500"
+                 style="width: <%= percentage %>%; background-color: <%= stat[:color] || 'var(--color-accent)' %>;"></div>
           </div>
         </div>
 
-        <span class="text-xs flex-shrink-0" style="color: var(--color-text-muted);">
+        <span class="text-xs font-medium font-tabular flex-shrink-0 w-10 text-right" style="color: var(--color-text-muted);">
           <%= percentage %>%
         </span>
       </div>
