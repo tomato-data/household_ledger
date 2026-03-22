@@ -1,6 +1,17 @@
 module ApplicationHelper
+  CHART_PALETTE = %w[
+    #6366f1 #0ea5e9 #14b8a6 #f59e0b #8b5cf6
+    #64748b #ec4899 #d97706 #0891b2 #7c3aed
+    #059669 #dc2626 #2563eb #ca8a04 #9333ea
+  ].freeze
+
   def format_currency(amount)
     number_to_currency(amount, unit: "원", format: "%n%u", delimiter: ",", precision: 0)
+  end
+
+  # DB 색상이 기본값이면 팔레트 색상, 커스텀이면 그대로 사용
+  def chart_color(db_color, index)
+    db_color.present? && db_color != "#a3a3a3" ? db_color : CHART_PALETTE[index % CHART_PALETTE.length]
   end
 
   def colored_amount(amount, type)

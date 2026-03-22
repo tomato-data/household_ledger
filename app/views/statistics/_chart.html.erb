@@ -1,15 +1,24 @@
 <div class="card p-4">
   <% if category_stats.any? %>
-    <div class="flex justify-center">
-      <%= pie_chart category_stats.map { |s| [s[:name], s[:amount]] },
-          donut: true,
-          colors: ["#2dd4bf", "#fb7185", "#fbbf24", "#818cf8", "#34d399", "#f97316", "#06b6d4", "#ec4899", "#84cc16", "#a78bfa", "#fb923c", "#14b8a6", "#e879f9"],
-          library: {
-            plugins: {
-              legend: { display: false }
-            },
-            cutout: "65%"
-          } %>
+    <%# 차트 데이터를 JSON으로 전달 %>
+    <div data-controller="stats-chart"
+         data-stats-chart-stats-value="<%= category_stats.to_json %>">
+
+      <%# 토글 버튼 %>
+      <div class="flex justify-end mb-3">
+        <button data-action="stats-chart#toggle"
+                data-stats-chart-target="toggleBtn"
+                class="btn btn-ghost text-xs gap-1.5"
+                aria-label="상세 보기 토글">
+          <i data-lucide="layers" aria-hidden="true" class="lucide-icon" style="width: 14px; height: 14px;"></i>
+          <span data-stats-chart-target="toggleLabel">상세</span>
+        </button>
+      </div>
+
+      <%# 차트 캔버스 %>
+      <div class="flex justify-center" style="max-height: 300px;">
+        <canvas data-stats-chart-target="canvas" style="max-height: 300px;"></canvas>
+      </div>
     </div>
   <% else %>
     <%= render "shared/empty_state", message: "해당 기간의 데이터가 없습니다" %>

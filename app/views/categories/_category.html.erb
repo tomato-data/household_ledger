@@ -1,38 +1,38 @@
 <%= turbo_frame_tag category do %>
-  <div class="rounded-lg group"
-       data-category-id="<%= category.id %>"
-       data-controller="inline-edit">
+  <div data-category-id="<%= category.id %>"
+       data-controller="inline-edit"
+       style="border-bottom: 1px solid var(--color-border-subtle);">
 
-    <%# 상위 카테고리 행 %>
-    <div class="table-row rounded-lg">
+    <%# === 상위 카테고리 행 === %>
+    <div class="flex items-center gap-2.5 py-2.5 px-3 group">
       <%# 드래그 핸들 %>
       <span class="cursor-grab active:cursor-grabbing flex-shrink-0" style="color: var(--color-text-muted);">
-        <%= lucide_icon("grip-vertical", size: 16) %>
+        <%= lucide_icon("grip-vertical", size: 14) %>
       </span>
 
-      <%# 아이콘 + 이름 (표시 모드) %>
-      <div data-inline-edit-target="display" class="flex items-center gap-2.5 flex-1">
-        <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-             style="background-color: <%= category.color || '#a3a3a3' %>20; color: <%= category.color || '#a3a3a3' %>;">
-          <%= lucide_icon(category.icon, size: 16) %>
-        </div>
-        <span class="text-sm font-medium"><%= category.name %></span>
+      <%# 아이콘 %>
+      <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+           style="background-color: <%= category.color || '#a3a3a3' %>20; color: <%= category.color || '#a3a3a3' %>;">
+        <%= lucide_icon(category.icon, size: 14) %>
+      </div>
+
+      <%# 이름 (표시 모드) %>
+      <div data-inline-edit-target="display" class="flex items-center gap-1.5 flex-1 min-w-0">
+        <span class="text-sm font-medium truncate"><%= category.name %></span>
         <% if category.subcategories.any? %>
-          <span class="text-[10px] font-medium" style="color: var(--color-text-muted);">
-            (<%= category.subcategories.size %>)
-          </span>
+          <span class="text-[10px]" style="color: var(--color-text-muted);">(<%= category.subcategories.size %>)</span>
         <% end %>
       </div>
 
-      <%# 편집 모드 %>
-      <div data-inline-edit-target="editor" class="flex-1 hidden relative">
+      <%# 이름 (편집 모드) %>
+      <div data-inline-edit-target="editor" class="flex-1 hidden">
         <%= form_with(model: category, class: "flex items-center gap-2", data: { controller: "icon-picker" }) do |f| %>
           <%= f.hidden_field :icon, data: { icon_picker_target: "input" } %>
           <%= f.hidden_field :color, data: { icon_picker_target: "colorInput" } %>
           <button type="button" data-action="icon-picker#toggle"
-                  class="w-8 h-8 flex items-center justify-center rounded-md flex-shrink-0"
+                  class="w-7 h-7 flex items-center justify-center rounded-md flex-shrink-0"
                   style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border);">
-            <span data-icon-picker-target="preview" style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 16) %></span>
+            <span data-icon-picker-target="preview" style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 14) %></span>
           </button>
           <%= render "categories/icon_color_picker", current_color: category.color %>
           <%= f.text_field :name, class: "input flex-1 min-w-0 text-sm py-1" %>
@@ -41,41 +41,55 @@
         <% end %>
       </div>
 
-      <%# 액션 버튼 %>
-      <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+      <%# 액션 (오른쪽 정렬) %>
+      <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
            data-inline-edit-target="actions">
         <button data-action="inline-edit#edit"
-                class="btn-ghost p-1.5 rounded-lg" style="color: var(--color-text-muted);" aria-label="수정">
-          <%= lucide_icon("pencil", size: 14) %>
+                class="btn-ghost p-1 rounded-md cursor-pointer" style="color: var(--color-text-muted);" aria-label="수정">
+          <%= lucide_icon("pencil", size: 13) %>
         </button>
         <%= button_to category_path(category),
             method: :delete,
-            class: "btn-ghost p-1.5 rounded-lg",
+            class: "btn-ghost p-1 rounded-md cursor-pointer",
             style: "color: var(--color-danger);",
             aria_label: "삭제",
             form: { data: { turbo_confirm: "이 카테고리를 삭제하시겠습니까? 하위 카테고리와 관련 거래도 함께 삭제됩니다." } } do %>
-          <%= lucide_icon("trash-2", size: 14) %>
+          <%= lucide_icon("trash-2", size: 13) %>
         <% end %>
       </div>
     </div>
 
-    <%# 서브카테고리 목록 %>
+    <%# === 서브카테고리 목록 === %>
     <% if category.subcategories.any? %>
-      <div class="ml-9 space-y-0.5" id="subcategories_<%= category.id %>">
+      <div class="ml-12 mr-3">
         <% category.subcategories.each do |sub| %>
           <%= render "categories/subcategory", subcategory: sub %>
         <% end %>
       </div>
     <% end %>
 
-    <%# 서브카테고리 추가 폼 %>
-    <div class="ml-9 mt-1 mb-2">
+    <%# === 서브카테고리 추가 (인라인, 컴팩트) === %>
+    <div class="ml-12 mr-3 pb-2">
       <%= form_with(model: Category.new, class: "flex items-center gap-2") do |f| %>
         <%= f.hidden_field :parent_id, value: category.id %>
         <%= f.hidden_field :icon, value: category.icon %>
-        <%= f.hidden_field :color, value: category.color %>
-        <%= f.text_field :name, class: "input flex-1 text-xs py-1", placeholder: "하위 카테고리 추가…" %>
-        <%= f.submit "+", class: "btn btn-ghost text-xs py-1 px-2" %>
+        <%# 색상 선택 도트 %>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <% %w[#a3a3a3 #f43f5e #8b5cf6 #06b6d4 #f59e0b #10b981 #ec4899 #f97316].each_with_index do |color, i| %>
+            <label class="cursor-pointer">
+              <input type="radio" name="category[color]" value="<%= color %>"
+                     <%= "checked" if i == 0 %>
+                     class="hidden peer">
+              <div class="w-3 h-3 rounded-full transition-all hover:scale-125 peer-checked:ring-1 peer-checked:ring-offset-1"
+                   style="background-color: <%= color %>; --tw-ring-color: <%= color %>;"></div>
+            </label>
+          <% end %>
+        </div>
+        <%= f.text_field :name,
+            class: "input flex-1 text-xs py-1.5",
+            placeholder: "하위 카테고리 추가…",
+            style: "background-color: transparent; border-color: var(--color-border-subtle);" %>
+        <%= f.submit "+", class: "btn btn-ghost text-sm py-1 px-2.5 cursor-pointer font-bold" %>
       <% end %>
     </div>
   </div>

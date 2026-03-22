@@ -17,7 +17,7 @@
   </div>
 
   <%# 총자산 카드 %>
-  <div class="stat-card flex flex-col" data-controller="toggle">
+  <div class="stat-card flex flex-col" data-controller="toggle" data-toggle-mode-value="visibility">
     <p class="stat-card-label">총자산</p>
     <p class="stat-card-value font-tabular" data-toggle-target="content" style="color: var(--color-assets);">
       <%= format_currency(total_assets) %>

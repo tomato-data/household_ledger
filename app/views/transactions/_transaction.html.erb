@@ -1,48 +1,52 @@
 <%= turbo_frame_tag transaction do %>
-  <div class="table-row rounded-lg"
+  <div class="py-2.5 px-4 transition-colors hover:bg-[var(--color-bg-tertiary)]"
+       style="border-bottom: 1px solid var(--color-border-subtle);"
        id="<%= dom_id(transaction) %>">
 
-    <div class="flex items-center gap-3 flex-1 min-w-0">
+    <%# 1행: 아이콘 + 설명 + 금액 %>
+    <div class="flex items-center gap-2.5">
       <%# 카테고리 아이콘 %>
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+      <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
            style="background-color: <%= transaction.category&.color || '#a3a3a3' %>20; color: <%= transaction.category&.color || '#a3a3a3' %>;">
-        <%= lucide_icon(transaction.category&.icon || "file-text", size: 16) %>
+        <%= lucide_icon(transaction.category&.icon || "file-text", size: 14) %>
       </div>
 
+      <%# 설명 + 카테고리 %>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium truncate"><%= transaction.description %></p>
-        <div class="flex items-center gap-1.5 mt-0.5">
-          <span class="text-xs" style="color: var(--color-text-muted);">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[10px]" style="color: var(--color-text-muted);">
             <%= transaction.category&.full_name %>
           </span>
           <% if transaction.status == "scheduled" %>
-            <%= lucide_icon("clock", size: 12, style: "color: var(--color-assets);") %>
+            <%= lucide_icon("clock", size: 10, style: "color: var(--color-assets);") %>
           <% end %>
           <% if transaction.recurring_transaction.present? %>
-            <%= lucide_icon("repeat", size: 12, style: "color: var(--color-accent);") %>
+            <%= lucide_icon("repeat", size: 10, style: "color: var(--color-accent);") %>
           <% end %>
         </div>
       </div>
-    </div>
 
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <span class="text-sm font-bold font-tabular">
-        <%= colored_amount(transaction.amount, transaction.transaction_type) %>
-      </span>
+      <%# 금액 + 액션 (오른쪽 정렬) %>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <span class="text-xs font-bold font-tabular">
+          <%= colored_amount(transaction.amount, transaction.transaction_type) %>
+        </span>
 
-      <div class="flex items-center gap-0.5">
         <%= link_to edit_transaction_path(transaction),
-            class: "btn-ghost p-1.5 rounded-lg",
-            data: { turbo_frame: "modal" } do %>
-          <%= lucide_icon("pencil", size: 14, style: "color: var(--color-text-muted);") %>
+            class: "btn-ghost p-1 rounded-md opacity-40 hover:opacity-100",
+            data: { turbo_frame: "modal" },
+            aria_label: "수정" do %>
+          <%= lucide_icon("pencil", size: 12) %>
         <% end %>
 
         <%= button_to transaction_path(transaction),
             method: :delete,
-            class: "btn-ghost p-1.5 rounded-lg",
+            class: "btn-ghost p-1 rounded-md opacity-40 hover:opacity-100 cursor-pointer",
             style: "color: var(--color-danger);",
+            aria_label: "삭제",
             form: { data: { turbo_confirm: "이 거래를 삭제하시겠습니까?" } } do %>
-          <%= lucide_icon("trash-2", size: 14) %>
+          <%= lucide_icon("trash-2", size: 12) %>
         <% end %>
       </div>
     </div>
