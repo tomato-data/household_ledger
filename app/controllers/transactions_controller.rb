@@ -3,7 +3,7 @@ class TransactionsController < ApplicationController
 
   def new
     @transaction = current_user.transactions.build(date: params[:date] || Date.today)
-    @categories = current_user.categories
+    @categories = current_user.categories.top_level.includes(:subcategories)
   end
 
   def create
@@ -16,13 +16,13 @@ class TransactionsController < ApplicationController
         format.html { redirect_to root_path }
       end
     else
-      @categories = current_user.categories
+      @categories = current_user.categories.top_level.includes(:subcategories)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @categories = current_user.categories
+    @categories = current_user.categories.top_level.includes(:subcategories)
   end
 
   def update
@@ -33,7 +33,7 @@ class TransactionsController < ApplicationController
         format.html { redirect_to root_path }
       end
     else
-      @categories = current_user.categories
+      @categories = current_user.categories.top_level.includes(:subcategories)
       render :edit, status: :unprocessable_entity
     end
   end

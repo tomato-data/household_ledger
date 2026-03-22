@@ -1,55 +1,81 @@
 <%= turbo_frame_tag category do %>
-  <div class="table-row rounded-lg group"
+  <div class="rounded-lg group"
        data-category-id="<%= category.id %>"
        data-controller="inline-edit">
 
-    <%# 드래그 핸들 %>
-    <span class="cursor-grab active:cursor-grabbing flex-shrink-0" style="color: var(--color-text-muted);">
-      <%= lucide_icon("grip-vertical", size: 16) %>
-    </span>
+    <%# 상위 카테고리 행 %>
+    <div class="table-row rounded-lg">
+      <%# 드래그 핸들 %>
+      <span class="cursor-grab active:cursor-grabbing flex-shrink-0" style="color: var(--color-text-muted);">
+        <%= lucide_icon("grip-vertical", size: 16) %>
+      </span>
 
-    <%# 아이콘 + 이름 (표시 모드) %>
-    <div data-inline-edit-target="display" class="flex items-center gap-2.5 flex-1">
-      <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-           style="background-color: <%= category.color || '#a3a3a3' %>20; color: <%= category.color || '#a3a3a3' %>;">
-        <%= lucide_icon(category.icon, size: 16) %>
+      <%# 아이콘 + 이름 (표시 모드) %>
+      <div data-inline-edit-target="display" class="flex items-center gap-2.5 flex-1">
+        <div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+             style="background-color: <%= category.color || '#a3a3a3' %>20; color: <%= category.color || '#a3a3a3' %>;">
+          <%= lucide_icon(category.icon, size: 16) %>
+        </div>
+        <span class="text-sm font-medium"><%= category.name %></span>
+        <% if category.subcategories.any? %>
+          <span class="text-[10px] font-medium" style="color: var(--color-text-muted);">
+            (<%= category.subcategories.size %>)
+          </span>
+        <% end %>
       </div>
-      <span class="text-sm font-medium"><%= category.name %></span>
+
+      <%# 편집 모드 %>
+      <div data-inline-edit-target="editor" class="flex-1 hidden relative">
+        <%= form_with(model: category, class: "flex items-center gap-2", data: { controller: "icon-picker" }) do |f| %>
+          <%= f.hidden_field :icon, data: { icon_picker_target: "input" } %>
+          <%= f.hidden_field :color, data: { icon_picker_target: "colorInput" } %>
+          <button type="button" data-action="icon-picker#toggle"
+                  class="w-8 h-8 flex items-center justify-center rounded-md flex-shrink-0"
+                  style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border);">
+            <span data-icon-picker-target="preview" style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 16) %></span>
+          </button>
+          <%= render "categories/icon_color_picker", current_color: category.color %>
+          <%= f.text_field :name, class: "input flex-1 min-w-0 text-sm py-1" %>
+          <%= f.submit "저장", class: "btn btn-primary text-xs py-1 px-3" %>
+          <button type="button" data-action="inline-edit#cancel" class="btn btn-ghost text-xs py-1 px-2">취소</button>
+        <% end %>
+      </div>
+
+      <%# 액션 버튼 %>
+      <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+           data-inline-edit-target="actions">
+        <button data-action="inline-edit#edit"
+                class="btn-ghost p-1.5 rounded-lg" style="color: var(--color-text-muted);" aria-label="수정">
+          <%= lucide_icon("pencil", size: 14) %>
+        </button>
+        <%= button_to category_path(category),
+            method: :delete,
+            class: "btn-ghost p-1.5 rounded-lg",
+            style: "color: var(--color-danger);",
+            aria_label: "삭제",
+            form: { data: { turbo_confirm: "이 카테고리를 삭제하시겠습니까? 하위 카테고리와 관련 거래도 함께 삭제됩니다." } } do %>
+          <%= lucide_icon("trash-2", size: 14) %>
+        <% end %>
+      </div>
     </div>
 
-    <%# 아이콘 + 이름 (편집 모드 — 숨김) %>
-    <div data-inline-edit-target="editor" class="flex-1 hidden relative">
-      <%= form_with(model: category, class: "flex items-center gap-2", data: { controller: "icon-picker" }) do |f| %>
-        <%= f.hidden_field :icon, data: { icon_picker_target: "input" } %>
-        <%= f.hidden_field :color, data: { icon_picker_target: "colorInput" } %>
-        <button type="button" data-action="icon-picker#toggle"
-                class="w-8 h-8 flex items-center justify-center rounded-md flex-shrink-0"
-                style="background-color: var(--color-bg-tertiary); border: 1px solid var(--color-border);">
-          <span data-icon-picker-target="preview" style="color: <%= category.color || '#a3a3a3' %>;"><%= lucide_icon(category.icon, size: 16) %></span>
-        </button>
-        <%= render "categories/icon_color_picker", current_color: category.color %>
-        <%= f.text_field :name, class: "input flex-1 min-w-0 text-sm py-1" %>
-        <%= f.submit "저장", class: "btn btn-primary text-xs py-1 px-3" %>
-        <button type="button" data-action="inline-edit#cancel"
-                class="btn btn-ghost text-xs py-1 px-2">
-          취소
-        </button>
-      <% end %>
-    </div>
+    <%# 서브카테고리 목록 %>
+    <% if category.subcategories.any? %>
+      <div class="ml-9 space-y-0.5" id="subcategories_<%= category.id %>">
+        <% category.subcategories.each do |sub| %>
+          <%= render "categories/subcategory", subcategory: sub %>
+        <% end %>
+      </div>
+    <% end %>
 
-    <%# 액션 버튼 %>
-    <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-         data-inline-edit-target="actions">
-      <button data-action="inline-edit#edit"
-              class="btn-ghost p-1.5 rounded-lg" style="color: var(--color-text-muted);">
-        <%= lucide_icon("pencil", size: 14) %>
-      </button>
-      <%= button_to category_path(category),
-          method: :delete,
-          class: "btn-ghost p-1.5 rounded-lg",
-          style: "color: var(--color-danger);",
-          form: { data: { turbo_confirm: "이 카테고리를 삭제하시겠습니까? 관련 거래도 함께 삭제됩니다." } } do %>
-        <%= lucide_icon("trash-2", size: 14) %>
+    <%# 서브카테고리 추가 폼 %>
+    <div class="ml-9 mt-1 mb-2">
+      <%= form_with(model: Category.new, class: "flex items-center gap-2") do |f| %>
+        <%= f.hidden_field :parent_id, value: category.id %>
+        <%= f.hidden_field :icon, value: category.icon %>
+        <%= f.hidden_field :color, value: category.color %>
+        <%= f.text_field :name, class: "input flex-1 text-xs py-1", placeholder: "하위 카테고리 추가…" %>
+        <%= f.submit "+", class: "btn btn-ghost text-xs py-1 px-2" %>
       <% end %>
     </div>
   </div>

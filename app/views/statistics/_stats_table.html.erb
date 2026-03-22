@@ -2,7 +2,14 @@
   <div class="card overflow-hidden mt-4">
     <% category_stats.each do |stat| %>
       <% percentage = total > 0 ? (stat[:amount].to_f / total * 100).round(1) : 0 %>
-      <div class="table-row gap-3">
+      <% has_subs = stat[:subcategories].present? && stat[:subcategories].any? %>
+
+      <%# 상위 카테고리 행 %>
+      <div class="table-row gap-3 <%= 'cursor-pointer' if has_subs %>"
+           <% if has_subs %>
+             data-controller="toggle"
+             data-action="click->toggle#toggle"
+           <% end %>>
         <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
              style="background-color: <%= stat[:color] || '#a3a3a3' %>20; color: <%= stat[:color] || '#a3a3a3' %>;">
           <%= lucide_icon(stat[:icon] || "file-text", size: 16) %>
@@ -10,13 +17,16 @@
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-sm font-medium"><%= stat[:name] %></span>
+            <span class="text-sm font-medium">
+              <%= stat[:name] %>
+              <% if has_subs %>
+                <span class="text-[10px] ml-1" style="color: var(--color-text-muted);">▾ <%= stat[:subcategories].size %></span>
+              <% end %>
+            </span>
             <span class="text-sm font-bold font-tabular"><%= format_currency(stat[:amount]) %></span>
           </div>
-          <%# 비율 바 %>
           <div class="w-full h-1 rounded-full" style="background-color: var(--color-bg-tertiary);">
-            <div class="h-full rounded-full transition-all duration-500"
-                 style="width: <%= percentage %>%; background-color: <%= stat[:color] || 'var(--color-accent)' %>;"></div>
+            <div class="h-full rounded-full" style="width: <%= percentage %>%; background-color: <%= stat[:color] || 'var(--color-accent)' %>; transition: width 0.4s ease;"></div>
           </div>
         </div>
 
@@ -24,6 +34,27 @@
           <%= percentage %>%
         </span>
       </div>
+
+      <%# 서브카테고리 행 (접힘) %>
+      <% if has_subs %>
+        <div data-toggle-target="content" style="display: none;">
+          <% stat[:subcategories].each do |sub| %>
+            <% sub_pct = stat[:amount] > 0 ? (sub[:amount].to_f / stat[:amount] * 100).round(1) : 0 %>
+            <div class="flex items-center gap-3 pl-14 pr-4 py-2"
+                 style="border-bottom: 1px solid var(--color-border-subtle); background-color: var(--color-bg-tertiary);">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs" style="color: var(--color-text-secondary);"><%= sub[:name] %></span>
+                  <span class="text-xs font-bold font-tabular"><%= format_currency(sub[:amount]) %></span>
+                </div>
+              </div>
+              <span class="text-[10px] font-tabular flex-shrink-0 w-9 text-right" style="color: var(--color-text-muted);">
+                <%= sub_pct %>%
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 <% end %>
