@@ -45,8 +45,7 @@ class TransactionsController < ApplicationController
   end
 
   def destroy
-    # 할부 그룹 전체 삭제 옵션
-    if params[:delete_group] == "1" && @transaction.installment_group.present?
+    if @transaction.installment_group.present?
       current_user.transactions.where(installment_group: @transaction.installment_group).destroy_all
     else
       @transaction.destroy
