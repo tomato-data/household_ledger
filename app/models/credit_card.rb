@@ -10,16 +10,9 @@ class CreditCard < ApplicationRecord
 
   scope :default_card, -> { find_by(is_default: true) }
 
-  # 특정 날짜 기준 다음 결제일 계산
+  # 구매월 다음 달 결제일 반환
   def next_payment_date(from_date)
-    # 이번 달 결제일이 아직 안 지났으면 이번 달, 지났으면 다음 달
-    this_month_payment = Date.new(from_date.year, from_date.month, payment_day)
-
-    if from_date <= this_month_payment
-      this_month_payment.next_month
-    else
-      this_month_payment + 2.months
-    end
+    Date.new(from_date.year, from_date.month, payment_day).next_month
   end
 
   private
