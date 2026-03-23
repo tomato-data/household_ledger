@@ -57,7 +57,7 @@
             class: "btn-ghost p-1 rounded-md opacity-40 hover:opacity-100 cursor-pointer",
             style: "color: var(--color-danger);",
             aria_label: "삭제",
-            form: { data: { turbo_confirm: "이 거래를 삭제하시겠습니까?" } } do %>
+            form: { data: { turbo_confirm: transaction.installment_group.present? ? "이 할부 거래 전체(#{transaction.installment_count}건)를 삭제하시겠습니까?" : "이 거래를 삭제하시겠습니까?" } } do %>
           <%= lucide_icon("trash-2", size: 12) %>
         <% end %>
       </div>
