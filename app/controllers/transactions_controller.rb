@@ -79,27 +79,35 @@ class TransactionsController < ApplicationController
     base_amount = @transaction.amount
     monthly_amount = (base_amount.to_f / installment_count).round
 
+    unless @transaction.valid?
+      load_form_data
+      render :new, status: :unprocessable_entity
+      return
+    end
+
     group_id = installment_count > 1 ? SecureRandom.uuid : nil
     created_transactions = []
 
-    installment_count.times do |i|
-      payment_date = card.next_payment_date(purchase_date) + i.months
-      per_amount = (i == installment_count - 1) ? base_amount - (monthly_amount * (installment_count - 1)) : monthly_amount
+    ActiveRecord::Base.transaction do
+      installment_count.times do |i|
+        payment_date = card.next_payment_date(purchase_date) + i.months
+        per_amount = (i == installment_count - 1) ? base_amount - (monthly_amount * (installment_count - 1)) : monthly_amount
 
-      t = current_user.transactions.create!(
-        date: payment_date,
-        purchase_date: purchase_date,
-        description: installment_count > 1 ? "#{@transaction.description} (#{i + 1}/#{installment_count})" : @transaction.description,
-        amount: per_amount,
-        transaction_type: @transaction.transaction_type,
-        category_id: @transaction.category_id,
-        status: :scheduled,
-        credit_card_id: card.id,
-        installment_count: installment_count > 1 ? installment_count : nil,
-        installment_number: installment_count > 1 ? i + 1 : nil,
-        installment_group: group_id
-      )
-      created_transactions << t
+        t = current_user.transactions.create!(
+          date: payment_date,
+          purchase_date: purchase_date,
+          description: installment_count > 1 ? "#{@transaction.description} (#{i + 1}/#{installment_count})" : @transaction.description,
+          amount: per_amount,
+          transaction_type: @transaction.transaction_type,
+          category_id: @transaction.category_id,
+          status: :scheduled,
+          credit_card_id: card.id,
+          installment_count: installment_count > 1 ? installment_count : nil,
+          installment_number: installment_count > 1 ? i + 1 : nil,
+          installment_group: group_id
+        )
+        created_transactions << t
+      end
     end
 
     @transaction = created_transactions.first
@@ -108,6 +116,9 @@ class TransactionsController < ApplicationController
       format.turbo_stream { render "create" }
       format.html { redirect_to root_path }
     end
+  rescue ActiveRecord::RecordInvalid
+    load_form_data
+    render :new, status: :unprocessable_entity
   end
 
   def set_month_data
@@ -118,7 +129,8 @@ class TransactionsController < ApplicationController
     @transactions_by_date = month_transactions.group_by(&:date)
     @total_income = month_transactions.where(transaction_type: :income).sum(:amount)
     @total_expense = month_transactions.where(transaction_type: :expense).sum(:amount)
-    @total_assets = current_user.transactions.where(transaction_type: :income).sum(:amount) - current_user.transactions.where(transaction_type: :expense).sum(:amount)
+    @total_assets = current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :income).sum(:amount) -
+                    current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :expense).sum(:amount)
 
     @selected_dates = [ @transaction.date ]
     @daily_transactions = current_user.transactions
