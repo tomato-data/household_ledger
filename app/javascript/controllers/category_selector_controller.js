@@ -39,6 +39,15 @@ export default class extends Controller {
     this.subcategoriesTargets.forEach(panel => {
       if (panel.dataset.parentId === parentId) {
         panel.classList.toggle("hidden")
+
+        // 해당 패널의 "전체" 라디오 자동 선택 (category_id 누락 방지)
+        if (!panel.classList.contains("hidden")) {
+          const alreadySelected = panel.querySelector('input[name="transaction[category_id]"]:checked')
+          if (!alreadySelected) {
+            const defaultRadio = panel.querySelector('input[name="transaction[category_id]"]')
+            if (defaultRadio) defaultRadio.checked = true
+          }
+        }
       } else {
         panel.classList.add("hidden")
         // 다른 부모의 _parent_selector 해제
