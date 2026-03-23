@@ -15,7 +15,7 @@ class CreditCard < ApplicationRecord
     # 이번 달 결제일이 아직 안 지났으면 이번 달, 지났으면 다음 달
     this_month_payment = Date.new(from_date.year, from_date.month, payment_day)
 
-    if from_date < this_month_payment
+    if from_date <= this_month_payment
       this_month_payment.next_month
     else
       this_month_payment + 2.months
