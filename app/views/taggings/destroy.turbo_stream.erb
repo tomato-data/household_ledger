@@ -1,25 +1,19 @@
-<div class="py-4">
-
+<%= turbo_stream.replace "month_frame" do %>
   <turbo-frame id="month_frame">
-    <%# 왼쪽(카드+달력)이 높이 기준, 오른쪽은 그 안에서 absolute로 맞춤 %>
     <div class="relative">
-
-      <%# === 왼쪽: 카드 + 달력 (높이 기준) === %>
       <div class="lg:pr-[340px]">
-        <div class="space-y-4" data-dashboard-layout-target="left">
+        <div class="space-y-4">
           <%= render "dashboard/summary_cards",
-              total_income: @total_income || 0,
-              total_expense: @total_expense || 0,
-              total_assets: @total_assets || 0 %>
-
+              total_income: @total_income,
+              total_expense: @total_expense,
+              total_assets: @total_assets %>
           <%= render "dashboard/calendar",
-              date: @date || Date.today,
-              transactions_by_date: @transactions_by_date || {},
-              taggings_by_date: @taggings_by_date || {} %>
+              date: @date,
+              transactions_by_date: @transactions_by_date,
+              taggings_by_date: @taggings_by_date || {},
+              selected_date: @selected_dates&.first %>
         </div>
       </div>
-
-      <%# === 오른쪽: 상세 내역 (absolute로 왼쪽 높이에 정확히 맞춤) === %>
       <div class="hidden lg:block absolute top-0 right-0 w-[320px] h-full">
         <turbo-frame id="daily_transactions" class="block h-full">
           <%= render "dashboard/daily_transactions",
@@ -30,8 +24,6 @@
               selection_expense: @selection_expense || 0 %>
         </turbo-frame>
       </div>
-
-      <%# 모바일에서는 아래에 표시 %>
       <div class="lg:hidden mt-4">
         <turbo-frame id="daily_transactions_mobile">
           <%= render "dashboard/daily_transactions",
@@ -42,17 +34,10 @@
               selection_expense: @selection_expense || 0 %>
         </turbo-frame>
       </div>
-
     </div>
   </turbo-frame>
+<% end %>
 
-  <div class="mt-5">
-    <turbo-frame id="selection_stats">
-      <%= render "dashboard/selection_stats",
-          stats: @selection_stats || [],
-          total: @selection_total || 0,
-          selected_dates: @selected_dates || [Date.today] %>
-    </turbo-frame>
-  </div>
-
-</div>
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("태그 기록이 삭제되었습니다")</script>
+<% end %>

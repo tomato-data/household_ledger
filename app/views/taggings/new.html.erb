@@ -1,0 +1,6 @@
+<turbo-frame id="modal">
+  <%= render "layouts/modal" do %>
+    <h2 class="text-lg font-bold mb-4">태그 기록 추가</h2>
+    <%= render "taggings/form", date: @date, tags: @tags %>
+  <% end %>
+</turbo-frame>

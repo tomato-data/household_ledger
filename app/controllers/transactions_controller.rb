@@ -16,6 +16,7 @@ class TransactionsController < ApplicationController
     end
 
     if @transaction.save
+      sync_tags(@transaction)
       set_month_data
       respond_to do |format|
         format.turbo_stream
@@ -33,6 +34,7 @@ class TransactionsController < ApplicationController
 
   def update
     if @transaction.update(transaction_params)
+      sync_tags(@transaction)
       set_month_data
       respond_to do |format|
         format.turbo_stream
@@ -65,6 +67,16 @@ class TransactionsController < ApplicationController
   def load_form_data
     @categories = current_user.categories.top_level.includes(:subcategories)
     @credit_cards = current_user.credit_cards
+    @tags = current_user.tags.reorder(:tag_type, :position)
+  end
+
+  def sync_tags(transaction)
+    transaction.taggings.destroy_all
+    (params[:tag_ids] || []).each do |tag_id|
+      tag = current_user.tags.find_by(id: tag_id)
+      next unless tag
+      transaction.taggings.create!(tag: tag, date: transaction.date, user: current_user)
+    end
   end
 
   def transaction_params
@@ -131,11 +143,22 @@ class TransactionsController < ApplicationController
     @total_assets = current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :income).sum(:amount) -
                     current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :expense).sum(:amount)
 
+    cal_start = @date.beginning_of_month.beginning_of_week(:sunday)
+    cal_end = @date.end_of_month.end_of_week(:sunday)
+    @taggings_by_date = current_user.taggings
+                          .where(date: cal_start..cal_end)
+                          .includes(:tag)
+                          .group_by(&:date)
+
     @selected_dates = [ @transaction.date ]
     @daily_transactions = current_user.transactions
                             .where(date: @selected_dates)
-                            .includes(category: :parent)
+                            .includes(category: :parent, tags: [])
                             .order(date: :desc, created_at: :desc)
+    @daily_taggings = current_user.taggings
+                        .where(date: @selected_dates)
+                        .includes(:tag)
+                        .order(created_at: :desc)
     @selection_income = @daily_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount)
     @selection_expense = @daily_transactions.select { |t| t.transaction_type == "expense" }.sum(&:amount)
   end

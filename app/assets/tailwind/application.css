@@ -365,6 +365,68 @@
     }
   }
 
+  /* ---- Tag System ---- */
+  .calendar-tag-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 6px;
+    margin: 1px 0;
+  }
+
+  .calendar-tag-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .calendar-tag-dot {
+      width: 5px;
+      height: 5px;
+    }
+  }
+
+  .calendar-selected .calendar-tag-dot {
+    opacity: 0.8;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1.5px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-text-secondary);
+  }
+
+  .tag-chip:hover {
+    border-color: var(--color-text-muted);
+  }
+
+  .tag-chip-selected {
+    border-color: currentColor;
+    color: #fff;
+  }
+
+  .days-since-badge {
+    font-size: 0.625rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-muted);
+  }
+
   /* ---- Page Transition ---- */
   @keyframes page-enter {
     from {

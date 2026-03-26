@@ -2,6 +2,7 @@
   <%= render "dashboard/daily_transactions",
       selected_dates: @selected_dates,
       transactions: @daily_transactions,
+      daily_taggings: @daily_taggings || [],
       selection_income: @selection_income || 0,
       selection_expense: @selection_expense || 0 %>
 </turbo-frame>

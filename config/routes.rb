@@ -24,6 +24,11 @@ Rails.application.routes.draw do
     patch :reorder, on: :collection
   end
 
+  resources :tags do
+    patch :reorder, on: :collection
+  end
+  resources :taggings, only: [:new, :create, :destroy]
+
   resources :credit_cards
   resources :recurring_transactions
   resources :asset_adjustments

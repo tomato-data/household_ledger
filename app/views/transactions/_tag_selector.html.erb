@@ -1,0 +1,27 @@
+<%# 태그 선택기 (거래 폼 내) %>
+<% tags ||= [] %>
+<% selected_tag_ids ||= [] %>
+<% if tags.any? %>
+  <div class="mb-6" data-controller="tag-selector">
+    <label class="block text-xs font-medium mb-2" style="color: var(--color-text-muted);">
+      <%= lucide_icon("tag", size: 12) %> 태그 (선택)
+    </label>
+    <div class="flex flex-wrap gap-1.5">
+      <% tags.each do |tag| %>
+        <% is_selected = selected_tag_ids.include?(tag.id) %>
+        <button type="button"
+                data-action="tag-selector#toggle"
+                data-tag-selector-target="chip"
+                data-tag-id="<%= tag.id %>"
+                class="tag-chip<%= ' tag-chip-selected' if is_selected %>"
+                style="<%= "background-color: #{tag.color}; border-color: #{tag.color}; color: #fff;" if is_selected %>">
+          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: <%= tag.color %>;"></span>
+          <span class="text-[11px]"><%= tag.name %></span>
+        </button>
+        <% if is_selected %>
+          <input type="hidden" name="tag_ids[]" value="<%= tag.id %>" data-tag-selector-target="hiddenField" data-tag-id="<%= tag.id %>">
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

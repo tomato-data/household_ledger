@@ -5,6 +5,8 @@ class Transaction < ApplicationRecord
   belongs_to :category
   belongs_to :recurring_transaction, optional: true
   belongs_to :credit_card, optional: true
+  has_many :taggings, foreign_key: "transaction_id", dependent: :destroy
+  has_many :tags, through: :taggings
 
   validates :description, presence: true, length: { maximum: 255 }
   validates :amount, presence: true, numericality: { only_integer: true }

@@ -12,6 +12,14 @@ class DashboardController < ApplicationController
     @total_assets = current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :income).sum(:amount) -
                       current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :expense).sum(:amount)
 
+    # taggings for calendar dots
+    cal_start = start_date.beginning_of_week(:sunday)
+    cal_end = end_date.end_of_week(:sunday)
+    @taggings_by_date = current_user.taggings
+                          .where(date: cal_start..cal_end)
+                          .includes(:tag)
+                          .group_by(&:date)
+
     @selected_dates = [ @date > Date.today ? start_date : Date.today ]
     load_selection_data
   end
@@ -36,8 +44,13 @@ class DashboardController < ApplicationController
   def load_selection_data
     @daily_transactions = current_user.transactions
                             .where(date: @selected_dates)
-                            .includes(category: :parent)
+                            .includes(category: :parent, tags: [])
                             .order(date: :desc, created_at: :desc)
+
+    @daily_taggings = current_user.taggings
+                        .where(date: @selected_dates)
+                        .includes(:tag)
+                        .order(created_at: :desc)
 
     # 부모 카테고리 기준 그룹핑
     expense_txns = @daily_transactions.select { |t| t.transaction_type == "expense" }
