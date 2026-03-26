@@ -36,6 +36,11 @@
           <% if transaction.recurring_transaction.present? %>
             <%= lucide_icon("repeat", size: 10, style: "color: var(--color-accent);") %>
           <% end %>
+          <% if transaction.tags.any? %>
+            <% transaction.tags.each do |tag| %>
+              <span class="inline-block w-1.5 h-1.5 rounded-full" style="background-color: <%= tag.color %>;" title="<%= tag.name %>"></span>
+            <% end %>
+          <% end %>
         </div>
       </div>
 

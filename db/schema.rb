@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_080000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_26_045122) do
   create_table "asset_adjustments", force: :cascade do |t|
     t.date "adjustment_date"
     t.string "adjustment_type"
@@ -65,6 +65,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_080000) do
     t.index ["user_id"], name: "index_recurring_transactions_on_user_id"
   end
 
+  create_table "taggings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.string "note"
+    t.integer "tag_id", null: false
+    t.integer "transaction_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+    t.index ["transaction_id"], name: "index_taggings_on_transaction_id"
+    t.index ["user_id", "date"], name: "index_taggings_on_user_id_and_date"
+    t.index ["user_id", "tag_id", "date"], name: "index_taggings_on_user_id_and_tag_id_and_date"
+    t.index ["user_id"], name: "index_taggings_on_user_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "color", default: "#6366f1"
+    t.datetime "created_at", null: false
+    t.string "icon"
+    t.string "name", null: false
+    t.integer "position"
+    t.string "tag_type", default: "general", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "tag_type"], name: "index_tags_on_user_id_and_tag_type"
+    t.index ["user_id"], name: "index_tags_on_user_id"
+  end
+
   create_table "transactions", force: :cascade do |t|
     t.integer "amount", null: false
     t.integer "category_id", null: false
@@ -105,6 +133,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_080000) do
   add_foreign_key "categories", "users"
   add_foreign_key "credit_cards", "users"
   add_foreign_key "recurring_transactions", "users"
+  add_foreign_key "taggings", "tags"
+  add_foreign_key "taggings", "transactions"
+  add_foreign_key "taggings", "users"
+  add_foreign_key "tags", "users"
   add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "credit_cards"
   add_foreign_key "transactions", "recurring_transactions"

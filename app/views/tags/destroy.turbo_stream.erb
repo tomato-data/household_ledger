@@ -1,0 +1,5 @@
+<%= turbo_stream.remove dom_id(@tag) %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("태그가 삭제되었습니다")</script>
+<% end %>

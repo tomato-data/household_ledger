@@ -1,0 +1,106 @@
+<%= form_with(model: tag, data: { controller: "tag-form" }) do |f| %>
+
+  <% if tag.errors.any? %>
+    <div class="mb-4 p-3 rounded-lg text-sm" style="background-color: var(--color-expense-bg); color: var(--color-danger);">
+      <% tag.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# 유형 선택 토글 %>
+  <div class="flex gap-2 mb-4">
+    <label class="flex-1">
+      <input type="radio" name="tag[tag_type]" value="general"
+             data-action="tag-form#selectType"
+             <%= "checked" if tag.tag_type == "general" || tag.new_record? && tag.tag_type.nil? %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all"
+           data-tag-form-target="generalButton"
+           style="border: 1px solid var(--color-border);">
+        일반
+      </div>
+    </label>
+    <label class="flex-1">
+      <input type="radio" name="tag[tag_type]" value="giving"
+             data-action="tag-form#selectType"
+             <%= "checked" if tag.tag_type == "giving" %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all"
+           data-tag-form-target="givingButton"
+           style="border: 1px solid var(--color-border);">
+        베푼것
+      </div>
+    </label>
+    <label class="flex-1">
+      <input type="radio" name="tag[tag_type]" value="receiving"
+             data-action="tag-form#selectType"
+             <%= "checked" if tag.tag_type == "receiving" %>
+             class="hidden peer">
+      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all"
+           data-tag-form-target="receivingButton"
+           style="border: 1px solid var(--color-border);">
+        받은것
+      </div>
+    </label>
+  </div>
+
+  <%# 이름 %>
+  <div class="mb-4">
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">태그 이름</label>
+    <%= f.text_field :name, class: "input", placeholder: "예: 이발, 화장실 청소" %>
+  </div>
+
+  <%# 색상 선택 %>
+  <div class="mb-4">
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">색상</label>
+    <div class="flex items-center gap-2">
+      <% %w[#6366f1 #f97316 #3b82f6 #22c55e #ef4444 #8b5cf6 #ec4899 #eab308 #06b6d4 #a8856c].each do |color| %>
+        <label class="cursor-pointer">
+          <input type="radio" name="tag[color]" value="<%= color %>"
+                 <%= "checked" if tag.color == color || (tag.new_record? && tag.color.blank? && color == "#6366f1") %>
+                 class="hidden peer">
+          <span class="block w-6 h-6 rounded-full transition-all hover:scale-110 peer-checked:ring-2 peer-checked:ring-offset-2"
+                style="background-color: <%= color %>; --tw-ring-color: var(--color-text-primary);"></span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <%# 아이콘 (선택) %>
+  <div class="mb-6">
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">아이콘 (선택)</label>
+    <div class="flex flex-wrap gap-1.5">
+      <% %w[tag heart gift scissors sparkles home droplets shirt dumbbell book utensils coffee car sun moon star].each do |icon| %>
+        <label class="cursor-pointer">
+          <input type="radio" name="tag[icon]" value="<%= icon %>"
+                 <%= "checked" if tag.icon == icon %>
+                 class="hidden peer">
+          <span class="flex items-center justify-center w-8 h-8 rounded-md transition-all hover:bg-[var(--color-bg-tertiary)] peer-checked:bg-[var(--color-accent-bg)] peer-checked:text-[var(--color-accent)]"
+                style="color: var(--color-text-secondary);">
+            <i data-lucide="<%= icon %>" class="lucide-icon" style="width: 16px; height: 16px;"></i>
+          </span>
+        </label>
+      <% end %>
+      <%# 아이콘 없음 옵션 %>
+      <label class="cursor-pointer">
+        <input type="radio" name="tag[icon]" value=""
+               <%= "checked" if tag.icon.blank? %>
+               class="hidden peer">
+        <span class="flex items-center justify-center w-8 h-8 rounded-md transition-all hover:bg-[var(--color-bg-tertiary)] peer-checked:bg-[var(--color-accent-bg)] peer-checked:text-[var(--color-accent)]"
+              style="color: var(--color-text-muted);">
+          <i data-lucide="x" class="lucide-icon" style="width: 14px; height: 14px;"></i>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <%# 버튼 %>
+  <div class="flex gap-3">
+    <button type="button" data-action="modal#close" class="btn btn-ghost flex-1 py-2.5">
+      취소
+    </button>
+    <%= f.submit tag.persisted? ? "수정" : "추가",
+        class: "btn btn-primary flex-1 py-2.5 font-bold" %>
+  </div>
+<% end %>

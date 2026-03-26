@@ -1,0 +1,63 @@
+<div class="space-y-6 py-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-xl font-bold">태그 관리</h1>
+    <%= link_to new_tag_path, class: "btn btn-primary text-sm",
+        data: { turbo_frame: "modal" } do %>
+      <%= lucide_icon("plus", size: 16) %>
+      <span>새 태그</span>
+    <% end %>
+  </div>
+
+  <%# 일반 태그 %>
+  <div class="card" id="tags_list">
+    <div class="px-4 pt-4 pb-2">
+      <h2 class="text-xs font-medium" style="color: var(--color-text-muted);">일반 태그</h2>
+    </div>
+    <% general_tags = (@grouped_tags["general"] || []) %>
+    <% if general_tags.any? %>
+      <% general_tags.each do |tag| %>
+        <%= render "tags/tag", tag: tag, last_date: @last_dates[tag.id] %>
+      <% end %>
+    <% else %>
+      <div class="px-4 py-6 text-center text-sm" style="color: var(--color-text-muted);">
+        일반 태그가 없습니다
+      </div>
+    <% end %>
+  </div>
+
+  <%# 베푼것 %>
+  <div class="card" id="giving_tags_list">
+    <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full" style="background-color: #f97316;"></span>
+      <h2 class="text-xs font-medium" style="color: var(--color-text-muted);">베푼것</h2>
+    </div>
+    <% giving_tags = (@grouped_tags["giving"] || []) %>
+    <% if giving_tags.any? %>
+      <% giving_tags.each do |tag| %>
+        <%= render "tags/tag", tag: tag, last_date: @last_dates[tag.id] %>
+      <% end %>
+    <% else %>
+      <div class="px-4 py-6 text-center text-sm" style="color: var(--color-text-muted);">
+        베푼것 태그가 없습니다
+      </div>
+    <% end %>
+  </div>
+
+  <%# 받은것 %>
+  <div class="card" id="receiving_tags_list">
+    <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full" style="background-color: #3b82f6;"></span>
+      <h2 class="text-xs font-medium" style="color: var(--color-text-muted);">받은것</h2>
+    </div>
+    <% receiving_tags = (@grouped_tags["receiving"] || []) %>
+    <% if receiving_tags.any? %>
+      <% receiving_tags.each do |tag| %>
+        <%= render "tags/tag", tag: tag, last_date: @last_dates[tag.id] %>
+      <% end %>
+    <% else %>
+      <div class="px-4 py-6 text-center text-sm" style="color: var(--color-text-muted);">
+        받은것 태그가 없습니다
+      </div>
+    <% end %>
+  </div>
+</div>

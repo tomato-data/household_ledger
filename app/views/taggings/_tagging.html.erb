@@ -1,0 +1,24 @@
+<div class="flex items-center gap-2.5 py-2 px-4" id="<%= dom_id(tagging) %>"
+     style="border-bottom: 1px solid var(--color-border-subtle);">
+  <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: <%= tagging.tag.color %>;"></span>
+  <% if tagging.tag.icon.present? %>
+    <%= lucide_icon(tagging.tag.icon, size: 12, style: "color: #{tagging.tag.color};") %>
+  <% end %>
+  <span class="text-sm flex-1 min-w-0 truncate">
+    <%= tagging.tag.name %>
+    <% if tagging.note.present? %>
+      <span class="text-[10px]" style="color: var(--color-text-muted);">- <%= tagging.note %></span>
+    <% end %>
+  </span>
+  <% if tagging.tag.giving? %>
+    <span class="text-[9px] font-medium px-1.5 py-0.5 rounded-full" style="background-color: #f9731620; color: #f97316;">베풂</span>
+  <% elsif tagging.tag.receiving? %>
+    <span class="text-[9px] font-medium px-1.5 py-0.5 rounded-full" style="background-color: #3b82f620; color: #3b82f6;">받음</span>
+  <% end %>
+  <%= button_to tagging_path(tagging), method: :delete,
+      class: "btn-ghost p-1 rounded-md opacity-40 hover:opacity-100 cursor-pointer flex-shrink-0",
+      style: "color: var(--color-danger);",
+      aria_label: "삭제" do %>
+    <%= lucide_icon("x", size: 12) %>
+  <% end %>
+</div>

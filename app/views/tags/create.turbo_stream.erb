@@ -1,0 +1,51 @@
+<%= turbo_stream.replace "tags_list" do %>
+  <div class="card" id="tags_list">
+    <div class="px-4 pt-4 pb-2">
+      <h2 class="text-xs font-medium" style="color: var(--color-text-muted);">일반 태그</h2>
+    </div>
+    <% (@grouped_tags["general"] || []).each do |tag| %>
+      <%= render "tags/tag", tag: tag, last_date: @last_dates[tag.id] %>
+    <% end %>
+    <% if (@grouped_tags["general"] || []).empty? %>
+      <div class="px-4 py-6 text-center text-sm" style="color: var(--color-text-muted);">일반 태그가 없습니다</div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "giving_tags_list" do %>
+  <div class="card" id="giving_tags_list">
+    <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full" style="background-color: #f97316;"></span>
+      <h2 class="text-xs font-medium" style="color: var(--color-text-muted);">베푼것</h2>
+    </div>
+    <% (@grouped_tags["giving"] || []).each do |tag| %>
+      <%= render "tags/tag", tag: tag, last_date: @last_dates[tag.id] %>
+    <% end %>
+    <% if (@grouped_tags["giving"] || []).empty? %>
+      <div class="px-4 py-6 text-center text-sm" style="color: var(--color-text-muted);">베푼것 태그가 없습니다</div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "receiving_tags_list" do %>
+  <div class="card" id="receiving_tags_list">
+    <div class="px-4 pt-4 pb-2 flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full" style="background-color: #3b82f6;"></span>
+      <h2 class="text-xs font-medium" style="color: var(--color-text-muted);">받은것</h2>
+    </div>
+    <% (@grouped_tags["receiving"] || []).each do |tag| %>
+      <%= render "tags/tag", tag: tag, last_date: @last_dates[tag.id] %>
+    <% end %>
+    <% if (@grouped_tags["receiving"] || []).empty? %>
+      <div class="px-4 py-6 text-center text-sm" style="color: var(--color-text-muted);">받은것 태그가 없습니다</div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "modal" do %>
+  <turbo-frame id="modal"></turbo-frame>
+<% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <script>showToast("태그가 추가되었습니다")</script>
+<% end %>

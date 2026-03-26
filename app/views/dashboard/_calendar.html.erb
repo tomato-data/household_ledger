@@ -1,4 +1,5 @@
 <% selected_date ||= Date.today %>
+<% taggings_by_date ||= {} %>
 <div class="card p-4"
      data-controller="calendar"
      data-calendar-selected-date-value="<%= selected_date.strftime('%Y-%m-%d') %>">
@@ -39,6 +40,8 @@
       <% day_transactions = transactions_by_date[day] || [] %>
       <% day_income = day_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount) %>
       <% day_expense = day_transactions.select { |t| t.transaction_type == "expense" }.sum(&:amount) %>
+      <% day_taggings = taggings_by_date[day] || [] %>
+      <% unique_tags = day_taggings.map(&:tag).uniq(&:id) %>
       <% is_current_month = day.month == date.month %>
       <% is_today = day == Date.today %>
 
@@ -48,6 +51,16 @@
           aria_label: "#{day.month}월 #{day.day}일 거래 보기",
           data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", date: day.strftime("%Y-%m-%d"), calendar_today: is_today ? "" : nil } do %>
         <div class="text-xs font-medium"><%= day.day %></div>
+        <% if unique_tags.any? %>
+          <div class="calendar-tag-dots">
+            <% unique_tags.first(4).each do |tag| %>
+              <span class="calendar-tag-dot" style="background-color: <%= tag.color %>;" title="<%= tag.name %>"></span>
+            <% end %>
+            <% if unique_tags.size > 4 %>
+              <span class="text-[6px] sm:text-[7px]" style="color: var(--color-text-muted);">+<%= unique_tags.size - 4 %></span>
+            <% end %>
+          </div>
+        <% end %>
         <% if day_income > 0 %>
           <div class="calendar-amount font-tabular" style="color: var(--color-income);">+<%= number_with_delimiter(day_income) %></div>
         <% end %>

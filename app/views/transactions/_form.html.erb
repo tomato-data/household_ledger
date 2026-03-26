@@ -148,6 +148,13 @@
         selected_id: transaction.category_id %>
   </div>
 
+  <%# 태그 선택 %>
+  <% if defined?(tags) && tags %>
+    <%= render "transactions/tag_selector",
+        tags: tags,
+        selected_tag_ids: transaction.persisted? ? transaction.tag_ids : [] %>
+  <% end %>
+
   <%# 버튼 %>
   <div class="flex gap-3">
     <button type="button" data-action="modal#close" class="btn btn-ghost flex-1 py-2.5">

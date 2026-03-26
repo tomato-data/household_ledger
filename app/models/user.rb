@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :recurring_transactions, dependent: :destroy
   has_many :asset_adjustments, dependent: :destroy
   has_many :credit_cards, dependent: :destroy
+  has_many :tags, dependent: :destroy
+  has_many :taggings, dependent: :destroy
 
 
   DEFAULT_CATEGORIES = [
@@ -26,12 +28,24 @@ class User < ApplicationRecord
     { name: "기타", icon: "file-text", position: 13 }
   ].freeze
 
+  DEFAULT_TAGS = [
+    { name: "베푼 것", tag_type: "giving", color: "#f97316", icon: "heart", position: 1 },
+    { name: "받은 것", tag_type: "receiving", color: "#3b82f6", icon: "gift", position: 2 }
+  ].freeze
+
   after_create :create_default_categories
+  after_create :create_default_tags
 
   private
   def create_default_categories
     DEFAULT_CATEGORIES.each do |category|
       categories.create!(category)
+    end
+  end
+
+  def create_default_tags
+    DEFAULT_TAGS.each do |tag|
+      tags.create!(tag)
     end
   end
 end

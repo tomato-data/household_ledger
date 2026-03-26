@@ -1,4 +1,5 @@
 <%# 높이 100% = 부모(absolute 컨테이너)의 높이 = 왼쪽 컬럼 높이 %>
+<% daily_taggings ||= [] %>
 <div class="card flex flex-col h-full">
 
   <%# 헤더 %>
@@ -43,5 +44,31 @@
     <% else %>
       <%= render "shared/empty_state", message: "거래가 없습니다" %>
     <% end %>
+
+    <%# 독립 태그 기록 (standalone taggings) %>
+    <% standalone_taggings = daily_taggings.select { |t| t.transaction_id.nil? } %>
+    <% if standalone_taggings.any? %>
+      <div class="px-4 pt-3 pb-1" style="border-top: 1px solid var(--color-border-subtle);">
+        <span class="text-[10px] font-medium flex items-center gap-1" style="color: var(--color-text-muted);">
+          <%= lucide_icon("tag", size: 10) %> 태그 기록
+        </span>
+      </div>
+      <% standalone_taggings.each do |tagging| %>
+        <%= render "taggings/tagging", tagging: tagging %>
+      <% end %>
+    <% end %>
   </div>
+
+  <%# 태그 추가 버튼 %>
+  <% if selected_dates.length == 1 %>
+    <div class="px-4 py-2 flex-shrink-0" style="border-top: 1px solid var(--color-border-subtle);">
+      <%= link_to new_tagging_path(date: selected_dates.first),
+          class: "flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-[var(--color-bg-tertiary)]",
+          style: "color: var(--color-text-muted);",
+          data: { turbo_frame: "modal" } do %>
+        <%= lucide_icon("tag", size: 12) %>
+        <span>태그 추가</span>
+      <% end %>
+    </div>
+  <% end %>
 </div>

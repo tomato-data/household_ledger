@@ -1,0 +1,36 @@
+<%= form_with(url: taggings_path, method: :post) do |f| %>
+  <%= f.hidden_field :date, name: "tagging[date]", value: date %>
+
+  <%# 태그 선택 %>
+  <div class="mb-4">
+    <label class="block text-xs font-medium mb-2" style="color: var(--color-text-muted);">태그 선택</label>
+    <div class="flex flex-wrap gap-2">
+      <% tags.each do |tag| %>
+        <label class="cursor-pointer">
+          <input type="radio" name="tagging[tag_id]" value="<%= tag.id %>"
+                 class="hidden peer" required>
+          <span class="tag-chip peer-checked:tag-chip-selected"
+                style="--chip-color: <%= tag.color %>;">
+            <span class="w-2 h-2 rounded-full" style="background-color: <%= tag.color %>;"></span>
+            <%= tag.name %>
+          </span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <%# 메모 %>
+  <div class="mb-6">
+    <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">메모 (선택)</label>
+    <input type="text" name="tagging[note]" class="input" placeholder="간단한 메모...">
+  </div>
+
+  <%# 버튼 %>
+  <div class="flex gap-3">
+    <button type="button" data-action="modal#close" class="btn btn-ghost flex-1 py-2.5">
+      취소
+    </button>
+    <%= f.submit "기록",
+        class: "btn btn-primary flex-1 py-2.5 font-bold" %>
+  </div>
+<% end %>
