@@ -28,8 +28,8 @@ module ApplicationHelper
   end
 
   # 사이드바 네비게이션 링크
-  def sidebar_link(label, path, icon_name)
-    active = current_page?(path)
+  def sidebar_link(label, path, icon_name, also_active_for: [])
+    active = current_page?(path) || also_active_for.any? { |p| current_page?(p) }
     css = active ? "sidebar-link sidebar-link-active" : "sidebar-link"
     link_to path, class: css, data: { action: "click->sidebar#close" } do
       lucide_icon(icon_name, size: 18) + content_tag(:span, label)
