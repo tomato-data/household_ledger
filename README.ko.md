@@ -19,7 +19,7 @@
 
 기존 가계부 앱들을 여러 개 써봤지만, 어느 것도 원하는 기능을 다 갖추고 있지 않았습니다. 신용카드 할부 자동 분할, 베푼 것/받은 것 태깅, 구매일 vs 결제일 기준 통계 전환 — 이런 것들이 개별적으로는 있어도 하나의 앱에 모여 있지 않았습니다.
 
-처음에는 React + FastAPI + PostgreSQL로 시작했지만, 개인 프로젝트에 3개 서버를 관리하는 건 과도하다고 판단하여 **Rails 8 모놀리스로 전면 이관**했습니다. Hotwire로 SPA급 UX를 JavaScript 프레임워크 없이 구현하며, Rails 8의 Solid Trifecta로 Redis 없이 완전한 기능을 제공합니다.
+처음에는 회사에서 React를 쓰고 있었는데 아무것도 몰랐기에, AI에게 한 단계씩 물어보며 React + FastAPI + PostgreSQL로 만들었습니다. 이후 Rails 8의 Solid Trifecta(Queue, Cache, Cable)가 Redis 없이 큐, 캐시, WebSocket을 지원한다는 소식을 접했고, 언어의 지평을 넓히고 싶기도 했고, 개인 프로젝트 유지보수에는 Rails 모놀리스가 더 어울린다고 판단하여 **Rails 8로 전면 이관**했습니다.
 
 ## 주요 기능
 

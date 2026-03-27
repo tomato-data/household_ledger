@@ -19,7 +19,7 @@
 
 I tried multiple finance apps, but none had everything I wanted in one place — automatic installment splitting, giving/receiving event tagging, purchase-date vs. payment-date statistics toggle. Features existed across different apps, but never together.
 
-Started with React + FastAPI + PostgreSQL, but managing 3 servers for a personal project felt excessive. Migrated to a **Rails 8 monolith** — SPA-level UX through Hotwire without any JavaScript framework, leveraging Rails 8's Solid Trifecta for full functionality without Redis.
+The first version was built with React + FastAPI + PostgreSQL — I was using React at work but knew nothing about it, so I learned step by step while building this app. Later, I heard about Rails 8's Solid Trifecta (Queue, Cache, Cable) — queue, cache, and WebSocket support without Redis. I wanted to broaden my language horizons, and a Rails monolith felt like a better fit for maintaining a personal project. So I **migrated entirely to Rails 8**.
 
 ## Features
 
