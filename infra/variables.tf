@@ -5,27 +5,24 @@
 # ===================
 
 variable "proxmox_url" {
-  description = "Proxmox API URL"
+  description = "Proxmox API URL (e.g. https://host:8006)"
   type        = string
-  default     = "https://REDACTED_HOST:8006"
 }
 
 variable "proxmox_user" {
-  description = "Proxmox username"
+  description = "Proxmox username (e.g. REDACTED_USER)"
   type        = string
-  default     = "REDACTED_USER"
 }
 
 variable "proxmox_password" {
   description = "Proxmox password"
   type        = string
-  sensitive  = true
+  sensitive   = true
 }
 
 variable "proxmox_node" {
   description = "Proxmox node name"
   type        = string
-  default     = "REDACTED_NODE"
 }
 
 # ===================
@@ -35,43 +32,36 @@ variable "proxmox_node" {
 variable "lxc_vmid" {
   description = "LXC Container ID"
   type        = number
-  default     = 201
 }
 
 variable "lxc_hostname" {
   description = "LXC Container hostname"
   type        = string
-  default     = "ledger"
 }
 
 variable "lxc_template" {
-  description = "LXC template path"
+  description = "LXC template path (e.g. local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst)"
   type        = string
-  default     = "local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst"
 }
 
 variable "lxc_storage" {
-  description = "Storage for rootfs"
+  description = "Storage for rootfs (e.g. local-lvm)"
   type        = string
-  default     = "local-lvm"
 }
 
 variable "lxc_bridge" {
-  description = "Network bridge"
+  description = "Network bridge (e.g. vmbr0)"
   type        = string
-  default     = "vmbr0"
 }
 
 variable "lxc_ip" {
-  description = "IP configuration (CIDR format)"
+  description = "IP configuration in CIDR format (e.g. 192.168.1.100/24)"
   type        = string
-  default     = "REDACTED_HOST0/24"
 }
 
 variable "lxc_gateway" {
-  description = "Gateway IP"
+  description = "Gateway IP (e.g. 192.168.1.1)"
   type        = string
-  default     = "REDACTED_GW"
 }
 
 variable "ssh_public_key" {

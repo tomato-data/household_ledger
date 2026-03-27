@@ -1,0 +1,28 @@
+# Terraform variables for Household Ledger infrastructure
+# Copy this file to terraform.tfvars and fill in your values.
+#
+#   cp terraform.tfvars.example terraform.tfvars
+
+# Proxmox Connection
+proxmox_url      = "https://YOUR_PROXMOX_HOST:8006"
+proxmox_user     = "REDACTED_USER"
+proxmox_password = "YOUR_PASSWORD"
+proxmox_node     = "YOUR_NODE_NAME"
+
+# LXC Configuration
+lxc_vmid     = 201
+lxc_hostname = "ledger"
+lxc_template = "local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst"
+lxc_storage  = "local-lvm"
+lxc_bridge   = "vmbr0"
+lxc_ip       = "YOUR_IP/24"
+lxc_gateway  = "YOUR_GATEWAY"
+
+# SSH
+ssh_public_key = "ssh-ed25519 AAAA..."
+
+# Resource Allocation (optional — defaults in variables.tf)
+# lxc_memory  = 1024
+# lxc_swap    = 512
+# lxc_cores   = 1
+# lxc_disk_gb = 8

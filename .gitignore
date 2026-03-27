@@ -11,6 +11,9 @@ infra/*.tfstate.backup
 infra/terraform.tfvars
 infra/.terraform.lock.hcl
 
+# Kamal deployment (contains server IPs and registry info)
+/config/deploy.yml
+
 .DS_Store
 
 # Ignore bundler config.

@@ -1,0 +1,42 @@
+# Kamal deployment configuration
+# Copy this file to config/deploy.yml and fill in your values.
+#
+#   cp config/deploy.yml.example config/deploy.yml
+
+service: household_ledger
+image: household_ledger
+
+servers:
+  web:
+    - YOUR_SERVER_IP
+
+proxy:
+  ssl: false
+  host: YOUR_SERVER_IP
+
+registry:
+  server: YOUR_REGISTRY_HOST:PORT
+  username: YOUR_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+env:
+  secret:
+    - RAILS_MASTER_KEY
+  clear:
+    SOLID_QUEUE_IN_PUMA: true
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
+
+volumes:
+  - "household_ledger_storage:/rails/storage"
+
+asset_path: /rails/public/assets
+
+builder:
+  arch: amd64
+  remote: ssh://YOUR_BUILD_USER@YOUR_BUILD_HOST

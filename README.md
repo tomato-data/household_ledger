@@ -2,8 +2,11 @@
 
 > Ruby on Rails 8 기반 개인 재무 관리 풀스택 애플리케이션
 
-React + FastAPI + PostgreSQL 아키텍처에서 **Rails 모놀리스**로 전면 이관한 프로젝트입니다.
-SPA 없이도 SPA 수준의 인터랙티브 UX를 Hotwire(Turbo + Stimulus)로 구현하며, Rails 8의 Solid Trifecta(Queue, Cache, Cable)를 활용하여 **Redis 없이 완전한 기능**을 제공합니다.
+## 왜 만들었나
+
+기존 가계부 앱들을 여러 개 써봤지만, 어느 것도 내가 원하는 기능을 다 갖추고 있지 않았습니다. 신용카드 할부 자동 분할, 베푼 것/받은 것 태깅, 구매일 vs 결제일 기준 통계 전환 — 이런 것들이 개별적으로는 있어도 하나의 앱에 모여 있지 않았습니다.
+
+그래서 직접 만들기로 했습니다. 처음에는 React + FastAPI + PostgreSQL로 시작했지만, 개인 프로젝트에 3개 서버를 관리하는 건 과도하다고 판단하여 **Rails 8 모놀리스로 전면 이관**했습니다. SPA 없이도 SPA 수준의 UX를 Hotwire(Turbo + Stimulus)로 구현하며, Rails 8의 Solid Trifecta(Queue, Cache, Cable)를 활용하여 **Redis 없이 완전한 기능**을 제공합니다.
 
 ---
 
@@ -277,8 +280,11 @@ bin/rails test          # 테스트 실행
 
 > A fullstack personal finance management app built with Ruby on Rails 8
 
-Migrated from a React + FastAPI + PostgreSQL architecture to a **Rails monolith**.
-Delivers SPA-level interactive UX through Hotwire (Turbo + Stimulus) without any JavaScript framework, and leverages Rails 8's Solid Trifecta (Queue, Cache, Cable) for **full functionality without Redis**.
+## Why I Built This
+
+I tried multiple personal finance apps, but none had everything I wanted in one place — automatic credit card installment splitting, giving/receiving event tagging, purchase-date vs. payment-date statistics toggle. Features existed in isolation across different apps, but never together.
+
+So I built my own. Started with React + FastAPI + PostgreSQL, but managing 3 servers for a personal project felt excessive. Migrated to a **Rails 8 monolith** — SPA-level interactive UX through Hotwire (Turbo + Stimulus) without any JavaScript framework, leveraging Rails 8's Solid Trifecta (Queue, Cache, Cable) for **full functionality without Redis**.
 
 ---
 
