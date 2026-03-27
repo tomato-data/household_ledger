@@ -5,7 +5,7 @@
 
 # Proxmox Connection
 proxmox_url      = "https://YOUR_PROXMOX_HOST:8006"
-proxmox_user     = "REDACTED_USER"
+proxmox_user     = "root@pam"
 proxmox_password = "YOUR_PASSWORD"
 proxmox_node     = "YOUR_NODE_NAME"
 

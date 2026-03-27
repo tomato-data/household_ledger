@@ -10,7 +10,7 @@ variable "proxmox_url" {
 }
 
 variable "proxmox_user" {
-  description = "Proxmox username (e.g. REDACTED_USER)"
+  description = "Proxmox username (e.g. root@pam)"
   type        = string
 }
 
