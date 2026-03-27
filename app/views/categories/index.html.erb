@@ -1,5 +1,19 @@
 <div class="space-y-6 py-4">
-  <h1 class="text-xl font-bold">카테고리 관리</h1>
+  <h1 class="text-xl font-bold">카테고리 / 태그 관리</h1>
+
+  <%# 탭 네비게이션 %>
+  <div class="flex gap-1 p-1 rounded-lg" style="background-color: var(--color-bg-tertiary);">
+    <%= link_to categories_path,
+        class: "flex-1 text-center py-2 rounded-md text-sm font-medium transition-all",
+        style: "background-color: var(--color-bg-secondary); color: var(--color-text-primary); box-shadow: var(--shadow-sm);" do %>
+      <%= lucide_icon("folder-open", size: 14) %> 카테고리
+    <% end %>
+    <%= link_to tags_path,
+        class: "flex-1 text-center py-2 rounded-md text-sm font-medium transition-all",
+        style: "color: var(--color-text-muted);" do %>
+      <%= lucide_icon("tag", size: 14) %> 태그
+    <% end %>
+  </div>
 
   <%# 새 상위 카테고리 추가 폼 %>
   <div class="card p-4">

@@ -11,10 +11,9 @@
   <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
     <%= sidebar_link "홈", authenticated_root_path, "home" %>
     <%= sidebar_link "통계", statistics_path, "bar-chart-3" %>
-    <%= sidebar_link "카테고리", categories_path, "folder-open" %>
+    <%= sidebar_link "카테고리/태그", categories_path, "folder-open", also_active_for: [tags_path] %>
     <%= sidebar_link "반복 거래", recurring_transactions_path, "repeat" %>
     <%= sidebar_link "자산 보정", asset_adjustments_path, "scale" %>
-    <%= sidebar_link "태그", tags_path, "tag" %>
     <%= sidebar_link "신용카드", credit_cards_path, "credit-card" %>
   </nav>
 
@@ -62,10 +61,9 @@
   <nav class="px-3 py-4 space-y-1">
     <%= sidebar_link "홈", authenticated_root_path, "home" %>
     <%= sidebar_link "통계", statistics_path, "bar-chart-3" %>
-    <%= sidebar_link "카테고리", categories_path, "folder-open" %>
+    <%= sidebar_link "카테고리/태그", categories_path, "folder-open", also_active_for: [tags_path] %>
     <%= sidebar_link "반복 거래", recurring_transactions_path, "repeat" %>
     <%= sidebar_link "자산 보정", asset_adjustments_path, "scale" %>
-    <%= sidebar_link "태그", tags_path, "tag" %>
     <%= sidebar_link "신용카드", credit_cards_path, "credit-card" %>
   </nav>
 
