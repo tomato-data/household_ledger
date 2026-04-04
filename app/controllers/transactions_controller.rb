@@ -33,6 +33,11 @@ class TransactionsController < ApplicationController
   end
 
   def update
+    if params[:card_payment] == "1" && params[:credit_card_id].present?
+      update_as_card_transaction
+      return
+    end
+
     if @transaction.update(transaction_params)
       sync_tags(@transaction)
       set_month_data
@@ -162,4 +167,29 @@ class TransactionsController < ApplicationController
     @selection_income = @daily_transactions.select { |t| t.transaction_type == "income" }.sum(&:amount)
     @selection_expense = @daily_transactions.select { |t| t.transaction_type == "expense" }.sum(&:amount)
   end
+
+  def update_as_card_transaction
+    card = current_user.credit_cards.find(params[:credit_card_id])
+    @transaction.assign_attributes(transaction_params)
+    purchase_date = @transaction.date
+    payment_date = card.next_payment_date(purchase_date)
+
+    @transaction.assign_attributes(
+      date: payment_date,
+      purchase_date: purchase_date,
+      credit_card_id: card.id,
+      status: payment_date <= Date.today ? :confirmed : :scheduled
+    )
+
+    if @transaction.save
+      sync_tags(@transaction)
+      set_month_data
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to root_path }
+      end
+    else
+      load_form_data
+      render :edit, status: :unprocessable_entity
+    end
 end
