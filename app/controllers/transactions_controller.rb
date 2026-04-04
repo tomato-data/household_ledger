@@ -192,4 +192,5 @@ class TransactionsController < ApplicationController
       load_form_data
       render :edit, status: :unprocessable_entity
     end
+  end
 end
