@@ -1,4 +1,4 @@
-<%= form_with(model: tag, data: { controller: "tag-form" }) do |f| %>
+<%= form_with(model: tag) do |f| %>
 
   <% if tag.errors.any? %>
     <div class="mb-4 p-3 rounded-lg text-sm" style="background-color: var(--color-expense-bg); color: var(--color-danger);">
@@ -8,47 +8,10 @@
     </div>
   <% end %>
 
-  <%# 유형 선택 토글 %>
-  <div class="flex gap-2 mb-4">
-    <label class="flex-1">
-      <input type="radio" name="tag[tag_type]" value="general"
-             data-action="tag-form#selectType"
-             <%= "checked" if tag.tag_type == "general" || tag.new_record? && tag.tag_type.nil? %>
-             class="hidden peer">
-      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all"
-           data-tag-form-target="generalButton"
-           style="border: 1px solid var(--color-border);">
-        일반
-      </div>
-    </label>
-    <label class="flex-1">
-      <input type="radio" name="tag[tag_type]" value="giving"
-             data-action="tag-form#selectType"
-             <%= "checked" if tag.tag_type == "giving" %>
-             class="hidden peer">
-      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all"
-           data-tag-form-target="givingButton"
-           style="border: 1px solid var(--color-border);">
-        베푼것
-      </div>
-    </label>
-    <label class="flex-1">
-      <input type="radio" name="tag[tag_type]" value="receiving"
-             data-action="tag-form#selectType"
-             <%= "checked" if tag.tag_type == "receiving" %>
-             class="hidden peer">
-      <div class="text-center py-2 rounded-lg cursor-pointer text-sm font-medium transition-all"
-           data-tag-form-target="receivingButton"
-           style="border: 1px solid var(--color-border);">
-        받은것
-      </div>
-    </label>
-  </div>
-
   <%# 이름 %>
   <div class="mb-4">
     <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">태그 이름</label>
-    <%= f.text_field :name, class: "input", placeholder: "예: 이발, 화장실 청소" %>
+    <%= f.text_field :name, class: "input", placeholder: "예: 이발, 베풂, 대접받음" %>
   </div>
 
   <%# 색상 선택 %>
@@ -71,7 +34,7 @@
   <div class="mb-6">
     <label class="block text-xs font-medium mb-1.5" style="color: var(--color-text-muted);">아이콘 (선택)</label>
     <div class="flex flex-wrap gap-1.5">
-      <% %w[tag heart gift scissors sparkles home droplets shirt dumbbell book utensils coffee car sun moon star].each do |icon| %>
+      <% %w[tag heart gift hand-heart handshake cake beer scissors sparkles home droplets shirt dumbbell book utensils coffee car sun moon star].each do |icon| %>
         <label class="cursor-pointer">
           <input type="radio" name="tag[icon]" value="<%= icon %>"
                  <%= "checked" if tag.icon == icon %>

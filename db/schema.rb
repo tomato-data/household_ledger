@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_26_045122) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_052311) do
   create_table "asset_adjustments", force: :cascade do |t|
     t.date "adjustment_date"
     t.string "adjustment_type"
@@ -86,10 +86,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_045122) do
     t.string "icon"
     t.string "name", null: false
     t.integer "position"
-    t.string "tag_type", default: "general", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id", "tag_type"], name: "index_tags_on_user_id_and_tag_type"
     t.index ["user_id"], name: "index_tags_on_user_id"
   end
 

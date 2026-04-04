@@ -29,8 +29,8 @@ class User < ApplicationRecord
   ].freeze
 
   DEFAULT_TAGS = [
-    { name: "베푼 것", tag_type: "giving", color: "#f97316", icon: "heart", position: 1 },
-    { name: "받은 것", tag_type: "receiving", color: "#3b82f6", icon: "gift", position: 2 }
+    { name: "베풂", color: "#f97316", icon: "heart", position: 1 },
+    { name: "대접받음", color: "#3b82f6", icon: "gift", position: 2 }
   ].freeze
 
   after_create :create_default_categories

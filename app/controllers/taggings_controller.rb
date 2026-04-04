@@ -1,7 +1,7 @@
 class TaggingsController < ApplicationController
   def new
     @date = params[:date] ? Date.parse(params[:date]) : Date.today
-    @tags = current_user.tags.reorder(:tag_type, :position)
+    @tags = current_user.tags.reorder(:position)
   end
 
   def create

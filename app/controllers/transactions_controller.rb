@@ -72,7 +72,7 @@ class TransactionsController < ApplicationController
   def load_form_data
     @categories = current_user.categories.top_level.includes(:subcategories)
     @credit_cards = current_user.credit_cards
-    @tags = current_user.tags.reorder(:tag_type, :position)
+    @tags = current_user.tags.reorder(:position)
   end
 
   def sync_tags(transaction)

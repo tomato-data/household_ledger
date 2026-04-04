@@ -2,23 +2,21 @@ class TagsController < ApplicationController
   before_action :set_tag, only: [:edit, :update, :destroy]
 
   def index
-    @tags = current_user.tags.reorder(:tag_type, :position)
+    @tags = current_user.tags.reorder(:position)
     @last_dates = current_user.taggings.group(:tag_id).maximum(:date)
-    @grouped_tags = @tags.group_by(&:tag_type)
   end
 
   def new
-    @tag = current_user.tags.build(tag_type: params[:tag_type] || "general")
+    @tag = current_user.tags.build
     render layout: false
   end
 
   def create
     @tag = current_user.tags.build(tag_params)
-    @tag.position = current_user.tags.where(tag_type: @tag.tag_type).count + 1
+    @tag.position = current_user.tags.count + 1
     if @tag.save
-      @tags = current_user.tags.reorder(:tag_type, :position)
+      @tags = current_user.tags.reorder(:position)
       @last_dates = current_user.taggings.group(:tag_id).maximum(:date)
-      @grouped_tags = @tags.group_by(&:tag_type)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to tags_path }
@@ -34,9 +32,8 @@ class TagsController < ApplicationController
 
   def update
     if @tag.update(tag_params)
-      @tags = current_user.tags.reorder(:tag_type, :position)
+      @tags = current_user.tags.reorder(:position)
       @last_dates = current_user.taggings.group(:tag_id).maximum(:date)
-      @grouped_tags = @tags.group_by(&:tag_type)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to tags_path }
@@ -68,6 +65,6 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:name, :color, :tag_type, :icon)
+    params.require(:tag).permit(:name, :color, :icon)
   end
 end
