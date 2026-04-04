@@ -419,6 +419,23 @@
     color: #fff;
     transform: scale(1.05);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+
+    .tag-chip-dot {
+      background-color: #fff !important;
+    }
+  }
+
+  /* 독립 태그 폼: peer-checked 지원 */
+  .peer:checked ~ .tag-chip {
+    border-color: var(--chip-color);
+    background-color: var(--chip-color);
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+
+    .tag-chip-dot {
+      background-color: #fff !important;
+    }
   }
 
   .days-since-badge {

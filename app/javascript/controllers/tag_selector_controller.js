@@ -9,12 +9,15 @@ export default class extends Controller {
     const color = chip.querySelector("span")?.style?.backgroundColor || "var(--color-accent)"
     const isSelected = chip.classList.contains("tag-chip-selected")
 
+    const dot = chip.querySelector(".tag-chip-dot")
+
     if (isSelected) {
       // Deselect
       chip.classList.remove("tag-chip-selected")
       chip.style.backgroundColor = "transparent"
       chip.style.borderColor = ""
       chip.style.color = "var(--color-text-secondary)"
+      if (dot) dot.style.backgroundColor = color
       this.removeHiddenField(tagId)
     } else {
       // Select
@@ -22,6 +25,7 @@ export default class extends Controller {
       chip.style.backgroundColor = color
       chip.style.borderColor = color
       chip.style.color = "#fff"
+      if (dot) dot.style.backgroundColor = "#fff"
       this.addHiddenField(tagId)
     }
   }

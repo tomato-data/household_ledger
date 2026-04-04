@@ -9,9 +9,9 @@
         <label class="cursor-pointer">
           <input type="radio" name="tagging[tag_id]" value="<%= tag.id %>"
                  class="hidden peer" required>
-          <span class="tag-chip peer-checked:tag-chip-selected"
+          <span class="tag-chip"
                 style="--chip-color: <%= tag.color %>;">
-            <span class="w-2 h-2 rounded-full" style="background-color: <%= tag.color %>;"></span>
+            <span class="tag-chip-dot w-2 h-2 rounded-full" style="background-color: <%= tag.color %>;"></span>
             <%= tag.name %>
           </span>
         </label>

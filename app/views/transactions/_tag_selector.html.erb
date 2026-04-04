@@ -15,7 +15,7 @@
                 data-tag-id="<%= tag.id %>"
                 class="tag-chip<%= ' tag-chip-selected' if is_selected %>"
                 style="<%= "background-color: #{tag.color}; border-color: #{tag.color}; color: #fff;" if is_selected %>">
-          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: <%= tag.color %>;"></span>
+          <span class="tag-chip-dot w-2 h-2 rounded-full flex-shrink-0" style="background-color: <%= tag.color %>;"></span>
           <span class="text-[11px]"><%= tag.name %></span>
         </button>
         <% if is_selected %>
