@@ -366,13 +366,15 @@
   }
 
   /* ---- Tag System ---- */
-  .calendar-tag-dots {
+  .calendar-tag-dots-right {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 2px;
-    min-height: 6px;
-    margin: 1px 0;
   }
 
   .calendar-tag-dot {
@@ -415,6 +417,8 @@
   .tag-chip-selected {
     border-color: currentColor;
     color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
   }
 
   .days-since-badge {

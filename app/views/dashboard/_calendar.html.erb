@@ -46,26 +46,26 @@
       <% is_today = day == Date.today %>
 
       <%= link_to dashboard_daily_transactions_path(date: day.strftime("%Y-%m-%d")),
-          class: "calendar-day p-0.5 sm:p-1 text-center min-h-[52px] sm:min-h-[60px] #{is_today ? 'ring-1 ring-offset-1' : ''}",
+          class: "calendar-day relative p-0.5 sm:p-1 text-center min-h-[52px] sm:min-h-[60px] #{is_today ? 'ring-1 ring-offset-1' : ''}",
           style: "background-color: #{is_today ? 'var(--color-bg-tertiary)' : 'transparent'}; opacity: #{is_current_month ? '1' : '0.3'}; #{'ring-color: var(--color-accent);' if is_today}",
           aria_label: "#{day.month}월 #{day.day}일 거래 보기",
           data: { turbo_frame: "daily_transactions", calendar_target: "day", action: "click->calendar#select", date: day.strftime("%Y-%m-%d"), calendar_today: is_today ? "" : nil } do %>
         <div class="text-xs font-medium"><%= day.day %></div>
-        <% if unique_tags.any? %>
-          <div class="calendar-tag-dots">
-            <% unique_tags.first(4).each do |tag| %>
-              <span class="calendar-tag-dot" style="background-color: <%= tag.color %>;" title="<%= tag.name %>"></span>
-            <% end %>
-            <% if unique_tags.size > 4 %>
-              <span class="text-[6px] sm:text-[7px]" style="color: var(--color-text-muted);">+<%= unique_tags.size - 4 %></span>
-            <% end %>
-          </div>
-        <% end %>
         <% if day_income > 0 %>
           <div class="calendar-amount font-tabular" style="color: var(--color-income);">+<%= number_with_delimiter(day_income) %></div>
         <% end %>
         <% if day_expense > 0 %>
           <div class="calendar-amount font-tabular" style="color: var(--color-expense);">-<%= number_with_delimiter(day_expense) %></div>
+        <% end %>
+        <% if unique_tags.any? %>
+          <div class="calendar-tag-dots-right">
+            <% unique_tags.first(3).each do |tag| %>
+              <span class="calendar-tag-dot" style="background-color: <%= tag.color %>;" title="<%= tag.name %>"></span>
+            <% end %>
+            <% if unique_tags.size > 3 %>
+              <span class="text-[5px] sm:text-[6px] leading-none" style="color: var(--color-text-muted);">+<%= unique_tags.size - 3 %></span>
+            <% end %>
+          </div>
         <% end %>
       <% end %>
     <% end %>
