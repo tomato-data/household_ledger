@@ -6,4 +6,16 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :authenticate_user!
+  before_action :resolve_scheduled_transactions
+
+  private
+  def resolve_scheduled_transactions
+    return unless user_signed_in?
+
+    current_user.transactions
+      .where(status: :scheduled)
+      .where("date <= ?", Date.today)
+      .update_all(status: :confirmed)
+  end
 end
+

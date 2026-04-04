@@ -9,8 +9,8 @@ class DashboardController < ApplicationController
     @transactions_by_date = @transactions.group_by(&:date)
     @total_income = @transactions.where(transaction_type: :income).sum(:amount)
     @total_expense = @transactions.where(transaction_type: :expense).sum(:amount)
-    @total_assets = current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :income).sum(:amount) -
-                      current_user.transactions.where("date <= ?", Date.today).where(transaction_type: :expense).sum(:amount)
+    @total_assets = current_user.transactions.where(status: :confirmed).where(transaction_type: :income).sum(:amount) -
+                      current_user.transactions.where(status: :confirmed).where(transaction_type: :expense).sum(:amount)
 
     # taggings for calendar dots
     cal_start = start_date.beginning_of_week(:sunday)
