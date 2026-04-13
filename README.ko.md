@@ -120,6 +120,19 @@ bin/dev
 # -> http://localhost:3000
 ```
 
+## 문서 구성
+
+프로젝트 문서는 **작성 주체**에 따라 둘로 분리되어 있습니다:
+
+| 경로 | 내용 |
+|------|------|
+| [`docs/`](docs/README.md) | Claude가 작성한 Phase 스펙·가이드·백엔드 상태 스냅샷 |
+| [`docs/backend-overview.md`](docs/backend-overview.md) | 현재 Rails 백엔드 상태 — 라우팅, 모델, 컨트롤러, Gem, TODO |
+| [`docs/phases/`](docs/phases/) | Rails 8 학습 단위 Phase 스펙 (학습 진행에 따라 추가) |
+| [`docs/plans/`](docs/plans/) | `/tdd-plan` 등 설계 문서 (선택) |
+| [`learnings/`](learnings/README.md) | 사용자가 직접 쓴 Q&A·회고·크로스커팅 심화 |
+| [`learnings/retrospectives/rails-migration.md`](learnings/retrospectives/rails-migration.md) | React + FastAPI → Rails 8 재작성 전체 서사 (Devise, Solid Queue, i18n, 데이터 이관 포함) |
+
 ## 마이그레이션 스토리
 
 **Before:** React SPA + FastAPI + PostgreSQL — 서버 3개, CORS 설정, 클라이언트 상태 관리 복잡도.

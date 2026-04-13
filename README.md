@@ -120,6 +120,19 @@ bin/dev
 # -> http://localhost:3000
 ```
 
+## Documentation
+
+Project documentation is split by authorship:
+
+| Path | Content |
+|------|---------|
+| [`docs/`](docs/README.md) | Claude-authored phase specs, guides, backend snapshot |
+| [`docs/backend-overview.md`](docs/backend-overview.md) | Current Rails backend snapshot — routes, models, controllers, gems, TODOs |
+| [`docs/phases/`](docs/phases/) | Phase-by-phase learning specs (populated as Rails 8 study proceeds) |
+| [`docs/plans/`](docs/plans/) | `/tdd-plan` and other design docs (optional) |
+| [`learnings/`](learnings/README.md) | User-authored Q&A, retrospectives, cross-cutting topics |
+| [`learnings/retrospectives/rails-migration.md`](learnings/retrospectives/rails-migration.md) | Full narrative of the React + FastAPI → Rails 8 rewrite (Devise, Solid Queue, i18n, data migration) |
+
 ## Migration Story
 
 **Before:** React SPA + FastAPI + PostgreSQL — 3 servers, CORS headaches, client state complexity.
