@@ -1,83 +1,83 @@
-# Household Ledger
+# 가계부 (Household Ledger)
 
-[한국어](README.ko.md)
+[English](README.en.md)
 
-> A personal finance app built with Rails 8 — zero external dependencies, SPA-level UX, no JavaScript framework.
+> Rails 8 기반 개인 재무 관리 앱 — 외부 의존성 제로, SPA급 UX, JavaScript 프레임워크 없음.
 
 ## Highlights
 
-- **Zero infrastructure** — SQLite + Solid Trifecta (Queue, Cache, Cable). No Redis, no npm, no separate DB server.
-- **SPA without the SPA** — Hotwire (Turbo + Stimulus) delivers real-time updates, modals, and partial page swaps with zero JavaScript framework.
-- **Credit card installment auto-splitting** — Enter a 12-month installment once; the app generates all 12 payment entries with correct billing dates.
-- **Giving/receiving event tags** — Track who you gave gifts to or received from, with calendar dot indicators. A feature no commercial app offers.
-- **Full Korean localization** — Dates, currency, UI labels, Pretendard font. Built for daily use in Korean.
-- **Migrated from React + FastAPI + PostgreSQL** — Collapsed a 3-server stack into a single `bin/dev` process.
+- **인프라 제로** — SQLite + Solid Trifecta (Queue, Cache, Cable). Redis 없음, npm 없음, DB 서버 없음.
+- **SPA 없이 SPA급 UX** — Hotwire (Turbo + Stimulus)로 실시간 업데이트, 모달, 부분 페이지 교체를 JavaScript 프레임워크 없이 구현.
+- **신용카드 할부 자동 분할** — 12개월 할부를 한 번 입력하면 결제일 기반으로 12건의 거래가 자동 생성.
+- **베푼 것/받은 것 태깅** — 누구에게 줬는지, 누구에게 받았는지 기록하고 달력에 컬러 도트로 표시. 시중 앱에 없는 기능.
+- **한국어 완전 로컬라이징** — 날짜, 통화, UI 전체, Pretendard 폰트. 한국어 일상 사용에 최적화.
+- **React + FastAPI + PostgreSQL에서 이관** — 서버 3개 스택을 `bin/dev` 하나로 축소.
 
-<!-- TODO: Add screenshots -->
+<!-- TODO: 스크린샷 추가 -->
 
-## Why I Built This
+## 왜 만들었나
 
-I tried multiple finance apps, but none had everything I wanted in one place — automatic installment splitting, giving/receiving event tagging, purchase-date vs. payment-date statistics toggle. Features existed across different apps, but never together.
+기존 가계부 앱들을 여러 개 써봤지만, 어느 것도 원하는 기능을 다 갖추고 있지 않았습니다. 신용카드 할부 자동 분할, 베푼 것/받은 것 태깅, 구매일 vs 결제일 기준 통계 전환 — 이런 것들이 개별적으로는 있어도 하나의 앱에 모여 있지 않았습니다.
 
-The first version was built with React + FastAPI + PostgreSQL — I was using React at work but knew nothing about it, so I learned step by step while building this app. Later, I heard about Rails 8's Solid Trifecta (Queue, Cache, Cable) — queue, cache, and WebSocket support without Redis. I wanted to broaden my language horizons, and a Rails monolith felt like a better fit for maintaining a personal project. So I **migrated entirely to Rails 8**.
+처음에는 회사에서 React를 쓰고 있었는데 아무것도 몰랐기에, AI에게 한 단계씩 물어보며 React + FastAPI + PostgreSQL로 만들었습니다. 이후 Rails 8의 Solid Trifecta(Queue, Cache, Cable)가 Redis 없이 큐, 캐시, WebSocket을 지원한다는 소식을 접했고, 언어의 지평을 넓히고 싶기도 했고, 개인 프로젝트 유지보수에는 Rails 모놀리스가 더 어울린다고 판단하여 **Rails 8로 전면 이관**했습니다.
 
-## Features
+## 주요 기능
 
-| Area | Capabilities |
-|------|-------------|
-| **Transactions** | Income/expense CRUD, confirmed/scheduled/pending status, hierarchical categories (2-level), drag-and-drop reordering, custom icons & colors |
-| **Credit Cards** | Card registration, default card, installment auto-splitting (UUID grouping), billing-day-based date calculation, purchase vs. payment date toggle |
-| **Tags** | General / giving / receiving types, link to transactions or record standalone, calendar color dots, last-usage tracking |
-| **Recurring** | Weekly/monthly/yearly templates, variable amounts, soft delete for history |
-| **Statistics** | Category pie/bar charts, 6-month rolling trends, parent category grouping, purchase/payment date toggle |
-| **Assets** | Reconcile recorded vs. actual balances, classify as missing income or expense |
-| **UX** | Dark mode (system + toggle), responsive (mobile tabs + desktop sidebar), Turbo Frame modals, real-time Turbo Stream updates |
+| 영역 | 내용 |
+|------|------|
+| **거래 관리** | 수입/지출 CRUD, 확인됨/예정/보류 상태, 2단계 계층 카테고리, 드래그 앤 드롭 정렬, 아이콘 및 색상 커스터마이징 |
+| **신용카드** | 카드 등록, 기본 카드 설정, 할부 자동 분할 (UUID 그룹핑), 결제일 기반 날짜 계산, 구매일/결제일 기준 전환 |
+| **태깅** | 범용 / 베푼 것 / 받은 것 3가지 유형, 거래 연결 또는 독립 이벤트 기록, 달력 컬러 도트, 마지막 사용일 추적 |
+| **반복 거래** | 주간/월간/연간 템플릿, 변동 금액 지원, Soft Delete로 이력 보존 |
+| **통계** | 카테고리별 파이/바 차트, 6개월 롤링 트렌드, 부모 카테고리 그룹화, 구매일/결제일 기준 전환 |
+| **자산 보정** | 실제 자산과 기록 차이 조정, 누락 수입/지출 유형 분류 |
+| **UX** | 다크 모드 (시스템 + 토글), 반응형 (모바일 하단 탭 + 데스크톱 사이드바), Turbo Frame 모달, 실시간 Turbo Stream 업데이트 |
 
-## Tech Stack
+## 기술 스택
 
-| Area | Technology | Notes |
-|------|-----------|-------|
-| **Framework** | Ruby on Rails 8.1 | Fullstack monolith |
-| **Language** | Ruby 3.3+ | rbenv managed |
-| **Database** | SQLite | File-based, no server |
-| **Auth** | Devise | Email/password |
-| **Frontend** | ERB + Hotwire | Turbo + Stimulus |
-| **CSS** | Tailwind CSS + Propshaft | Utility-first |
-| **JS** | importmap-rails | No npm needed |
-| **Jobs / Cache / WS** | Solid Queue / Cache / Cable | DB-backed, no Redis |
-| **Charts** | Chartkick + Groupdate | |
-| **Deployment** | Kamal + Docker | |
+| 영역 | 기술 | 비고 |
+|------|------|------|
+| **프레임워크** | Ruby on Rails 8.1 | 풀스택 모놀리스 |
+| **언어** | Ruby 3.3+ | rbenv 관리 |
+| **데이터베이스** | SQLite | 파일 기반, 서버 불필요 |
+| **인증** | Devise | 이메일/비밀번호 |
+| **프론트엔드** | ERB + Hotwire | Turbo + Stimulus |
+| **CSS** | Tailwind CSS + Propshaft | 유틸리티 우선 |
+| **JS** | importmap-rails | npm 불필요 |
+| **잡 / 캐시 / WS** | Solid Queue / Cache / Cable | DB 기반, Redis 불필요 |
+| **차트** | Chartkick + Groupdate | |
+| **배포** | Kamal + Docker | |
 
-## Architecture
+## 아키텍처
 
 ```
-Browser Request
+브라우저 요청
     -> Router (config/routes.rb)
         -> Controller (app/controllers/)
             -> Model (app/models/)        <- ActiveRecord ORM
-            -> View (app/views/)          <- ERB templates
-        -> Response (HTML or Turbo Stream)
-            -> Turbo Frame swap (partial update)
-            -> Stimulus Controller (client interaction)
+            -> View (app/views/)          <- ERB 템플릿
+        -> 응답 (HTML 또는 Turbo Stream)
+            -> Turbo Frame 교체 (부분 갱신)
+            -> Stimulus Controller (클라이언트 인터랙션)
 ```
 
-## Data Model
+## 데이터 모델
 
 ```
 User (Devise)
  |-- has_many :categories
- |    +-- parent_id (self-ref, 2-level hierarchy)
+ |    +-- parent_id (self-ref, 2단계 계층)
  |-- has_many :transactions
  |    |-- belongs_to :category
  |    |-- belongs_to :credit_card (optional)
  |    |-- belongs_to :recurring_transaction (optional)
  |    |-- has_many :taggings
- |    +-- installment_group (UUID for installment grouping)
+ |    +-- installment_group (UUID, 할부 그룹핑)
  |-- has_many :tags
  |    +-- tag_type: general / giving / receiving
  |-- has_many :taggings
  |    |-- belongs_to :tag
- |    +-- belongs_to :transaction (optional, standalone allowed)
+ |    +-- belongs_to :transaction (optional, 독립 태그 가능)
  |-- has_many :credit_cards
  |    +-- payment_day (1-28), is_default
  |-- has_many :recurring_transactions (soft delete)
@@ -86,32 +86,32 @@ User (Devise)
       +-- adjustment_type: income_missing / expense_missing
 ```
 
-### Design Decisions
+### 설계 특징
 
-- **STI Avoidance** — Uses `transaction_type`, `adjustment_type` instead of Rails' reserved `type` column
-- **Soft Delete** — `discard` gem with `discarded_at` column
-- **Multi-user** — All tables scoped via `user_id` FK
-- **Installment Grouping** — UUID `installment_group` tracks split payments across months
-- **Flexible Tagging** — Tags attach to transactions or stand alone as independent events
+- **STI 회피** — Rails의 `type` 예약어 대신 `transaction_type`, `adjustment_type` 사용
+- **Soft Delete** — `discard` gem으로 `discarded_at` 기반 소프트 삭제
+- **다중 사용자** — 모든 테이블이 `user_id` FK로 스코핑
+- **할부 그룹핑** — UUID `installment_group`으로 월별 분할 결제 추적
+- **유연한 태깅** — 거래에 연결하거나 독립 이벤트로 기록 가능
 
-## Screens
+## 화면 구성
 
-| Screen | Path | Description |
-|--------|------|-------------|
-| **Dashboard** | `/` | Monthly calendar + income/expense/asset summary |
-| **Daily Detail** | `/dashboard/daily_transactions` | Transaction list + category breakdown |
-| **Transaction Entry** | `/transactions/new` | Modal form with category tree, tags, installments |
-| **Categories** | `/categories` | Drag-and-drop sorting, icon/color editing |
-| **Tags** | `/tags` | Type-grouped display, last usage date |
-| **Statistics** | `/statistics/:id` | Category pie chart + monthly trends |
-| **Credit Cards** | `/credit_cards` | Card registration, billing day |
-| **Recurring** | `/recurring_transactions` | Template CRUD |
+| 화면 | 경로 | 설명 |
+|------|------|------|
+| **대시보드** | `/` | 월별 캘린더 + 수입/지출/자산 요약 |
+| **일별 상세** | `/dashboard/daily_transactions` | 거래 목록 + 카테고리 비율 |
+| **거래 입력** | `/transactions/new` | 모달 폼 (카테고리 트리, 태그, 할부) |
+| **카테고리 관리** | `/categories` | 드래그 앤 드롭 정렬, 아이콘/색상 편집 |
+| **태그 관리** | `/tags` | 유형별 그룹, 마지막 사용일 표시 |
+| **통계** | `/statistics/:id` | 카테고리 파이차트 + 월별 트렌드 |
+| **신용카드** | `/credit_cards` | 카드 등록, 결제일 설정 |
+| **반복 거래** | `/recurring_transactions` | 템플릿 CRUD |
 
-<!-- TODO: Add screenshots -->
+<!-- TODO: 스크린샷 추가 -->
 
-## Setup
+## 개발 환경 설정
 
-**Requirements:** Ruby 3.3+ (rbenv recommended), SQLite 3
+**요구사항:** Ruby 3.3+ (rbenv 권장), SQLite 3
 
 ```bash
 bundle install
@@ -120,39 +120,39 @@ bin/dev
 # -> http://localhost:3000
 ```
 
-## Documentation
+## 문서 구성
 
-Project documentation is split by authorship:
+프로젝트 문서는 **작성 주체**에 따라 둘로 분리되어 있습니다:
 
-| Path | Content |
-|------|---------|
-| [`docs/`](docs/README.md) | Claude-authored phase specs, guides, backend snapshot |
-| [`docs/backend-overview.md`](docs/backend-overview.md) | Current Rails backend snapshot — routes, models, controllers, gems, TODOs |
-| [`docs/phases/`](docs/phases/) | Phase-by-phase learning specs (populated as Rails 8 study proceeds) |
-| [`docs/plans/`](docs/plans/) | `/tdd-plan` and other design docs (optional) |
-| [`learnings/`](learnings/README.md) | User-authored Q&A, retrospectives, cross-cutting topics |
-| [`learnings/retrospectives/rails-migration.md`](learnings/retrospectives/rails-migration.md) | Full narrative of the React + FastAPI → Rails 8 rewrite (Devise, Solid Queue, i18n, data migration) |
+| 경로 | 내용 |
+|------|------|
+| [`docs/`](docs/README.md) | Claude가 작성한 Phase 스펙·가이드·백엔드 상태 스냅샷 |
+| [`docs/backend-overview.md`](docs/backend-overview.md) | 현재 Rails 백엔드 상태 — 라우팅, 모델, 컨트롤러, Gem, TODO |
+| [`docs/phases/`](docs/phases/) | Rails 8 학습 단위 Phase 스펙 (학습 진행에 따라 추가) |
+| [`docs/plans/`](docs/plans/) | `/tdd-plan` 등 설계 문서 (선택) |
+| [`learnings/`](learnings/README.md) | 사용자가 직접 쓴 Q&A·회고·크로스커팅 심화 |
+| [`learnings/retrospectives/rails-migration.md`](learnings/retrospectives/rails-migration.md) | React + FastAPI → Rails 8 재작성 전체 서사 (Devise, Solid Queue, i18n, 데이터 이관 포함) |
 
-## Migration Story
+## 마이그레이션 스토리
 
-**Before:** React SPA + FastAPI + PostgreSQL — 3 servers, CORS headaches, client state complexity.
+**Before:** React SPA + FastAPI + PostgreSQL — 서버 3개, CORS 설정, 클라이언트 상태 관리 복잡도.
 
-**After:** Rails 8 monolith — single process, SQLite file, Solid Trifecta (no Redis), Hotwire (no JS framework).
+**After:** Rails 8 모놀리스 — 단일 프로세스, SQLite 파일 하나, Solid Trifecta (Redis 불필요), Hotwire (JS 프레임워크 불필요).
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Rails init + Devise auth | Done |
-| 2 | Data models + migrations | Done |
-| 3 | Core CRUD + dashboard | Done |
-| 4 | Calendar view + statistics | Done |
-| 5 | Credit cards + installments | Done |
-| 6 | Tagging system | Done |
-| 7 | Recurring transaction scheduler | -- |
-| 8 | Data migration (596 records) | -- |
-| 9 | Docker deployment | -- |
+| Phase | 설명 | 상태 |
+|-------|------|------|
+| 1 | Rails 초기화 + Devise 인증 | 완료 |
+| 2 | 데이터 모델 + 마이그레이션 | 완료 |
+| 3 | 핵심 CRUD + 대시보드 | 완료 |
+| 4 | 달력 뷰 + 통계 차트 | 완료 |
+| 5 | 신용카드 + 할부 결제 | 완료 |
+| 6 | 태깅 시스템 | 완료 |
+| 7 | 반복 거래 스케줄러 | -- |
+| 8 | 데이터 이관 (596건) | -- |
+| 9 | Docker 배포 | -- |
 
-> Legacy code preserved on the `legacy/react-fastapi` branch.
+> 기존 코드는 `legacy/react-fastapi` 브랜치에 보존되어 있습니다.
 
-## License
+## 라이선스
 
-This project is licensed under the [MIT License](LICENSE).
+이 프로젝트는 [MIT 라이선스](LICENSE)로 배포됩니다.
